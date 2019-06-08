@@ -17,6 +17,7 @@ object TestUtil {
         every { message.channel.sendMessage(capture(capturedCalls)) } returns mockk()
         every { message.messageAuthor.isYourself } returns isSelf
         every { message.message.canYouDelete() } returns true
+        every { message.messageAuthor.isBotOwner } returns false
         return message
     }
 }

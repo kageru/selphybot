@@ -1,6 +1,9 @@
 [system]
 serverId = "356414885292277771"
 
+[localization]
+permissionDenied = "You do not have permission to use this command."
+
 [[commands]]
 trigger = "!ping"
 response = "pong"
@@ -24,6 +27,15 @@ response = "@@ there you go"
 [[commands]]
 trigger = "delet this"
 deleteMessage = true
+
+[[commands]]
+trigger = "!restricted"
+response = "access granted"
+# a user needs *one of* these roles to trigger the command
+neededRoles = [
+    452034011393425409,
+    446668543816106004
+]
 
 [[commands]]
 trigger = "^[^`]*([()|DoOvVcC][-=^']?;|;[-=^']?[()|DoOpPvVcC3]|:wink:|😉)[^`]*$"
