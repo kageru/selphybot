@@ -20,10 +20,17 @@ repositories {
     mavenCentral()
 }
 
+val test by tasks.getting(Test::class) {
+    useJUnitPlatform { }
+}
+
 dependencies {
+    compile("com.moandjiezana.toml:toml4j:0.7.2")
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.javacord:javacord:3.0.4")
-    compile("com.moandjiezana.toml:toml4j:0.7.2")
+
+    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")
+    testImplementation("io.mockk:mockk:1.9")
 }
 
 tasks.withType<KotlinCompile> {
