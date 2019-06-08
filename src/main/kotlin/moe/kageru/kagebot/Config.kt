@@ -3,7 +3,7 @@ package moe.kageru.kagebot
 import com.moandjiezana.toml.Toml
 import java.io.File
 
-class Config(val system: System, val commands: Commands) {
+class Config(val system: System, val commands: List<Command>) {
     companion object {
         val config: Config by lazy { read("config.toml") }
         val secret = File("secret").readText().replace("\n", "")
@@ -20,7 +20,7 @@ class Config(val system: System, val commands: Commands) {
             val parsed = rawConfig.to(Config::class.java)
             return Config(
                 System(parsed.system),
-                Commands(parsed.commands.commands.map { Command(it) })
+                parsed.commands.map { Command(it) }
             )
         }
 
@@ -34,7 +34,3 @@ data class System(val serverId: String, val admins: List<String>) {
     constructor(system: System) : this(system.serverId, system.admins)
 }
 
-/**
- * Wrapper around [Command]s for TOML deserialization.
- */
-data class Commands(val commands: List<Command>)

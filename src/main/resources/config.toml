@@ -4,15 +4,11 @@ admins = [
     "137780880344088576"
 ]
 
-[commands]
-commands = [
-    {
-        trigger = "!ping",
-        response = "pong"
-    },
-    {
-        trigger = "somewhere",
-        response = "found it",
-        matchType = "CONTAINS"
-    }
-]
+[[commands]]
+trigger = "!ping"
+response = "pong"
+
+[[commands]]
+trigger = "somewhere"
+response = "found it"
+matchType = "CONTAINS"
