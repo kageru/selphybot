@@ -1,8 +1,5 @@
 [system]
 serverId = "356414885292277771"
-admins = [
-    "137780880344088576"
-]
 
 [[commands]]
 trigger = "!ping"

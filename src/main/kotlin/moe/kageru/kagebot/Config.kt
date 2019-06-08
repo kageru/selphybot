@@ -19,7 +19,7 @@ class Config(val system: System, val commands: List<Command>) {
             })
             val parsed = rawConfig.to(Config::class.java)
             return Config(
-                System(parsed.system),
+                parsed.system,
                 parsed.commands.map { Command(it) }
             )
         }
@@ -27,10 +27,5 @@ class Config(val system: System, val commands: List<Command>) {
     }
 }
 
-data class System(val serverId: String, val admins: List<String>) {
-    /**
-     * Self constructor to explicitly repeat the nullability checks after TOML parsing.
-     */
-    constructor(system: System) : this(system.serverId, system.admins)
-}
+data class System(val serverId: String)
 
