@@ -25,6 +25,10 @@ trigger = "answer me"
 response = "@@ there you go"
 
 [[commands]]
+trigger = "delet this"
+deleteMessage = true
+
+[[commands]]
 trigger = "^[^`]*([()|DoOvVcC][-=^']?;|;[-=^']?[()|DoOpPvVcC3]|:wink:|😉)[^`]*$"
 response = "@@ Oboe!"
 matchType = "REGEX"

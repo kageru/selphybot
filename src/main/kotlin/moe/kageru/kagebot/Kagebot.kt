@@ -8,7 +8,7 @@ import org.javacord.api.event.message.MessageCreateEvent
 class Kagebot {
     companion object {
         fun processMessage(event: MessageCreateEvent) {
-            if (!event.messageAuthor.isYourself) {
+            if (event.messageAuthor.isYourself) {
                 return
             }
             for (command in config.commands) {
