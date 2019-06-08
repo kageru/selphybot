@@ -17,13 +17,24 @@ class Config(val system: System, val commands: Commands) {
                 println("Config not found, falling back to defaults...")
                 File(this::class.java.classLoader.getResource(path)!!.toURI())
             })
-            return rawConfig.to(Config::class.java)
+            val parsed = rawConfig.to(Config::class.java)
+            return Config(
+                System(parsed.system),
+                Commands(parsed.commands.commands.map { Command(it) })
+            )
         }
 
     }
 }
 
-data class System(val serverId: String, val admins: List<String>)
+data class System(val serverId: String, val admins: List<String>) {
+    /**
+     * Self constructor to explicitly repeat the nullability checks after TOML parsing.
+     */
+    constructor(system: System) : this(system.serverId, system.admins)
+}
 
-// wrapper for toml deserialization
+/**
+ * Wrapper around [Command]s for TOML deserialization.
+ */
 data class Commands(val commands: List<Command>)
