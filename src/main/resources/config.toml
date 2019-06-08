@@ -7,7 +7,12 @@ admins = [
 [commands]
 commands = [
     {
-        input = "!ping",
-        output = "pong"
+        trigger = "!ping",
+        response = "pong"
+    },
+    {
+        trigger = "somewhere",
+        response = "found it",
+        matchType = "CONTAINS"
     }
 ]

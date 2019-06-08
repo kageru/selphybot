@@ -23,10 +23,11 @@ fun createBot() {
     })
     log.info("kagebot Mk II running")
     api.addMessageCreateListener { event ->
-        if (config.commands.commands[0].matches(event.messageContent)) {
-            event.channel.sendMessage(config.commands.commands[0].respond())
-            println("message was created")
+        for (command in config.commands.commands) {
+            if (command.matches(event.messageContent)) {
+                event.channel.sendMessage(command.respond())
+                break
+            }
         }
     }
-
 }
