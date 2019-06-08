@@ -14,6 +14,17 @@ response = "found it"
 matchType = "CONTAINS"
 
 [[commands]]
+trigger = "A.+B"
+response = "regex matched"
+matchType = "REGEX"
+
+[[commands]]
+trigger = "answer me"
+# this will @mention the user who triggered the command,
+# i.e. “@author there you go”
+response = "@@ there you go"
+
+[[commands]]
 trigger = "^[^`]*([()|DoOvVcC][-=^']?;|;[-=^']?[()|DoOpPvVcC3]|:wink:|😉)[^`]*$"
 response = "@@ Oboe!"
 matchType = "REGEX"
