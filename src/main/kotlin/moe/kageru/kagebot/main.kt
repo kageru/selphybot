@@ -25,7 +25,7 @@ fun createBot() {
     api.addMessageCreateListener { event ->
         for (command in config.commands) {
             if (command.matches(event.messageContent)) {
-                event.channel.sendMessage(command.respond())
+                event.channel.sendMessage(command.respond(event.messageAuthor))
                 break
             }
         }

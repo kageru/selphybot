@@ -12,3 +12,9 @@ response = "pong"
 trigger = "somewhere"
 response = "found it"
 matchType = "CONTAINS"
+
+[[commands]]
+trigger = "^[^`]*([()|DoOvVcC][-=^']?;|;[-=^']?[()|DoOpPvVcC3]|:wink:|😉)[^`]*$"
+response = "@@ Oboe!"
+matchType = "REGEX"
+deleteMessage = true
