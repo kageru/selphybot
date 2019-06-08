@@ -8,9 +8,12 @@ import org.javacord.api.event.message.MessageCreateEvent
 class Kagebot {
     companion object {
         fun processMessage(event: MessageCreateEvent) {
+            if (!event.messageAuthor.isYourself) {
+                return
+            }
             for (command in config.commands) {
                 if (command.matches(event.messageContent)) {
-                    event.channel.sendMessage(command.respond(event.messageAuthor))
+                    command.execute(event)
                     break
                 }
             }
