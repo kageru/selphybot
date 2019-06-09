@@ -2,6 +2,7 @@ package moe.kageru.kagebot
 
 import moe.kageru.kagebot.Config.Companion.config
 import moe.kageru.kagebot.Util.doIf
+import moe.kageru.kagebot.Util.ifNotEmpty
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.event.message.MessageCreateEvent
 
@@ -11,20 +12,20 @@ class Command(
     trigger: String?,
     private val response: String?,
     matchType: MatchType?,
-    private val deleteMessage: Boolean,
-    neededPermissions: Iterable<Long>?
+    neededPermissions: Iterable<Long>?,
+    private val actions: MessageActions?
 ) {
     val trigger: String = trigger!!
     val regex: Regex? = if (matchType == MatchType.REGEX) Regex(trigger!!) else null
-    private val matchType: MatchType = matchType ?: MatchType.PREFIX
+    val matchType: MatchType = matchType ?: MatchType.PREFIX
     private val neededRoles = neededPermissions?.toSet()
 
     constructor(cmd: Command) : this(
         cmd.trigger,
         cmd.response,
         cmd.matchType,
-        cmd.deleteMessage,
-        cmd.neededRoles
+        cmd.neededRoles,
+        cmd.actions
     )
 
     fun execute(message: MessageCreateEvent) {
@@ -34,20 +35,16 @@ class Command(
                 return
             }
         }
-        if (this.deleteMessage && message.message.canYouDelete()) {
-            message.deleteMessage()
-        }
+        this.actions?.run(message, this)
         this.response?.let {
             message.channel.sendMessage(respond(message.messageAuthor))
         }
     }
 
     private fun hasOneOf(messageAuthor: MessageAuthor, roles: Set<Long>): Boolean {
-        val optional = messageAuthor.asUser()
-        return when {
-            optional.isEmpty -> false
-            else -> optional.get().getRoles(Config.server).map { it.id }.toSet().intersect(roles).isNotEmpty()
-        }
+        return messageAuthor.asUser().ifNotEmpty { user ->
+            user.getRoles(Config.server).map { it.id }.toSet().intersect(roles).isNotEmpty()
+        } ?: false
     }
 
     fun matches(msg: String) = this.matchType.matches(msg, this)
@@ -59,9 +56,6 @@ class Command(
 enum class MatchType {
     PREFIX {
         override fun matches(message: String, command: Command) = message.startsWith(command.trigger)
-    },
-    FULL {
-        override fun matches(message: String, command: Command) = message == command.trigger
     },
     CONTAINS {
         override fun matches(message: String, command: Command) = message.contains(command.trigger)

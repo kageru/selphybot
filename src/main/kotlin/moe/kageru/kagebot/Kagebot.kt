@@ -23,6 +23,7 @@ class Kagebot {
     init {
         val api = DiscordApiBuilder().setToken(Config.secret).login().join()
         Config.server = api.getServerById(config.system.serverId).orElseThrow()
+        Config.api = api
         Runtime.getRuntime().addShutdownHook(Thread {
             log.info("Bot has been interrupted. Shutting down.")
             api.disconnect()

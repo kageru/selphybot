@@ -1,8 +1,11 @@
 [system]
 serverId = "356414885292277771"
+color = "#1793d0"
 
 [localization]
 permissionDenied = "You do not have permission to use this command."
+# results in <name> says <message>
+redirectedMessage = "says"
 
 [[commands]]
 trigger = "!ping"
@@ -26,7 +29,7 @@ response = "@@ there you go"
 
 [[commands]]
 trigger = "delet this"
-deleteMessage = true
+actions = { delete = true }
 
 [[commands]]
 trigger = "!restricted"
@@ -37,8 +40,14 @@ neededRoles = [
     446668543816106004
 ]
 
+# redirect every message that starts with !redirect to channel 555097559023222825
 [[commands]]
-trigger = "^[^`]*([()|DoOvVcC][-=^']?;|;[-=^']?[()|DoOpPvVcC3]|:wink:|😉)[^`]*$"
-response = "@@ Oboe!"
-matchType = "REGEX"
-deleteMessage = true
+trigger = "!redirect"
+response = "redirected"
+actions = { redirect = { target = 555097559023222825 } }
+
+# the same, but without the original username
+[[commands]]
+trigger = "!anonRedirect"
+response = "redirected"
+actions = { redirect = {target = 555097559023222825, anonymous = true } }

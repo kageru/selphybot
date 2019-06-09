@@ -31,6 +31,9 @@ dependencies {
 
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")
     testImplementation("io.mockk:mockk:1.9")
+    // these two are needed to access javacord internals (such as reading from sent embeds during tests)
+    testImplementation("org.javacord:javacord-core:3.0.4")
+    testCompile("com.fasterxml.jackson.core:jackson-databind:2.9.9")
 }
 
 tasks.withType<KotlinCompile> {
