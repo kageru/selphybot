@@ -67,6 +67,28 @@ class CommandTest : StringSpec({
         calls.size shouldBe 1
         calls[0] shouldBe "access granted"
     }
+    "should deny command to excluded roles" {
+        val calls = mutableListOf<String>()
+        val mockMessage = TestUtil.mockMessage("!almostUnrestricted", capturedCalls = calls)
+        // with the banned role
+        every { mockMessage.messageAuthor.asUser() } returns mockk {
+            every { isPresent } returns true
+            every { get().getRoles(any()) } returns listOf(
+                mockk { every { id } returns 452034011393425409 }
+            )
+        }
+        Kagebot.processMessage(mockMessage)
+
+        // without the role
+        every { mockMessage.messageAuthor.asUser() } returns mockk {
+            every { isPresent } returns true
+            every { get().getRoles(any()) } returns emptyList()
+        }
+        Kagebot.processMessage(mockMessage)
+        calls.size shouldBe 2
+        calls[0] shouldBe config.localization.permissionDenied
+        calls[1] shouldBe "access granted"
+    }
     /*
      * This implicitly tests that the message author is not included in anonymous complaints
      * because getting the author’s name from the mock is undefined.

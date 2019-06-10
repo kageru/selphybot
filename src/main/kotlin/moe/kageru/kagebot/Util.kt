@@ -1,5 +1,6 @@
 package moe.kageru.kagebot
 
+import org.javacord.api.entity.message.MessageAuthor
 import java.util.*
 
 object Util {
@@ -12,5 +13,11 @@ object Util {
             return op(this.get())
         }
         return null
+    }
+
+    fun hasOneOf(messageAuthor: MessageAuthor, roles: Set<Long>): Boolean {
+        return messageAuthor.asUser().ifNotEmpty { user ->
+            user.getRoles(Config.server).map { it.id }.toSet().intersect(roles).isNotEmpty()
+        } ?: false
     }
 }

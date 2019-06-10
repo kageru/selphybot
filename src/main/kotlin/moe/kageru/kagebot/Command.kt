@@ -2,7 +2,6 @@ package moe.kageru.kagebot
 
 import moe.kageru.kagebot.Config.Companion.config
 import moe.kageru.kagebot.Util.doIf
-import moe.kageru.kagebot.Util.ifNotEmpty
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.event.message.MessageCreateEvent
 
@@ -12,39 +11,30 @@ class Command(
     trigger: String?,
     private val response: String?,
     matchType: MatchType?,
-    neededPermissions: Iterable<Long>?,
+    private val permissions: Permissions?,
     private val actions: MessageActions?
 ) {
     val trigger: String = trigger!!
     val regex: Regex? = if (matchType == MatchType.REGEX) Regex(trigger!!) else null
     val matchType: MatchType = matchType ?: MatchType.PREFIX
-    private val neededRoles = neededPermissions?.toSet()
 
     constructor(cmd: Command) : this(
         cmd.trigger,
         cmd.response,
         cmd.matchType,
-        cmd.neededRoles,
+        cmd.permissions?.let { Permissions(it) },
         cmd.actions
     )
 
     fun execute(message: MessageCreateEvent) {
-        neededRoles?.let { roles ->
-            if (!(message.messageAuthor.isBotOwner || hasOneOf(message.messageAuthor, roles))) {
-                message.channel.sendMessage(config.localization.permissionDenied)
-                return
-            }
+        if (!(message.messageAuthor.isBotOwner || permissions?.isAllowed(message) != false)) {
+            message.channel.sendMessage(config.localization.permissionDenied)
+            return
         }
         this.actions?.run(message, this)
         this.response?.let {
             message.channel.sendMessage(respond(message.messageAuthor))
         }
-    }
-
-    private fun hasOneOf(messageAuthor: MessageAuthor, roles: Set<Long>): Boolean {
-        return messageAuthor.asUser().ifNotEmpty { user ->
-            user.getRoles(Config.server).map { it.id }.toSet().intersect(roles).isNotEmpty()
-        } ?: false
     }
 
     fun matches(msg: String) = this.matchType.matches(msg, this)
@@ -65,4 +55,24 @@ enum class MatchType {
     };
 
     abstract fun matches(message: String, command: Command): Boolean
+}
+
+class Permissions(hasOneOf: Iterable<Long>?, hasNoneOf: Iterable<Long>?, private val onlyDM: Boolean) {
+    private val hasNoneOf = hasNoneOf?.toSet()
+    private val hasOneOf = hasOneOf?.toSet()
+
+    constructor(perms: Permissions) : this(perms.hasOneOf, perms.hasNoneOf, perms.onlyDM)
+
+    fun isAllowed(message: MessageCreateEvent): Boolean {
+        if (onlyDM && !message.isPrivateMessage) {
+            return false
+        }
+        hasOneOf?.let {
+            if (!Util.hasOneOf(message.messageAuthor, hasOneOf)) return false
+        }
+        hasNoneOf?.let {
+            if (Util.hasOneOf(message.messageAuthor, hasNoneOf)) return false
+        }
+        return true
+    }
 }
