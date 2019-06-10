@@ -22,7 +22,7 @@ class Redirect(private val target: Long, private val anonymous: Boolean) {
                 config.localization.redirectedMessage,
                 message.readableMessageContent.let { content ->
                     when (command.matchType) {
-                        MatchType.PREFIX -> content.removePrefix("${command.trigger} ")
+                        MatchType.PREFIX -> content.removePrefix(command.trigger).trim()
                         else -> content
                     }
                 }

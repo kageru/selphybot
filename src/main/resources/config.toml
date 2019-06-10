@@ -50,4 +50,4 @@ actions = { redirect = { target = 555097559023222825 } }
 [[commands]]
 trigger = "!anonRedirect"
 response = "redirected"
-actions = { redirect = {target = 555097559023222825, anonymous = true } }
+actions = { redirect = { target = 555097559023222825, anonymous = true } }
