@@ -6,6 +6,7 @@ color = "#1793d0"
 permissionDenied = "You do not have permission to use this command."
 # results in <name> says <message>
 redirectedMessage = "says"
+messageDeleted = "Your message was deleted because it contained a banned word or phrase."
 
 [[command]]
 trigger = "!ping"

@@ -9,6 +9,13 @@ class MessageActions(private val delete: Boolean, private val redirect: Redirect
     fun run(message: MessageCreateEvent, command: Command) {
         if (delete && message.message.canYouDelete()) {
             message.deleteMessage()
+            message.messageAuthor.asUser().ifNotEmpty { user ->
+                user.sendMessage(
+                    MessageUtil.getEmbedBuilder()
+                        .addField("Blacklisted", config.localization.messageDeleted)
+                        .addField("Original:", "“${message.readableMessageContent}”")
+                )
+            }
         }
         redirect?.execute(message, command)
     }

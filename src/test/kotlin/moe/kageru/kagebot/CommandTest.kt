@@ -7,8 +7,11 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import moe.kageru.kagebot.Config.Companion.config
+import moe.kageru.kagebot.TestUtil.embedToString
+import moe.kageru.kagebot.TestUtil.messageableAuthor
+import moe.kageru.kagebot.TestUtil.mockMessage
+import moe.kageru.kagebot.TestUtil.testMessageSuccess
 import org.javacord.api.entity.message.embed.EmbedBuilder
-import org.javacord.core.entity.message.embed.EmbedBuilderDelegateImpl
 
 class CommandTest : StringSpec({
     TestUtil.prepareServerConfig()
@@ -26,37 +29,37 @@ class CommandTest : StringSpec({
     }
     "should not react to own message" {
         val calls = mutableListOf<String>()
-        Kagebot.processMessage(TestUtil.mockMessage("!ping", capturedCalls = calls, isSelf = true))
-        calls.size shouldBe 0
+        Kagebot.processMessage(mockMessage("!ping", replies = calls, isSelf = true))
+        calls shouldBe mutableListOf()
     }
-    "should delete messages" {
-        val mockMessage = TestUtil.mockMessage("delet this")
+    "should delete messages and send copy to author" {
+        val replies = mutableListOf<EmbedBuilder>()
+        val messageContent = "delet this"
+        val mockMessage = mockMessage(messageContent)
         every { mockMessage.deleteMessage() } returns mockk()
+        every { mockMessage.messageAuthor.asUser() } returns messageableAuthor(replies)
         Kagebot.processMessage(mockMessage)
         verify(exactly = 1) { mockMessage.deleteMessage() }
+        replies.size shouldBe 1
+        embedToString(replies[0]) shouldContain messageContent
     }
     "should refuse command without permissions" {
-        val calls = mutableListOf<String>()
-        val mockMessage = TestUtil.mockMessage("!restricted", capturedCalls = calls)
-        every { mockMessage.messageAuthor.asUser() } returns mockk {
-            every { get().getRoles(any()) } returns emptyList()
-            every { isPresent } returns true
-        }
+        val replies = mutableListOf<String>()
+        val mockMessage = mockMessage("!restricted", replies = replies)
+        every { mockMessage.messageAuthor.asUser() } returns messageableAuthor()
         Kagebot.processMessage(mockMessage)
-        calls.size shouldBe 1
-        calls[0] shouldBe config.localization.permissionDenied
+        replies shouldBe mutableListOf(config.localization.permissionDenied)
     }
     "should accept restricted command for owner" {
         val calls = mutableListOf<String>()
-        val mockMessage = TestUtil.mockMessage("!restricted", capturedCalls = calls)
+        val mockMessage = mockMessage("!restricted", replies = calls)
         every { mockMessage.messageAuthor.isBotOwner } returns true
         Kagebot.processMessage(mockMessage)
-        calls.size shouldBe 1
-        calls[0] shouldBe "access granted"
+        calls shouldBe mutableListOf("access granted")
     }
     "should accept restricted command with permissions" {
         val calls = mutableListOf<String>()
-        val mockMessage = TestUtil.mockMessage("!restricted", capturedCalls = calls)
+        val mockMessage = mockMessage("!restricted", replies = calls)
         every { mockMessage.messageAuthor.asUser() } returns mockk {
             every { isPresent } returns true
             every { get().getRoles(any()) } returns listOf(
@@ -64,12 +67,11 @@ class CommandTest : StringSpec({
             )
         }
         Kagebot.processMessage(mockMessage)
-        calls.size shouldBe 1
-        calls[0] shouldBe "access granted"
+        calls shouldBe mutableListOf("access granted")
     }
     "should deny command to excluded roles" {
         val calls = mutableListOf<String>()
-        val mockMessage = TestUtil.mockMessage("!almostUnrestricted", capturedCalls = calls)
+        val mockMessage = mockMessage("!almostUnrestricted", replies = calls)
         // with the banned role
         every { mockMessage.messageAuthor.asUser() } returns mockk {
             every { isPresent } returns true
@@ -85,9 +87,7 @@ class CommandTest : StringSpec({
             every { get().getRoles(any()) } returns emptyList()
         }
         Kagebot.processMessage(mockMessage)
-        calls.size shouldBe 2
-        calls[0] shouldBe config.localization.permissionDenied
-        calls[1] shouldBe "access granted"
+        calls shouldBe mutableListOf(config.localization.permissionDenied, "access granted")
     }
     /*
      * This implicitly tests that the message author is not included in anonymous complaints
@@ -97,20 +97,8 @@ class CommandTest : StringSpec({
         val calls = mutableListOf<EmbedBuilder>()
         TestUtil.prepareServerConfig(calls)
         val message = "this is a message"
-        Kagebot.processMessage(TestUtil.mockMessage("!anonRedirect $message"))
+        Kagebot.processMessage(mockMessage("!anonRedirect $message"))
         calls.size shouldBe 1
-        val delegateImpl = calls[0].delegate as EmbedBuilderDelegateImpl
-        val embedContent = delegateImpl.toJsonNode().toString()
-        embedContent shouldContain "\"$message\""
-
+        embedToString(calls[0]) shouldContain "\"$message\""
     }
-}) {
-    companion object {
-        fun testMessageSuccess(content: String, result: String) {
-            val calls = mutableListOf<String>()
-            Kagebot.processMessage(TestUtil.mockMessage(content, capturedCalls = calls))
-            calls.size shouldBe 1
-            calls[0] shouldBe result
-        }
-    }
-}
+})

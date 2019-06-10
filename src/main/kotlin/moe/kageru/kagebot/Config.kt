@@ -40,4 +40,4 @@ class Config(
 }
 
 data class System(val serverId: String, val color: String)
-data class Localization(val permissionDenied: String, val redirectedMessage: String)
+data class Localization(val permissionDenied: String, val redirectedMessage: String, val messageDeleted: String)
