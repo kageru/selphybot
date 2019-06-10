@@ -1,5 +1,6 @@
 package moe.kageru.kagebot
 
+import com.google.gson.annotations.SerializedName
 import moe.kageru.kagebot.Config.Companion.config
 import moe.kageru.kagebot.Util.doIf
 import org.javacord.api.entity.message.MessageAuthor
@@ -12,7 +13,7 @@ class Command(
     private val response: String?,
     matchType: MatchType?,
     private val permissions: Permissions?,
-    private val actions: MessageActions?
+    @SerializedName("action") private val actions: MessageActions?
 ) {
     val trigger: String = trigger!!
     val regex: Regex? = if (matchType == MatchType.REGEX) Regex(trigger!!) else null

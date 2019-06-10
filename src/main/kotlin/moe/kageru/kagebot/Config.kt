@@ -1,11 +1,16 @@
 package moe.kageru.kagebot
 
+import com.google.gson.annotations.SerializedName
 import com.moandjiezana.toml.Toml
 import org.javacord.api.DiscordApi
 import org.javacord.api.entity.server.Server
 import java.io.File
 
-class Config(val system: System, val localization: Localization, val commands: List<Command>) {
+class Config(
+    val system: System,
+    val localization: Localization,
+    @SerializedName("command") val commands: List<Command>
+) {
     companion object {
         val config: Config by lazy { read("config.toml") }
         val secret = File("secret").readText().replace("\n", "")

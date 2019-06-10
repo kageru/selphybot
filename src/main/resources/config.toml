@@ -7,57 +7,59 @@ permissionDenied = "You do not have permission to use this command."
 # results in <name> says <message>
 redirectedMessage = "says"
 
-[[commands]]
+[[command]]
 trigger = "!ping"
 response = "pong"
 
-[[commands]]
+[[command]]
 trigger = "somewhere"
 response = "found it"
 matchType = "CONTAINS"
 
-[[commands]]
+[[command]]
 trigger = "A.+B"
 response = "regex matched"
 matchType = "REGEX"
 
-[[commands]]
+[[command]]
 trigger = "answer me"
 # this will @mention the user who triggered the command,
 # i.e. “@author there you go”
 response = "@@ there you go"
 
-[[commands]]
+[[command]]
 trigger = "delet this"
-actions = { delete = true }
+[command.action]
+delete = true
 
-[[commands]]
+[[command]]
 trigger = "!restricted"
 response = "access granted"
-[commands.permissions]
+[command.permissions]
 hasOneOf = [
     452034011393425409,
     446668543816106004
 ]
 
-[[commands]]
+[[command]]
 trigger = "!almostUnrestricted"
 response = "access granted"
-[commands.permissions]
-hasNoneOf = [
-    452034011393425409
-]
+[command.permissions]
+hasNoneOf = [452034011393425409]
 
 
 
 # redirect every message that starts with !redirect to channel 555097559023222825
-[[commands]]
+[[command]]
 trigger = "!redirect"
 response = "redirected"
-actions = { redirect = { target = 555097559023222825 } }
+[command.action.redirect]
+target = 555097559023222825
 
 # the same, but without the original username
-[[commands]]
+[[command]]
 trigger = "!anonRedirect"
 response = "redirected"
-actions = { redirect = { target = 555097559023222825, anonymous = true } }
+[command.action.redirect]
+target = 555097559023222825
+anonymous = true
