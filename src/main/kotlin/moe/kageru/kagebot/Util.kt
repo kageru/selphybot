@@ -6,6 +6,8 @@ import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.entity.permission.Role
 import java.util.*
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionException
 
 object Util {
     inline fun <T> T.doIf(condition: (T) -> Boolean, op: (T) -> T): T {
@@ -45,6 +47,15 @@ object Util {
                 }
             }
         }
+    }
+
+    fun <T> wasSuccessful(future: CompletableFuture<T>): Boolean {
+        try {
+            future.join()
+        } catch (e: CompletionException) {
+            // we don’t care about this error, but I don’t want to spam stdout
+        }
+        return !future.isCompletedExceptionally
     }
 
     @Throws(IllegalArgumentException::class)

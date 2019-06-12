@@ -62,7 +62,7 @@ class Redirect(rawRedirect: RawRedirect) {
             }
         }
 
-        if (target.sendMessage(embed).isCompletedExceptionally) {
+        if (Util.wasSuccessful(target.sendMessage(embed))) {
             log.warning("Could not redirect message to channel $target")
         }
     }
