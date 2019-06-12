@@ -1,18 +1,30 @@
 package moe.kageru.kagebot
 
-import moe.kageru.kagebot.Config.Companion.config
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.entity.message.embed.EmbedBuilder
-import java.awt.Color
+import org.javacord.api.entity.user.User
 
 object MessageUtil {
     fun mention(user: MessageAuthor): String {
         return "<@${user.id}>"
     }
 
+    fun mention(user: User): String {
+        return "<@${user.id}>"
+    }
+
+
     fun getEmbedBuilder(): EmbedBuilder {
         val builder = EmbedBuilder()
-        Config.server!!.icon.ifPresent { builder.setThumbnail(it) }
-        return builder.setColor(Color.decode(config.system.color)).setTimestampToNow()
+        Globals.server.icon.ifPresent { builder.setThumbnail(it) }
+        return builder.setColor(Globals.config.system.color).setTimestampToNow()
+    }
+
+    fun mapToEmbed(contents: Map<String, String>): EmbedBuilder {
+        val builder = getEmbedBuilder()
+        for ((heading, content) in contents) {
+            builder.addField(heading, content)
+        }
+        return builder
     }
 }

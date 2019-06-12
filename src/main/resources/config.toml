@@ -8,6 +8,19 @@ permissionDenied = "You do not have permission to use this command."
 redirectedMessage = "says"
 messageDeleted = "Your message was deleted because it contained a banned word or phrase."
 
+# If this is enabled, every new user will receive a welcome message.
+# If the user has disabled their DMs, the fallbackMessage will be sent in the fallbackChannel instead.
+# If no fallback channel or message is specified, no fallback will be sent.
+[feature.welcome]
+enabled = true
+fallbackChannel = 555097559023222825
+fallbackMessage = "@@ I would like to greet you, but I can’t. :("
+# This is a list of pairs where the key is the title and the value the content of the paragraph.
+# Do not use empty strings to get empty headings or paragraphs. The discord API rejects those.
+[feature.welcome.content]
+"Welcome to the Server" = "This is the content of the first paragraph"
+"Second paragraph heading" = "Second paragraph content"
+
 [[command]]
 trigger = "!ping"
 response = "pong"
@@ -38,29 +51,27 @@ trigger = "!restricted"
 response = "access granted"
 [command.permissions]
 hasOneOf = [
-    452034011393425409,
-    446668543816106004
+    "452034011393425409",
+    "446668543816106004"
 ]
 
 [[command]]
 trigger = "!almostUnrestricted"
 response = "access granted"
 [command.permissions]
-hasNoneOf = [452034011393425409]
-
-
+hasNoneOf = ["452034011393425409"]
 
 # redirect every message that starts with !redirect to channel 555097559023222825
 [[command]]
 trigger = "!redirect"
 response = "redirected"
 [command.action.redirect]
-target = 555097559023222825
+target = "testchannel"
 
 # the same, but without the original username
 [[command]]
 trigger = "!anonRedirect"
 response = "redirected"
 [command.action.redirect]
-target = 555097559023222825
+target = "555097559023222825"
 anonymous = true

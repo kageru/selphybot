@@ -50,7 +50,7 @@ object TestUtil {
         val server = mockk<Server>()
         every { server.icon.ifPresent(any()) } just Runs
         every { server.getTextChannelById(any<Long>()) } returns resultMock
-        Config.server = server
+        //Config.server = server
     }
 
     fun testMessageSuccess(content: String, result: String) {

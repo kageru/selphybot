@@ -1,27 +1,45 @@
-package moe.kageru.kagebot
+package moe.kageru.kagebot.command
 
-import moe.kageru.kagebot.Config.Companion.config
+import moe.kageru.kagebot.Globals.config
 import moe.kageru.kagebot.Log.log
-import moe.kageru.kagebot.Util.ifNotEmpty
+import moe.kageru.kagebot.MessageUtil
+import moe.kageru.kagebot.Util
+import moe.kageru.kagebot.config.RawMessageActions
+import moe.kageru.kagebot.config.RawRedirect
+import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.event.message.MessageCreateEvent
 
-class MessageActions(private val delete: Boolean, private val redirect: Redirect?) {
+class MessageActions(rawActions: RawMessageActions) {
+    private val delete: Boolean = rawActions.delete
+    private val redirect: Redirect? = rawActions.redirect?.let { Redirect(it) }
+
     fun run(message: MessageCreateEvent, command: Command) {
-        if (delete && message.message.canYouDelete()) {
+        if (delete) {
+            deleteMessage(message)
+        }
+        redirect?.execute(message, command)
+    }
+
+    private fun deleteMessage(message: MessageCreateEvent) {
+        if (message.message.canYouDelete()) {
             message.deleteMessage()
-            message.messageAuthor.asUser().ifNotEmpty { user ->
+            message.messageAuthor.asUser().ifPresent { user ->
                 user.sendMessage(
                     MessageUtil.getEmbedBuilder()
                         .addField("Blacklisted", config.localization.messageDeleted)
                         .addField("Original:", "“${message.readableMessageContent}”")
                 )
             }
+        } else {
+            log.info("Tried to delete a message without the necessary permissions. Channel: ${message.channel.id}")
         }
-        redirect?.execute(message, command)
     }
 }
 
-class Redirect(private val target: Long, private val anonymous: Boolean) {
+class Redirect(rawRedirect: RawRedirect) {
+    private val target: TextChannel = rawRedirect.target?.let(Util::findChannel)
+        ?: throw IllegalArgumentException("Every redirect needs to have a target.")
+    private val anonymous: Boolean = rawRedirect.anonymous
 
     fun execute(message: MessageCreateEvent, command: Command) {
         val embed = MessageUtil.getEmbedBuilder()
@@ -43,7 +61,9 @@ class Redirect(private val target: Long, private val anonymous: Boolean) {
                 setAuthor(message.messageAuthor)
             }
         }
-        Config.server!!.getTextChannelById(target).ifNotEmpty { it.sendMessage(embed) }
-            ?: log.warning("Could not redirect message to channel $target")
+
+        if (target.sendMessage(embed).isCompletedExceptionally) {
+            log.warning("Could not redirect message to channel $target")
+        }
     }
 }

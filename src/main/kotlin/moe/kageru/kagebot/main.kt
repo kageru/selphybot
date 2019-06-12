@@ -4,10 +4,10 @@ import moe.kageru.kagebot.Log.log
 import java.lang.System
 
 fun main() {
-    try {
+    //try {
         Kagebot()
-    } catch (e: Exception) {
+    /*} catch (e: Exception) {
         log.warning("An exception occurred in the main thread, exiting.\n${e.stackTrace.joinToString("\n")}")
         System.exit(1)
-    }
+    }*/
 }
