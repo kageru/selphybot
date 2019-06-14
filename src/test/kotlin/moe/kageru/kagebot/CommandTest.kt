@@ -10,7 +10,6 @@ import moe.kageru.kagebot.TestUtil.embedToString
 import moe.kageru.kagebot.TestUtil.messageableAuthor
 import moe.kageru.kagebot.TestUtil.mockMessage
 import moe.kageru.kagebot.TestUtil.testMessageSuccess
-import moe.kageru.kagebot.config.RawConfig.Companion.config
 import org.javacord.api.entity.message.embed.EmbedBuilder
 
 class CommandTest : StringSpec({

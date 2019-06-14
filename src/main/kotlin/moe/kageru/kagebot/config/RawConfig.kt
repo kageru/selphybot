@@ -13,6 +13,8 @@ class RawConfig(
     companion object {
         const val DEFAULT_CONFIG_PATH = "config.toml"
 
+        fun readFromString(tomlContent: String) = Toml().read(tomlContent).to(RawConfig::class.java)
+
         fun read(path: String = DEFAULT_CONFIG_PATH): RawConfig {
             val toml: Toml = Toml().read(run {
                 val file = File(path)

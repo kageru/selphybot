@@ -42,8 +42,9 @@ object TestUtil {
     }
 
     fun prepareServerConfig(sentMessages: MutableList<EmbedBuilder> = mutableListOf()) {
-        val channelMock = mockk<ServerTextChannel>()
-        every { channelMock.sendMessage(capture(sentMessages)) } returns mockk()
+        val channelMock = mockk<ServerTextChannel> {
+            every { sendMessage(capture(sentMessages)) } returns mockk()
+        }
         val resultMock = mockk<Optional<ServerTextChannel>>()
         every { resultMock.isPresent } returns true
         every { resultMock.get() } returns channelMock
