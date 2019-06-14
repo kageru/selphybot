@@ -7,8 +7,13 @@ import moe.kageru.kagebot.config.RawWelcomeFeature
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.embed.EmbedBuilder
 
-class Features(rawFeatures: RawFeatures) {
-    val welcome: WelcomeFeature? = rawFeatures.welcome?.let { WelcomeFeature(it) }
+class Features(val welcome: WelcomeFeature?) {
+
+    constructor(rawFeatures: RawFeatures) : this(rawFeatures.welcome?.let(::WelcomeFeature))
+
+    companion object {
+        val NONE = Features(null)
+    }
 }
 
 class WelcomeFeature(rawWelcome: RawWelcomeFeature) {

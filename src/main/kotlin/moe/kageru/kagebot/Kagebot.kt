@@ -11,7 +11,7 @@ import java.io.File
 class Kagebot {
     companion object {
         fun processMessage(event: MessageCreateEvent) {
-            if (event.messageAuthor.isYourself) {
+            if (event.messageAuthor.isBotUser) {
                 return
             }
             for (command in Globals.config.commands) {

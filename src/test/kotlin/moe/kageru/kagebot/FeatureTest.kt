@@ -31,7 +31,7 @@ class FeatureTest : StringSpec({
     "should send welcome fallback if DMs are disabled" {
         val dm = slot<String>()
         val sentMessages = mutableListOf<EmbedBuilder>()
-        TestUtil.prepareServerConfig(sentMessages)
+        TestUtil.prepareTestEnvironment(sentMessages)
         Kagebot.welcomeUser(
             mockk {
                 every { user } returns mockk {

@@ -1,0 +1,8 @@
+[system]
+serverId = "356414885292277771"
+color = "#1793d0"
+
+[localization]
+permissionDenied = "no permissions"
+redirectedMessage = "says"
+messageDeleted = "message dongered"

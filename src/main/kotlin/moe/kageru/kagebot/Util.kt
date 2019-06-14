@@ -27,7 +27,7 @@ object Util {
 
     fun hasOneOf(messageAuthor: MessageAuthor, roles: Set<Role>): Boolean {
         return messageAuthor.asUser().ifNotEmpty { user ->
-            user.getRoles(server).map { it }.toSet().intersect(roles).isNotEmpty()
+            user.getRoles(server).toSet().intersect(roles).isNotEmpty()
         } ?: false
     }
 

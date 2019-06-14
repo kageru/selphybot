@@ -13,12 +13,13 @@ class Config(rawConfig: RawConfig) {
         ?: throw IllegalArgumentException("No [system] block in config.")
     var localization: Localization = rawConfig.localization?.let(::Localization)
         ?: throw IllegalArgumentException("No [localization] block in config.")
-    var commands: List<Command> = rawConfig.commands?.map(::Command) ?: emptyList()
-    var features: Features = rawConfig.features?.let(::Features)
-        ?: throw IllegalArgumentException("No [feature] block in config.")
+    var commands: List<Command>
+    var features: Features
 
     init {
         Globals.server = api.getServerById(system.serverId).orElseThrow()
+        this.commands = rawConfig.commands?.map(::Command) ?: emptyList()
+        this.features = rawConfig.features?.let(::Features) ?: Features.NONE
     }
 
     fun reloadLocalization(rawLocalization: RawLocalization) {

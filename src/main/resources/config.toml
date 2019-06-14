@@ -61,6 +61,12 @@ response = "access granted"
 [command.permissions]
 hasNoneOf = ["452034011393425409"]
 
+[[command]]
+trigger = "!private"
+response = "some long response that you don’t want in public channels"
+[command.permissions]
+onlyDM = true
+
 # redirect every message that starts with !redirect to channel 555097559023222825
 [[command]]
 trigger = "!redirect"
