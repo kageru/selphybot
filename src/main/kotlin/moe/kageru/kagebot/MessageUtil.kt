@@ -13,7 +13,6 @@ object MessageUtil {
         return "<@${user.id}>"
     }
 
-
     fun getEmbedBuilder(): EmbedBuilder {
         val builder = EmbedBuilder()
         Globals.server.icon.ifPresent { builder.setThumbnail(it) }

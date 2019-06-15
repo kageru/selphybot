@@ -61,4 +61,3 @@ enum class MatchType {
 
     abstract fun matches(message: String, command: Command): Boolean
 }
-

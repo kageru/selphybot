@@ -28,5 +28,4 @@ class WelcomeFeature(rawWelcome: RawWelcomeFeature) {
         Util.findChannel(it)
     }
     val fallbackMessage: String? = rawWelcome.fallbackMessage
-
 }

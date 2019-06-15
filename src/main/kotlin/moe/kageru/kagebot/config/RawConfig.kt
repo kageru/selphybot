@@ -26,7 +26,6 @@ class RawConfig(
             })
             return toml.to(RawConfig::class.java)
         }
-
     }
 }
 

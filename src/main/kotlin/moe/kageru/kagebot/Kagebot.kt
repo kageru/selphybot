@@ -26,9 +26,9 @@ class Kagebot {
             Globals.config.features.welcome!!.let { welcome ->
                 val message = event.user.sendMessage(welcome.embed)
                 // If the user disabled direct messages, try the fallback (if defined)
-                if (!Util.wasSuccessful(message)
-                    && welcome.fallbackChannel != null
-                    && welcome.fallbackMessage != null
+                if (!Util.wasSuccessful(message) &&
+                    welcome.fallbackChannel != null &&
+                    welcome.fallbackMessage != null
                 ) {
                     welcome.fallbackChannel.sendMessage(
                         welcome.fallbackMessage.replace(

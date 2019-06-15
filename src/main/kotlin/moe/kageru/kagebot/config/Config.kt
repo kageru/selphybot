@@ -4,9 +4,7 @@ import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.Globals.api
 import moe.kageru.kagebot.command.Command
 import moe.kageru.kagebot.features.Features
-import moe.kageru.kagebot.features.WelcomeFeature
 import java.awt.Color
-import kotlin.IllegalArgumentException
 
 class Config(rawConfig: RawConfig) {
     val system: SystemConfig = rawConfig.system?.let(::SystemConfig)
