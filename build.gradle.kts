@@ -10,7 +10,7 @@ sourceSets {
 
 sourceSets["main"].resources.srcDir("src/main/resources")
 application {
-    mainClassName = "moe.kageru.kagebot.MainKt"
+    mainClassName = "moe.kageru.kagebot.KagebotKt"
 }
 
 group = "moe.kageru.kagebot"

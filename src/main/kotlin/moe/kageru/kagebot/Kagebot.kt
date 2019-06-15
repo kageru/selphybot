@@ -9,40 +9,44 @@ import org.javacord.api.event.message.MessageCreateEvent
 import org.javacord.api.event.server.member.ServerMemberJoinEvent
 import java.io.File
 
-class Kagebot {
-    companion object {
-        fun processMessage(event: MessageCreateEvent) {
-            if (event.messageAuthor.isBotUser) {
-                return
-            }
-            for (command in Globals.config.commands) {
-                if (command.matches(event.messageContent)) {
-                    command.execute(event)
-                    break
-                }
-            }
-        }
+fun main() {
+    Kagebot.init()
+}
 
-        fun welcomeUser(event: ServerMemberJoinEvent) {
-            Globals.config.features.welcome!!.let { welcome ->
-                val message = event.user.sendMessage(welcome.embed)
-                // If the user disabled direct messages, try the fallback (if defined)
-                if (!Util.wasSuccessful(message) &&
-                    welcome.fallbackChannel != null &&
-                    welcome.fallbackMessage != null
-                ) {
-                    welcome.fallbackChannel.sendMessage(
-                        welcome.fallbackMessage.replace(
-                            "@@",
-                            MessageUtil.mention(event.user)
-                        )
-                    )
-                }
+object Kagebot {
+    fun processMessage(event: MessageCreateEvent) {
+        if (event.messageAuthor.isBotUser) {
+            return
+        }
+        for (command in Globals.config.commands) {
+            if (command.matches(event.messageContent)) {
+                command.execute(event)
+                break
             }
         }
     }
 
-    init {
+    fun welcomeUser(event: ServerMemberJoinEvent) {
+        Globals.config.features.welcome!!.let { welcome ->
+            val message = event.user.sendMessage(welcome.embed)
+            // If the user disabled direct messages, try the fallback (if defined)
+            if (!Util.wasSuccessful(message) &&
+                welcome.fallbackChannel != null &&
+                welcome.fallbackMessage != null
+            ) {
+                welcome.fallbackChannel.sendMessage(
+                    welcome.fallbackMessage.replace(
+                        "@@",
+                        MessageUtil.mention(event.user)
+                    )
+                )
+            }
+        }
+    }
+
+    private fun getSecret() = File("secret").readText().replace("\n", "")
+
+    fun init() {
         Globals.api = DiscordApiBuilder().setToken(getSecret()).login().join()
         try {
             Globals.config = Config(RawConfig.read())
@@ -64,6 +68,4 @@ class Kagebot {
             }
         }
     }
-
-    private fun getSecret() = File("secret").readText().replace("\n", "")
 }
