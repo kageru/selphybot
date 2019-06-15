@@ -67,5 +67,12 @@ object Kagebot {
                 }
             }
         }
+        Globals.config.features.debug?.let { debug ->
+            if (debug.enabled) {
+                Globals.api.addMessageCreateListener {
+                    checked { debug.handle(it) }
+                }
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package moe.kageru.kagebot.command
 
+import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.Globals.config
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util.doIf
@@ -36,6 +37,7 @@ class Command(cmd: RawCommand) {
             }
             return
         }
+        Globals.commandCounter.incrementAndGet()
         this.actions?.run(message, this)
         this.response?.let {
             message.channel.sendMessage(respond(message.messageAuthor, it))

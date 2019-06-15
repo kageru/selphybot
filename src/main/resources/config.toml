@@ -22,6 +22,10 @@ fallbackMessage = "@@ I would like to greet you, but I can’t. :("
 "Welcome to the Server" = "This is the content of the first paragraph"
 "Second paragraph heading" = "Second paragraph content"
 
+# allow the bot owner to get debug stats
+[feature.debug]
+enabled = true
+
 [[command]]
 trigger = "!ping"
 response = "pong"
