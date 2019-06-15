@@ -11,6 +11,8 @@ import java.time.Duration
 import java.time.temporal.ChronoUnit
 
 class DebugFeatures(rawDebugFeatures: RawDebugFeatures) {
+    val enabled: Boolean = rawDebugFeatures.enabled
+
     fun handle(message: MessageCreateEvent) {
         if (message.messageAuthor.isBotOwner) {
             if (message.readableMessageContent.startsWith("!debugstats")) {
@@ -72,6 +74,4 @@ class DebugFeatures(rawDebugFeatures: RawDebugFeatures) {
 
     private fun getOsInfo() = "Running on ${System.getProperty("os.name")} " +
             "${System.getProperty("os.version")}-${System.getProperty("os.arch")}.\n"
-
-    val enabled: Boolean = rawDebugFeatures.enabled
 }
