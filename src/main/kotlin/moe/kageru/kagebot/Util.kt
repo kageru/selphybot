@@ -2,9 +2,12 @@ package moe.kageru.kagebot
 
 import moe.kageru.kagebot.Globals.api
 import moe.kageru.kagebot.Globals.server
+import moe.kageru.kagebot.Log.log
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.MessageAuthor
+import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.permission.Role
+import java.awt.Color
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
@@ -78,6 +81,25 @@ object Util {
                     }
                 }
             }
+        }
+    }
+
+    inline fun checked(op: (() -> Unit)) {
+        try {
+            op()
+        } catch (e: Exception) {
+            log.warning("An uncaught exception occurred.\n$e")
+            Globals.api.owner.get().sendMessage(
+                EmbedBuilder()
+                    .setTimestampToNow()
+                    .setColor(Color.RED)
+                    .addField("Error", "kagebot has encountered an error")
+                    .addField(
+                        "$e", """```
+                       ${e.stackTrace.joinToString("\n")}
+                    ```""".trimIndent()
+                    )
+            )
         }
     }
 }

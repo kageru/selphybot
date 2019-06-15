@@ -1,6 +1,7 @@
 package moe.kageru.kagebot
 
 import moe.kageru.kagebot.Log.log
+import moe.kageru.kagebot.Util.checked
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.RawConfig
 import org.javacord.api.DiscordApiBuilder
@@ -46,7 +47,7 @@ class Kagebot {
         try {
             Globals.config = Config(RawConfig.read())
         } catch (e: IllegalArgumentException) {
-            println("Config error:\n$e,\n${e.message},\n${e.stackTrace}")
+            println("Config error:\n$e,\n${e.message},\n${e.stackTrace.joinToString("\n")}")
             System.exit(1)
         }
         Runtime.getRuntime().addShutdownHook(Thread {
@@ -54,10 +55,12 @@ class Kagebot {
             Globals.api.disconnect()
         })
         log.info("kagebot Mk II running")
-        Globals.api.addMessageCreateListener { processMessage(it) }
+        Globals.api.addMessageCreateListener { checked { processMessage(it) } }
         Globals.config.features.welcome?.let { welcome ->
             if (welcome.enabled) {
-                Globals.api.addServerMemberJoinListener { welcomeUser(it) }
+                Globals.api.addServerMemberJoinListener {
+                    checked { welcomeUser(it) }
+                }
             }
         }
     }

@@ -18,7 +18,7 @@ class Command(cmd: RawCommand) {
     val regex: Regex?
 
     init {
-        trigger = cmd.trigger!!
+        trigger = cmd.trigger ?: throw IllegalArgumentException("Every command must have a trigger.")
         response = cmd.response
         matchType = cmd.matchType?.let { type ->
             MatchType.values().find { it.name.equals(type, ignoreCase = true) }
