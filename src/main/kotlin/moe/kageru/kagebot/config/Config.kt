@@ -48,8 +48,8 @@ class Localization(val permissionDenied: String, val redirectedMessage: String, 
         permissionDenied = rawLocalization.permissionDenied
             ?: throw IllegalArgumentException("No [localization.permissionDenied] defined"),
         redirectedMessage = rawLocalization.redirectedMessage
-            ?: throw IllegalArgumentException("No [localization.permissionDenied] defined"),
+            ?: throw IllegalArgumentException("No [localization.redirectMessage] defined"),
         messageDeleted = rawLocalization.messageDeleted
-            ?: throw IllegalArgumentException("No [localization.permissionDenied] defined")
+            ?: throw IllegalArgumentException("No [localization.messageDeleted] defined")
     )
 }

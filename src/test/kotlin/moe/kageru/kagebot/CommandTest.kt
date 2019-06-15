@@ -1,7 +1,6 @@
 package moe.kageru.kagebot
 
 import io.kotlintest.matchers.string.shouldContain
-import io.kotlintest.matchers.string.shouldNotContain
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import io.mockk.every
@@ -12,14 +11,15 @@ import moe.kageru.kagebot.TestUtil.embedToString
 import moe.kageru.kagebot.TestUtil.messageableAuthor
 import moe.kageru.kagebot.TestUtil.mockMessage
 import moe.kageru.kagebot.TestUtil.testMessageSuccess
-import moe.kageru.kagebot.TestUtil.withConfig
+import moe.kageru.kagebot.TestUtil.withCommands
+import moe.kageru.kagebot.TestUtil.withLocalization
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import java.util.*
 
 class CommandTest : StringSpec({
     TestUtil.prepareTestEnvironment()
     "should match prefix command" {
-        withConfig(
+        withCommands(
             """
             [[command]]
             trigger = "!ping"
@@ -30,7 +30,7 @@ class CommandTest : StringSpec({
         }
     }
     "should match contains command" {
-        withConfig(
+        withCommands(
             """
             [[command]]
             trigger = "somewhere"
@@ -42,7 +42,7 @@ class CommandTest : StringSpec({
         }
     }
     "should match regex command" {
-        withConfig(
+        withCommands(
             """
             [[command]]
             trigger = "A.+B"
@@ -54,7 +54,7 @@ class CommandTest : StringSpec({
         }
     }
     "should ping author" {
-        withConfig(
+        withCommands(
             """
             [[command]]
             trigger = "answer me"
@@ -65,7 +65,7 @@ class CommandTest : StringSpec({
         }
     }
     "should not react to own message" {
-        withConfig(
+        withCommands(
             """
             [[command]]
             trigger = "!ping"
@@ -78,7 +78,7 @@ class CommandTest : StringSpec({
         }
     }
     "should delete messages and send copy to author" {
-        withConfig(
+        withCommands(
             """
             [[command]]
             trigger = "delet this"
@@ -98,7 +98,7 @@ class CommandTest : StringSpec({
         }
     }
     "should refuse command without permissions" {
-        withConfig(
+        withCommands(
             """
             [[command]]
             trigger = "!restricted"
@@ -114,10 +114,22 @@ class CommandTest : StringSpec({
             every { mockMessage.messageAuthor.asUser() } returns Optional.of(messageableAuthor())
             Kagebot.processMessage(mockMessage)
             replies shouldBe mutableListOf(config.localization.permissionDenied)
+            withLocalization(
+                """
+            [localization]
+            permissionDenied = ""
+            messageDeleted = "whatever"
+            redirectedMessage = "asdja"
+            """.trimIndent()
+            ) {
+                Kagebot.processMessage(mockMessage)
+                // still one string in there from earlier, nothing new was added
+                replies.size shouldBe 1
+            }
         }
     }
     "should accept restricted command for owner" {
-        withConfig(
+        withCommands(
             """
             [[command]]
             trigger = "!restricted"
@@ -136,7 +148,7 @@ class CommandTest : StringSpec({
         }
     }
     "should accept restricted command with permissions" {
-        withConfig(
+        withCommands(
             """
             [[command]]
             trigger = "!restricted"
@@ -159,7 +171,7 @@ class CommandTest : StringSpec({
         }
     }
     "should deny command to excluded roles" {
-        withConfig(
+        withCommands(
             """
             [[command]]
             trigger = "!almostUnrestricted"
@@ -189,7 +201,7 @@ class CommandTest : StringSpec({
         }
     }
     "should refuse DM only message in server channel" {
-        withConfig(
+        withCommands(
             """
             [[command]]
             trigger = "!dm"
@@ -210,7 +222,7 @@ class CommandTest : StringSpec({
     "should redirect" {
         val calls = mutableListOf<EmbedBuilder>()
         TestUtil.prepareTestEnvironment(calls)
-        withConfig(
+        withCommands(
             """
             [[command]]
             trigger = "!redirect"

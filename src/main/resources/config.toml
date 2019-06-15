@@ -3,6 +3,7 @@ serverId = "356414885292277771"
 color = "#1793d0"
 
 [localization]
+# empty string to disable the message
 permissionDenied = "You do not have permission to use this command."
 # results in <name> says <message>
 redirectedMessage = "says"

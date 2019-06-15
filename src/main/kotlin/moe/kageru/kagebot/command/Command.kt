@@ -31,7 +31,9 @@ class Command(cmd: RawCommand) {
 
     fun execute(message: MessageCreateEvent) {
         if (permissions?.isAllowed(message) == false) {
-            message.channel.sendMessage(config.localization.permissionDenied)
+            if (config.localization.permissionDenied.isNotBlank()) {
+                message.channel.sendMessage(config.localization.permissionDenied)
+            }
             return
         }
         this.actions?.run(message, this)

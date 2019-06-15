@@ -32,7 +32,7 @@ object Util {
     }
 
     private val channelIdRegex = Regex("\\d{18}")
-    fun String.isEntityId() = channelIdRegex.matches(this)
+    private fun String.isEntityId() = channelIdRegex.matches(this)
 
     @Throws(IllegalArgumentException::class)
     fun findRole(idOrName: String): Role {

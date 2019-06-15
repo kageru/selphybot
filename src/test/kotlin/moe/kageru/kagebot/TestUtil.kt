@@ -77,9 +77,19 @@ object TestUtil {
         return (embed.delegate as EmbedBuilderDelegateImpl).toJsonNode().toString()
     }
 
-    fun <R> withConfig(config: String, test: (() -> R)) {
+    fun <R> withCommands(config: String, test: (() -> R)) {
+        val oldCmds = Globals.config.commands
         val rawConfig = RawConfig.readFromString(config)
         Globals.config.reloadCommands(rawConfig)
         test()
+        Globals.config.commands = oldCmds
+    }
+
+    fun <R> withLocalization(config: String, test: (() -> R)) {
+        val oldLoc = Globals.config.localization
+        val rawConfig = RawConfig.readFromString(config)
+        Globals.config.reloadLocalization(rawConfig.localization!!)
+        test()
+        Globals.config.localization = oldLoc
     }
 }
