@@ -1,4 +1,4 @@
-package moe.kageru.kagebot
+package moe.kageru.kagebot.command
 
 import io.kotlintest.matchers.string.shouldContain
 import io.kotlintest.shouldBe
@@ -6,7 +6,10 @@ import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.Globals.config
+import moe.kageru.kagebot.Kagebot
+import moe.kageru.kagebot.TestUtil
 import moe.kageru.kagebot.TestUtil.embedToString
 import moe.kageru.kagebot.TestUtil.messageableAuthor
 import moe.kageru.kagebot.TestUtil.mockMessage
@@ -111,7 +114,6 @@ class CommandTest : StringSpec({
         ) {
             val replies = mutableListOf<String>()
             val mockMessage = mockMessage("!restricted", replies = replies)
-            every { mockMessage.messageAuthor.asUser() } returns Optional.of(messageableAuthor())
             Kagebot.processMessage(mockMessage)
             replies shouldBe mutableListOf(config.localization.permissionDenied)
             withLocalization(

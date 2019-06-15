@@ -16,6 +16,9 @@ fun main() {
 object Kagebot {
     fun processMessage(event: MessageCreateEvent) {
         if (event.messageAuthor.isBotUser) {
+            if (event.messageAuthor.isYourself) {
+                log.info("<Self> ${event.readableMessageContent}")
+            }
             return
         }
         for (command in Globals.config.commands) {

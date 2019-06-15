@@ -18,7 +18,6 @@ import java.util.*
 object TestUtil {
     fun mockMessage(
         content: String,
-        author: Long = 1,
         replies: MutableList<String> = mutableListOf(),
         replyEmbeds: MutableList<EmbedBuilder> = mutableListOf(),
         isBot: Boolean = false
@@ -26,13 +25,18 @@ object TestUtil {
         return mockk {
             every { messageContent } returns content
             every { readableMessageContent } returns content
-            every { messageAuthor.id } returns author
             every { channel.sendMessage(capture(replies)) } returns mockk()
             every { channel.sendMessage(capture(replyEmbeds)) } returns mockk()
-            every { messageAuthor.isBotUser } returns isBot
             every { message.canYouDelete() } returns true
-            every { messageAuthor.isBotOwner } returns false
             every { isPrivateMessage } returns false
+            // We can’t use a nested mock here because other fields of messageAuthor might
+            // get overwritten by other tests, which would delete a nested mock.
+            every { messageAuthor.id } returns 1
+            every { messageAuthor.discriminatedName } returns "testuser#1234"
+            every { messageAuthor.isBotUser } returns isBot
+            every { messageAuthor.isYourself } returns isBot
+            every { messageAuthor.isBotOwner } returns false
+            every { messageAuthor.asUser() } returns Optional.of(messageableAuthor())
         }
     }
 

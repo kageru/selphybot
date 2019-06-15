@@ -2,6 +2,7 @@ package moe.kageru.kagebot.command
 
 import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.Globals.config
+import moe.kageru.kagebot.Log.log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util.doIf
 import moe.kageru.kagebot.config.RawCommand
@@ -35,8 +36,10 @@ class Command(cmd: RawCommand) {
             if (config.localization.permissionDenied.isNotBlank()) {
                 message.channel.sendMessage(config.localization.permissionDenied)
             }
+            log.info("Denying command ${this.trigger} to user ${message.messageAuthor.discriminatedName} (ID: ${message.messageAuthor.id})")
             return
         }
+        log.info("Executing command ${this.trigger} triggered by user ${message.messageAuthor.discriminatedName} (ID: ${message.messageAuthor.id})")
         Globals.commandCounter.incrementAndGet()
         this.actions?.run(message, this)
         this.response?.let {
@@ -45,6 +48,7 @@ class Command(cmd: RawCommand) {
     }
 
     fun matches(msg: String) = this.matchType.matches(msg, this)
+
     private fun respond(author: MessageAuthor, response: String) = response.doIf({ it.contains(AUTHOR_PLACEHOLDER) }) {
         it.replace(AUTHOR_PLACEHOLDER, MessageUtil.mention(author))
     }
