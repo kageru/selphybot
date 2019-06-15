@@ -43,14 +43,18 @@ object TestUtil {
         }
     }
 
-    fun prepareTestEnvironment(sentMessages: MutableList<EmbedBuilder> = mutableListOf()) {
+    fun prepareTestEnvironment(
+        sentEmbeds: MutableList<EmbedBuilder> = mutableListOf(),
+        sentMessages: MutableList<String> = mutableListOf()
+    ) {
         val channel = mockk<Optional<ServerTextChannel>> {
             every { isPresent } returns true
             every { get() } returns mockk {
-                every { sendMessage(capture(sentMessages)) } returns mockk {
+                every { sendMessage(capture(sentEmbeds)) } returns mockk {
                     every { join() } returns mockk()
                     every { isCompletedExceptionally } returns false
                 }
+                every { sendMessage(capture(sentMessages)) } returns mockk()
             }
         }
         val api = mockk<DiscordApi> {

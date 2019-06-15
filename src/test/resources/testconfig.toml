@@ -6,3 +6,13 @@ color = "#1793d0"
 permissionDenied = "no permissions"
 redirectedMessage = "says"
 messageDeleted = "message dongered"
+
+[feature.welcome]
+enabled = true
+fallbackChannel = "123"
+fallbackMessage = "@@ welcome"
+# This is a list of pairs where the key is the title and the value the content of the paragraph.
+# Do not use empty strings to get empty headings or paragraphs. The discord API rejects those.
+[feature.welcome.content]
+"Welcome to the Server" = "This is the content of the first paragraph"
+"Second paragraph heading" = "Second paragraph content"
