@@ -38,12 +38,12 @@ class Command(cmd: RawCommand) {
         }
         this.actions?.run(message, this)
         this.response?.let {
-            message.channel.sendMessage(respond(message.messageAuthor))
+            message.channel.sendMessage(respond(message.messageAuthor, it))
         }
     }
 
     fun matches(msg: String) = this.matchType.matches(msg, this)
-    private fun respond(author: MessageAuthor) = this.response!!.doIf({ it.contains(AUTHOR_PLACEHOLDER) }) {
+    private fun respond(author: MessageAuthor, response: String) = response.doIf({ it.contains(AUTHOR_PLACEHOLDER) }) {
         it.replace(AUTHOR_PLACEHOLDER, MessageUtil.mention(author))
     }
 }
