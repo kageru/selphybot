@@ -4,6 +4,7 @@ import moe.kageru.kagebot.Log.log
 import moe.kageru.kagebot.Util.checked
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.RawConfig
+import moe.kageru.kagebot.features.MessageFeature
 import org.javacord.api.DiscordApiBuilder
 import org.javacord.api.event.message.MessageCreateEvent
 import org.javacord.api.event.server.member.ServerMemberJoinEvent
@@ -71,17 +72,10 @@ object Kagebot {
                 }
             }
         }
-        Globals.config.features.debug?.let { debug ->
-            if (debug.enabled) {
+        for (feature in Globals.config.features.allWithMessage()) {
+            if (feature.commandEnabled) {
                 Globals.api.addMessageCreateListener {
-                    checked { debug.handle(it) }
-                }
-            }
-        }
-        Globals.config.features.welcome?.let { welcome ->
-            if (welcome.commandEnabled) {
-                Globals.api.addMessageCreateListener {
-                    welcome.handle(it)
+                    checked { feature.handle(it) }
                 }
             }
         }

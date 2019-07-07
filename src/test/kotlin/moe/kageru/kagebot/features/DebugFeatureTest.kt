@@ -5,7 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import moe.kageru.kagebot.TestUtil
-import moe.kageru.kagebot.config.RawDebugFeatures
+import moe.kageru.kagebot.config.RawDebugFeature
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.event.message.MessageCreateEvent
 
@@ -17,7 +17,7 @@ class DebugFeatureTest : StringSpec({
         val message = mockk<MessageCreateEvent> {
             every { messageAuthor.isBotOwner } returns false
         }
-        DebugFeatures(RawDebugFeatures(true)).handle(message)
+        DebugFeature(RawDebugFeature(true)).handle(message)
         verify(exactly = 0) { message.channel.sendMessage(any<EmbedBuilder>()) }
     }
     "should return something" {
@@ -26,7 +26,7 @@ class DebugFeatureTest : StringSpec({
             every { readableMessageContent } returns "!debugstats something"
             every { channel.sendMessage(any<EmbedBuilder>()) } returns mockk()
         }
-        DebugFeatures(RawDebugFeatures(true)).handle(message)
+        DebugFeature(RawDebugFeature(true)).handle(message)
         verify(exactly = 1) { message.channel.sendMessage(any<EmbedBuilder>()) }
     }
 })

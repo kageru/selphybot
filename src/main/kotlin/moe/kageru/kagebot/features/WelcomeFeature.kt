@@ -8,6 +8,8 @@ import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.event.message.MessageCreateEvent
 
 class WelcomeFeature(rawWelcome: RawWelcomeFeature) : MessageFeature() {
+    override val commandEnabled = rawWelcome.commandEnabled
+
     override fun handleInternal(message: MessageCreateEvent) {
         if (message.readableMessageContent == "!welcome") {
             message.channel.sendMessage(embed)
@@ -25,5 +27,4 @@ class WelcomeFeature(rawWelcome: RawWelcomeFeature) : MessageFeature() {
         Util.findChannel(it)
     }
     val fallbackMessage: String? = rawWelcome.fallbackMessage
-    val commandEnabled: Boolean = rawWelcome.commandEnabled
 }

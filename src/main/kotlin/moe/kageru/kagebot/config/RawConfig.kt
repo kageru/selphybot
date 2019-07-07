@@ -43,7 +43,7 @@ class RawCommand(
 class RawPermissions(val hasOneOf: List<String>?, val hasNoneOf: List<String>?, val onlyDM: Boolean)
 class RawMessageActions(val delete: Boolean, val redirect: RawRedirect?)
 class RawRedirect(val target: String?, val anonymous: Boolean)
-class RawFeatures(val welcome: RawWelcomeFeature?, val debug: RawDebugFeatures?)
+class RawFeatures(val welcome: RawWelcomeFeature?, val debug: RawDebugFeature?)
 class RawWelcomeFeature(
     val enabled: Boolean,
     val content: Map<String, String>?,
@@ -51,4 +51,4 @@ class RawWelcomeFeature(
     val fallbackMessage: String?,
     @SerializedName("command") val commandEnabled: Boolean
 )
-class RawDebugFeatures(var enabled: Boolean)
+class RawDebugFeature(var enabled: Boolean)
