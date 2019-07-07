@@ -78,5 +78,12 @@ object Kagebot {
                 }
             }
         }
+        Globals.config.features.welcome?.let { welcome ->
+            if (welcome.commandEnabled) {
+                Globals.api.addMessageCreateListener {
+                    welcome.handle(it)
+                }
+            }
+        }
     }
 }

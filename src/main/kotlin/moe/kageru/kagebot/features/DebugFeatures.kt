@@ -10,10 +10,10 @@ import java.lang.management.ManagementFactory
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
-class DebugFeatures(rawDebugFeatures: RawDebugFeatures) {
+class DebugFeatures(rawDebugFeatures: RawDebugFeatures): MessageFeature() {
     val enabled: Boolean = rawDebugFeatures.enabled
 
-    fun handle(message: MessageCreateEvent) {
+    override fun handleInternal(message: MessageCreateEvent) {
         if (message.messageAuthor.isBotOwner) {
             if (message.readableMessageContent.startsWith("!debugstats")) {
                 message.channel.sendMessage(getPerformanceStats())
@@ -47,7 +47,7 @@ class DebugFeatures(rawDebugFeatures: RawDebugFeatures) {
     }
 
     private fun getBotStats() = "kagebot has been running for ${getBotUptime()}.\n" +
-            "During this time, ${Globals.commandCounter.incrementAndGet()} commands have been executed."
+            "During this time, ${Globals.commandCounter.get()} commands have been executed."
 
     private fun getBotUptime(): String {
         val uptime = Duration.of(ManagementFactory.getRuntimeMXBean().uptime, ChronoUnit.MILLIS)

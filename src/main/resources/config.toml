@@ -14,6 +14,8 @@ messageDeleted = "Your message was deleted because it contained a banned word or
 # If no fallback channel or message is specified, no fallback will be sent.
 [feature.welcome]
 enabled = true
+# enable the !welcome command which will print the welcome embed
+command = true
 fallbackChannel = "555097559023222825"
 fallbackMessage = "@@ I would like to greet you, but I can’t. :("
 # This is a list of pairs where the key is the title and the value the content of the paragraph.

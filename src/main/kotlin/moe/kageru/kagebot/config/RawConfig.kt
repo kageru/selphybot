@@ -48,6 +48,7 @@ class RawWelcomeFeature(
     val enabled: Boolean,
     val content: Map<String, String>?,
     val fallbackChannel: String?,
-    val fallbackMessage: String?
+    val fallbackMessage: String?,
+    @SerializedName("command") val commandEnabled: Boolean
 )
 class RawDebugFeatures(var enabled: Boolean)

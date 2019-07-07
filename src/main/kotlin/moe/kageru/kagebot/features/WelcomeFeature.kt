@@ -5,8 +5,15 @@ import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.config.RawWelcomeFeature
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.embed.EmbedBuilder
+import org.javacord.api.event.message.MessageCreateEvent
 
-class WelcomeFeature(rawWelcome: RawWelcomeFeature) {
+class WelcomeFeature(rawWelcome: RawWelcomeFeature) : MessageFeature() {
+    override fun handleInternal(message: MessageCreateEvent) {
+        if (message.readableMessageContent == "!welcome") {
+            message.channel.sendMessage(embed)
+        }
+    }
+
     val enabled: Boolean = rawWelcome.enabled
     val embed: EmbedBuilder? by lazy {
         rawWelcome.content?.let(MessageUtil::mapToEmbed)
@@ -18,4 +25,5 @@ class WelcomeFeature(rawWelcome: RawWelcomeFeature) {
         Util.findChannel(it)
     }
     val fallbackMessage: String? = rawWelcome.fallbackMessage
+    val commandEnabled: Boolean = rawWelcome.commandEnabled
 }
