@@ -22,7 +22,7 @@ object Kagebot {
             }
             return
         }
-        for (command in Globals.config.commands) {
+        for (command in Globals.commands) {
             if (command.matches(event.messageContent)) {
                 command.execute(event)
                 break

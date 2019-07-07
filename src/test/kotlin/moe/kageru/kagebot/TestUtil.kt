@@ -86,11 +86,11 @@ object TestUtil {
     }
 
     fun <R> withCommands(config: String, test: (() -> R)) {
-        val oldCmds = Globals.config.commands
+        val oldCmds = Globals.commands
         val rawConfig = RawConfig.readFromString(config)
         Globals.config.reloadCommands(rawConfig)
         test()
-        Globals.config.commands = oldCmds
+        Globals.commands = oldCmds
     }
 
     fun <R> withLocalization(config: String, test: (() -> R)) {

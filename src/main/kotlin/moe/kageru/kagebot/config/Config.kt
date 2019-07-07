@@ -11,13 +11,12 @@ class Config(rawConfig: RawConfig) {
         ?: throw IllegalArgumentException("No [system] block in config.")
     var localization: Localization = rawConfig.localization?.let(::Localization)
         ?: throw IllegalArgumentException("No [localization] block in config.")
-    var commands: List<Command>
     var features: Features
 
     init {
         Globals.systemConfig = system
         Globals.server = api.getServerById(system.serverId).orElseThrow()
-        this.commands = rawConfig.commands?.map(::Command) ?: emptyList()
+        Globals.commands = rawConfig.commands?.map(::Command) ?: emptyList()
         Globals.config = this
         this.features = rawConfig.features?.let(::Features) ?: Features.NONE
     }
@@ -27,7 +26,7 @@ class Config(rawConfig: RawConfig) {
     }
 
     fun reloadCommands(rawConfig: RawConfig) {
-        this.commands = rawConfig.commands?.map(::Command)
+        Globals.commands = rawConfig.commands?.map(::Command)?.toMutableList()
             ?: throw IllegalArgumentException("No commands found in config.")
     }
 

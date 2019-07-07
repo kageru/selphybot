@@ -8,6 +8,7 @@ class ConfigTest : StringSpec({
     TestUtil.prepareTestEnvironment()
     "should properly parse test config" {
         Globals.config shouldNotBe null
-        Globals.config.commands shouldBe emptyList()
+        Globals.systemConfig shouldNotBe null
+        Globals.commands shouldBe emptyList()
     }
 })
