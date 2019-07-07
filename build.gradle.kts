@@ -4,11 +4,7 @@ plugins {
     kotlin("jvm") version "1.3.31"
     application
 }
-sourceSets {
-    getByName("main").resources.srcDirs("src/main/resources")
-}
 
-sourceSets["main"].resources.srcDir("src/main/resources")
 application {
     mainClassName = "moe.kageru.kagebot.KagebotKt"
 }
@@ -25,15 +21,15 @@ val test by tasks.getting(Test::class) {
 }
 
 dependencies {
-    compile("com.moandjiezana.toml:toml4j:0.7.2")
+    implementation("com.moandjiezana.toml:toml4j:0.7.2")
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.javacord:javacord:3.0.4")
 
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")
-    testImplementation("io.mockk:mockk:1.9")
+    testImplementation("io.mockk:mockk:1.9.3")
     // these two are needed to access javacord internals (such as reading from sent embeds during tests)
     testImplementation("org.javacord:javacord-core:3.0.4")
-    testCompile("com.fasterxml.jackson.core:jackson-databind:2.9.9")
+    testImplementation("com.fasterxml.jackson.core:jackson-databind:2.9.9")
 }
 
 tasks.withType<KotlinCompile> {
