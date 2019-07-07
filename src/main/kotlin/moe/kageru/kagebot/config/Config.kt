@@ -7,7 +7,7 @@ import moe.kageru.kagebot.features.Features
 import java.awt.Color
 
 class Config(rawConfig: RawConfig) {
-    val system: SystemConfig = rawConfig.system?.let(::SystemConfig)
+    private val system: SystemConfig = rawConfig.system?.let(::SystemConfig)
         ?: throw IllegalArgumentException("No [system] block in config.")
     var localization: Localization = rawConfig.localization?.let(::Localization)
         ?: throw IllegalArgumentException("No [localization] block in config.")
@@ -15,8 +15,10 @@ class Config(rawConfig: RawConfig) {
     var features: Features
 
     init {
+        Globals.systemConfig = system
         Globals.server = api.getServerById(system.serverId).orElseThrow()
         this.commands = rawConfig.commands?.map(::Command) ?: emptyList()
+        Globals.config = this
         this.features = rawConfig.features?.let(::Features) ?: Features.NONE
     }
 

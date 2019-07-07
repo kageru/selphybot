@@ -16,13 +16,13 @@ object MessageUtil {
     fun getEmbedBuilder(): EmbedBuilder {
         val builder = EmbedBuilder()
         Globals.server.icon.ifPresent { builder.setThumbnail(it) }
-        return builder.setColor(Globals.config.system.color).setTimestampToNow()
+        return builder.setColor(Globals.systemConfig.color).setTimestampToNow()
     }
 
     fun mapToEmbed(contents: Map<String, String>): EmbedBuilder {
         val builder = getEmbedBuilder()
         for ((heading, content) in contents) {
-            builder.addField(heading, content)
+            builder.addField(heading.removePrefix("\"").removeSuffix("\""), content)
         }
         return builder
     }

@@ -32,6 +32,24 @@ class CommandTest : StringSpec({
             testMessageSuccess("!ping", "pong")
         }
     }
+    "should print embed for command" {
+        val calls = mutableListOf<EmbedBuilder>()
+        TestUtil.prepareTestEnvironment(calls)
+        val heading = "heading 1"
+        val content = "this is the first paragraph of the embed"
+        withCommands(
+            """
+            [[command]]
+            trigger = "!embed"
+            embed = { "$heading" = "$content" }
+            """.trimIndent()
+        ) {
+            Kagebot.processMessage(mockMessage("!embed", replyEmbeds = calls))
+            calls.size shouldBe 1
+            embedToString(calls[0]) shouldContain "\"$heading\""
+            embedToString(calls[0]) shouldContain "\"$content\""
+        }
+    }
     "should match contains command" {
         withCommands(
             """

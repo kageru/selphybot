@@ -36,7 +36,8 @@ class RawCommand(
     val response: String?,
     val matchType: String?,
     val permissions: RawPermissions?,
-    @SerializedName("action") val actions: RawMessageActions?
+    @SerializedName("action") val actions: RawMessageActions?,
+    val embed: Map<String, String>?
 )
 
 class RawPermissions(val hasOneOf: List<String>?, val hasNoneOf: List<String>?, val onlyDM: Boolean)

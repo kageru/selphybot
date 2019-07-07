@@ -41,6 +41,10 @@ response = "regex matched"
 matchType = "REGEX"
 
 [[command]]
+trigger = "!embed"
+embed = { "some embed heading" = "your embed content" }
+
+[[command]]
 trigger = "answer me"
 # this will @mention the user who triggered the command,
 # i.e. “@author there you go”

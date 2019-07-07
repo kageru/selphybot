@@ -7,6 +7,7 @@ import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util.doIf
 import moe.kageru.kagebot.config.RawCommand
 import org.javacord.api.entity.message.MessageAuthor
+import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.event.message.MessageCreateEvent
 
 private const val AUTHOR_PLACEHOLDER = "@@"
@@ -18,6 +19,7 @@ class Command(cmd: RawCommand) {
     private val permissions: Permissions?
     private val actions: MessageActions?
     val regex: Regex?
+    val embed: EmbedBuilder?
 
     init {
         trigger = cmd.trigger ?: throw IllegalArgumentException("Every command must have a trigger.")
@@ -29,6 +31,7 @@ class Command(cmd: RawCommand) {
         permissions = cmd.permissions?.let { Permissions(it) }
         actions = cmd.actions?.let { MessageActions(it) }
         regex = if (matchType == MatchType.REGEX) Regex(trigger) else null
+        embed = cmd.embed?.let(MessageUtil::mapToEmbed)
     }
 
     fun execute(message: MessageCreateEvent) {
@@ -44,6 +47,9 @@ class Command(cmd: RawCommand) {
         this.actions?.run(message, this)
         this.response?.let {
             message.channel.sendMessage(respond(message.messageAuthor, it))
+        }
+        this.embed?.let {
+            message.channel.sendMessage(embed)
         }
     }
 

@@ -8,6 +8,7 @@ import org.javacord.api.DiscordApiBuilder
 import org.javacord.api.event.message.MessageCreateEvent
 import org.javacord.api.event.server.member.ServerMemberJoinEvent
 import java.io.File
+import kotlin.system.exitProcess
 
 fun main() {
     Kagebot.init()
@@ -55,7 +56,7 @@ object Kagebot {
             Globals.config = Config(RawConfig.read())
         } catch (e: IllegalArgumentException) {
             println("Config error:\n$e,\n${e.message},\n${e.stackTrace.joinToString("\n")}")
-            System.exit(1)
+            exitProcess(1)
         }
         Runtime.getRuntime().addShutdownHook(Thread {
             log.info("Bot has been interrupted. Shutting down.")
