@@ -1,12 +1,24 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.31"
+    kotlin("jvm") version "1.3.40"
+    id("com.github.johnrengelman.shadow") version "5.1.0" apply true
     application
 }
 
+val botMainClass = "moe.kageru.kagebot.KagebotKt"
 application {
-    mainClassName = "moe.kageru.kagebot.KagebotKt"
+    mainClassName = botMainClass
+}
+
+tasks.withType<Jar> {
+    manifest {
+        attributes(
+            mapOf(
+                "Main-Class" to botMainClass
+            )
+        )
+    }
 }
 
 group = "moe.kageru.kagebot"
@@ -14,6 +26,7 @@ version = "0.1"
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 val test by tasks.getting(Test::class) {
