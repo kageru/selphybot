@@ -12,14 +12,18 @@ import moe.kageru.kagebot.TestUtil
 import moe.kageru.kagebot.TestUtil.embedToString
 import moe.kageru.kagebot.TestUtil.messageableAuthor
 import moe.kageru.kagebot.TestUtil.mockMessage
+import moe.kageru.kagebot.TestUtil.prepareTestEnvironment
 import moe.kageru.kagebot.TestUtil.testMessageSuccess
 import moe.kageru.kagebot.TestUtil.withCommands
 import moe.kageru.kagebot.TestUtil.withLocalization
+import moe.kageru.kagebot.Util
 import org.javacord.api.entity.message.embed.EmbedBuilder
+import org.javacord.api.entity.permission.Role
+import org.javacord.api.entity.user.User
 import java.util.*
 
 class CommandTest : StringSpec({
-    TestUtil.prepareTestEnvironment()
+    prepareTestEnvironment()
     "should match prefix command" {
         withCommands(
             """
@@ -33,7 +37,7 @@ class CommandTest : StringSpec({
     }
     "should print embed for command" {
         val calls = mutableListOf<EmbedBuilder>()
-        TestUtil.prepareTestEnvironment(calls)
+        prepareTestEnvironment(calls)
         val heading = "heading 1"
         val content = "this is the first paragraph of the embed"
         withCommands(
@@ -237,7 +241,7 @@ class CommandTest : StringSpec({
      */
     "should redirect" {
         val calls = mutableListOf<EmbedBuilder>()
-        TestUtil.prepareTestEnvironment(calls)
+        prepareTestEnvironment(calls)
         withCommands(
             """
             [[command]]
@@ -252,6 +256,24 @@ class CommandTest : StringSpec({
             Kagebot.processMessage(mockMessage("!redirect $message"))
             calls.size shouldBe 1
             embedToString(calls[0]) shouldContain "\"$message\""
+        }
+    }
+    "should assign" {
+        withCommands(
+            """
+            [[command]]
+            trigger = "!assign"
+            [command.action.assign]
+            role = "testrole"
+            """.trimIndent()
+        ) {
+            val roles = mutableListOf<Role>()
+            val user = mockk<User> {
+                every { addRole(capture(roles), "Requested via command.") } returns mockk()
+            }
+            every { Globals.server.getMemberById(1) } returns Optional.of(user)
+            Kagebot.processMessage(mockMessage("!assign"))
+            roles shouldBe mutableListOf(Util.findRole("testrole"))
         }
     }
 })

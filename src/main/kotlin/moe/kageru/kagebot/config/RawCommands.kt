@@ -13,5 +13,6 @@ class RawCommand(
 )
 
 class RawPermissions(val hasOneOf: List<String>?, val hasNoneOf: List<String>?, val onlyDM: Boolean)
-class RawMessageActions(val delete: Boolean, val redirect: RawRedirect?)
+class RawMessageActions(val delete: Boolean, val redirect: RawRedirect?, val assign: RawAssignment?)
 class RawRedirect(val target: String?, val anonymous: Boolean)
+class RawAssignment(var role: String?)

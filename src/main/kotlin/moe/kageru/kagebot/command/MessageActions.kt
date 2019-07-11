@@ -3,21 +3,20 @@ package moe.kageru.kagebot.command
 import moe.kageru.kagebot.Globals.config
 import moe.kageru.kagebot.Log.log
 import moe.kageru.kagebot.MessageUtil
-import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.config.RawMessageActions
-import moe.kageru.kagebot.config.RawRedirect
-import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.event.message.MessageCreateEvent
 
 class MessageActions(rawActions: RawMessageActions) {
     private val delete: Boolean = rawActions.delete
-    private val redirect: Redirect? = rawActions.redirect?.let { Redirect(it) }
+    private val redirect: MessageRedirect? = rawActions.redirect?.let(::MessageRedirect)
+    private val assignment: RoleAssignment? = rawActions.assign?.let(::RoleAssignment)
 
     fun run(message: MessageCreateEvent, command: Command) {
         if (delete) {
             deleteMessage(message)
         }
         redirect?.execute(message, command)
+        assignment?.assign(message)
     }
 
     private fun deleteMessage(message: MessageCreateEvent) {
@@ -36,34 +35,3 @@ class MessageActions(rawActions: RawMessageActions) {
     }
 }
 
-class Redirect(rawRedirect: RawRedirect) {
-    private val target: TextChannel = rawRedirect.target?.let(Util::findChannel)
-        ?: throw IllegalArgumentException("Every redirect needs to have a target.")
-    private val anonymous: Boolean = rawRedirect.anonymous
-
-    fun execute(message: MessageCreateEvent, command: Command) {
-        val embed = MessageUtil.getEmbedBuilder()
-            .addField(
-                config.localization.redirectedMessage,
-                message.readableMessageContent.let { content ->
-                    when (command.matchType) {
-                        MatchType.PREFIX -> content.removePrefix(command.trigger).trim()
-                        else -> content
-                    }
-                }
-            )
-        // No inlined if/else because the types are different.
-        // Passing the full message author will also include the avatar in the embed.
-        embed.apply {
-            if (anonymous) {
-                setAuthor("Anonymous")
-            } else {
-                setAuthor(message.messageAuthor)
-            }
-        }
-
-        if (Util.wasSuccessful(target.sendMessage(embed))) {
-            log.warning("Could not redirect message to channel $target")
-        }
-    }
-}

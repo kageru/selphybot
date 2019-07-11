@@ -87,6 +87,11 @@ target = "555097559023222825"
 anonymous = true
 
 [[command]]
+trigger = "!assign"
+[command.action.assign]
+role = "new role"
+
+[[command]]
 trigger = "!debug"
 feature = "debug"
 

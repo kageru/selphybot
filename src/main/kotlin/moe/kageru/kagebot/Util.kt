@@ -7,6 +7,8 @@ import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.permission.Role
+import org.javacord.api.entity.user.User
+import org.javacord.api.event.message.MessageCreateEvent
 import java.awt.Color
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -100,6 +102,12 @@ object Util {
                     ```""".trimIndent()
                     )
             )
+        }
+    }
+
+    fun userFromMessage(message: MessageCreateEvent): User? {
+        return message.messageAuthor.id.let { id ->
+            Globals.server.getMemberById(id).orElse(null)
         }
     }
 }
