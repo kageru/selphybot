@@ -6,6 +6,7 @@ import moe.kageru.kagebot.Log.log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util.doIf
 import moe.kageru.kagebot.config.RawCommand
+import moe.kageru.kagebot.features.MessageFeature
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.event.message.MessageCreateEvent
@@ -20,6 +21,7 @@ class Command(cmd: RawCommand) {
     private val actions: MessageActions?
     val regex: Regex?
     val embed: EmbedBuilder?
+    val feature: MessageFeature?
 
     init {
         trigger = cmd.trigger ?: throw IllegalArgumentException("Every command must have a trigger.")
@@ -32,6 +34,7 @@ class Command(cmd: RawCommand) {
         actions = cmd.actions?.let { MessageActions(it) }
         regex = if (matchType == MatchType.REGEX) Regex(trigger) else null
         embed = cmd.embed?.let(MessageUtil::mapToEmbed)
+        feature = cmd.feature?.let { Globals.features.findByString(it) }
     }
 
     fun isAllowed(message: MessageCreateEvent) = permissions?.isAllowed(message) ?: true
@@ -53,6 +56,7 @@ class Command(cmd: RawCommand) {
         this.embed?.let {
             message.channel.sendMessage(embed)
         }
+        this.feature?.handle(message)
     }
 
     fun matches(msg: String) = this.matchType.matches(msg, this)

@@ -13,9 +13,6 @@ messageDeleted = "Your message was deleted because it contained a banned word or
 # If the user has disabled their DMs, the fallbackMessage will be sent in the fallbackChannel instead.
 # If no fallback channel or message is specified, no fallback will be sent.
 [feature.welcome]
-enable = true
-# enable the !welcome command which will print the welcome embed
-command = true
 fallbackChannel = "555097559023222825"
 fallbackMessage = "@@ I would like to greet you, but I can’t. :("
 # This is a list of pairs where the key is the title and the value the content of the paragraph.
@@ -23,13 +20,6 @@ fallbackMessage = "@@ I would like to greet you, but I can’t. :("
 [feature.welcome.content]
 "Welcome to the Server" = "This is the content of the first paragraph"
 "Second paragraph heading" = "Second paragraph content"
-
-# allow the bot owner to get debug stats
-[feature.debug]
-enable = true
-
-[feature.help]
-enable = true
 
 [[command]]
 trigger = "!ping"
@@ -95,3 +85,15 @@ response = "redirected"
 [command.action.redirect]
 target = "555097559023222825"
 anonymous = true
+
+[[command]]
+trigger = "!debug"
+feature = "debug"
+
+[[command]]
+trigger = "!welcome"
+feature = "welcome"
+
+[[command]]
+trigger = "!help"
+feature = "help"

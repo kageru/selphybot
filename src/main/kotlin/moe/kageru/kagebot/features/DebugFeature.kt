@@ -3,21 +3,17 @@ package moe.kageru.kagebot.features
 import com.sun.management.OperatingSystemMXBean
 import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.MessageUtil
-import moe.kageru.kagebot.config.RawDebugFeature
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.event.message.MessageCreateEvent
 import java.lang.management.ManagementFactory
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
-class DebugFeature(rawDebugFeatures: RawDebugFeature): MessageFeature() {
-    override val commandEnabled = rawDebugFeatures.enable
+class DebugFeature : MessageFeature() {
 
     override fun handleInternal(message: MessageCreateEvent) {
         if (message.messageAuthor.isBotOwner) {
-            if (message.readableMessageContent.startsWith("!debugstats")) {
-                message.channel.sendMessage(getPerformanceStats())
-            }
+            message.channel.sendMessage(getPerformanceStats())
         }
     }
 

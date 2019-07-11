@@ -1,16 +1,10 @@
 package moe.kageru.kagebot.features
 
-import moe.kageru.kagebot.Globals
 import org.javacord.api.event.message.MessageCreateEvent
 
-abstract class MessageFeature : Feature {
-    abstract val commandEnabled: Boolean
-
+abstract class MessageFeature {
     fun handle(message: MessageCreateEvent) {
-        if (commandEnabled) {
-            Globals.commandCounter.incrementAndGet()
-            handleInternal(message)
-        }
+        handleInternal(message)
     }
 
     internal abstract fun handleInternal(message: MessageCreateEvent)

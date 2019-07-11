@@ -9,6 +9,6 @@ class ConfigTest : StringSpec({
     "should properly parse test config" {
         Globals.config shouldNotBe null
         Globals.systemConfig shouldNotBe null
-        Globals.commands shouldBe emptyList()
+        Globals.commands.size shouldBe 2
     }
 })

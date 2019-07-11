@@ -2,19 +2,14 @@ package moe.kageru.kagebot.features
 
 import moe.kageru.kagebot.config.RawFeatures
 
-class Features(val welcome: WelcomeFeature?, val debug: DebugFeature?, val help: HelpFeature?) {
+class Features(val welcome: WelcomeFeature?, debug: DebugFeature, help: HelpFeature) {
     constructor(rawFeatures: RawFeatures) : this(
         rawFeatures.welcome?.let(::WelcomeFeature),
-        rawFeatures.debug?.let(::DebugFeature),
-        rawFeatures.help?.let(::HelpFeature)
+        DebugFeature(),
+        HelpFeature()
     )
 
-    fun all() = listOfNotNull(this.welcome, this.debug, this.help)
-    fun allWithMessage() = all().filterIsInstance<MessageFeature>()
+    private val featureMap = mapOf("help" to help, "debug" to debug, "welcome" to welcome)
 
-    companion object {
-        val NONE = Features(null, null, null)
-    }
+    fun findByString(feature: String) = featureMap[feature]
 }
-
-interface Feature

@@ -16,9 +16,11 @@ class Config(rawConfig: RawConfig) {
     init {
         Globals.systemConfig = system
         Globals.server = api.getServerById(system.serverId).orElseThrow()
+        Globals.features = rawConfig.features?.let(::Features) ?: Features(RawFeatures(null))
+        // TODO: remove this
+        this.features = Globals.features
         Globals.commands = rawConfig.commands?.map(::Command) ?: emptyList()
         Globals.config = this
-        this.features = rawConfig.features?.let(::Features) ?: Features.NONE
     }
 
     fun reloadLocalization(rawLocalization: RawLocalization) {

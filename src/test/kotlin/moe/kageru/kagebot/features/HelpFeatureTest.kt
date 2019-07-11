@@ -4,18 +4,21 @@ import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
 import moe.kageru.kagebot.Globals
+import moe.kageru.kagebot.Kagebot
 import moe.kageru.kagebot.TestUtil
-import moe.kageru.kagebot.TestUtil.withReplyContents
 import moe.kageru.kagebot.TestUtil.mockMessage
 import moe.kageru.kagebot.TestUtil.withCommands
-import moe.kageru.kagebot.config.RawHelpFeature
+import moe.kageru.kagebot.TestUtil.withReplyContents
 import org.javacord.api.entity.message.embed.EmbedBuilder
-import java.util.Optional
+import java.util.*
 
 class HelpFeatureTest : StringSpec({
     val sentEmbeds = mutableListOf<EmbedBuilder>()
     TestUtil.prepareTestEnvironment(sentEmbeds = sentEmbeds)
     val commandConfig = """
+        [[command]]
+        trigger = "!help"
+        feature = "help"
         [[command]]
         trigger = "!ping"
         [[command]]
@@ -33,9 +36,7 @@ class HelpFeatureTest : StringSpec({
             val expected = listOf("!ping", "!something")
             val unexpected = listOf("not a prefix", "!prison")
             withReplyContents(expected = expected, unexpected = unexpected) { replies ->
-                HelpFeature(RawHelpFeature(true))
-                    .handle(message = mockMessage("!help", replyEmbeds = replies))
-                //Kagebot.processMessage(TestUtil.mockMessage("!help", replyEmbeds = replies))
+                Kagebot.processMessage(mockMessage("!help", replyEmbeds = replies))
             }
         }
     }
@@ -50,11 +51,8 @@ class HelpFeatureTest : StringSpec({
                         Globals.server.getRolesByNameIgnoreCase("testrole")[0]
                     )
                 })
-                HelpFeature(RawHelpFeature(true))
-                    .handle(message = message)
-                //Kagebot.processMessage(TestUtil.mockMessage("!help", replyEmbeds = replies))
+                Kagebot.processMessage(message)
             }
         }
     }
 })
-
