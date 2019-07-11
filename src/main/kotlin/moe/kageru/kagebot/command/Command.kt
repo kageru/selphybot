@@ -34,6 +34,8 @@ class Command(cmd: RawCommand) {
         embed = cmd.embed?.let(MessageUtil::mapToEmbed)
     }
 
+    fun isAllowed(message: MessageCreateEvent) = permissions?.isAllowed(message) ?: true
+
     fun execute(message: MessageCreateEvent) {
         if (permissions?.isAllowed(message) == false) {
             if (config.localization.permissionDenied.isNotBlank()) {

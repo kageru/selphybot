@@ -16,7 +16,7 @@ class WelcomeFeature(rawWelcome: RawWelcomeFeature) : MessageFeature() {
         }
     }
 
-    val enabled: Boolean = rawWelcome.enabled
+    val enabled: Boolean = rawWelcome.enable
     val embed: EmbedBuilder? by lazy {
         rawWelcome.content?.let(MessageUtil::mapToEmbed)
     }

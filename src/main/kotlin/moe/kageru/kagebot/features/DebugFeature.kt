@@ -11,7 +11,7 @@ import java.time.Duration
 import java.time.temporal.ChronoUnit
 
 class DebugFeature(rawDebugFeatures: RawDebugFeature): MessageFeature() {
-    override val commandEnabled = rawDebugFeatures.enabled
+    override val commandEnabled = rawDebugFeatures.enable
 
     override fun handleInternal(message: MessageCreateEvent) {
         if (message.messageAuthor.isBotOwner) {

@@ -1,5 +1,7 @@
 package moe.kageru.kagebot
 
+import io.kotlintest.matchers.string.shouldContain
+import io.kotlintest.matchers.string.shouldNotContain
 import io.kotlintest.shouldBe
 import io.mockk.Runs
 import io.mockk.every
@@ -99,5 +101,18 @@ object TestUtil {
         Globals.config.reloadLocalization(rawConfig.localization!!)
         test()
         Globals.config.localization = oldLoc
+    }
+
+    fun assertEmbedContents(expected: List<String>, unexpected: List<String>, op: (MutableList<EmbedBuilder>) -> Unit) {
+        val replies = mutableListOf<EmbedBuilder>()
+        op(replies)
+        replies.size shouldBe 1
+        val replyString = embedToString(replies[0])
+        for (string in expected) {
+            replyString shouldContain string
+        }
+        for (string in unexpected) {
+            replyString shouldNotContain string
+        }
     }
 }

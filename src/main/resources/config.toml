@@ -9,11 +9,11 @@ permissionDenied = "You do not have permission to use this command."
 redirectedMessage = "says"
 messageDeleted = "Your message was deleted because it contained a banned word or phrase."
 
-# If this is enabled, every new user will receive a welcome message.
+# If this is enable, every new user will receive a welcome message.
 # If the user has disabled their DMs, the fallbackMessage will be sent in the fallbackChannel instead.
 # If no fallback channel or message is specified, no fallback will be sent.
 [feature.welcome]
-enabled = true
+enable = true
 # enable the !welcome command which will print the welcome embed
 command = true
 fallbackChannel = "555097559023222825"
@@ -26,7 +26,10 @@ fallbackMessage = "@@ I would like to greet you, but I can’t. :("
 
 # allow the bot owner to get debug stats
 [feature.debug]
-enabled = true
+enable = true
+
+[feature.help]
+enable = true
 
 [[command]]
 trigger = "!ping"
