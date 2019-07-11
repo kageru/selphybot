@@ -5,7 +5,6 @@ import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.Globals.config
 import moe.kageru.kagebot.Kagebot
@@ -44,10 +43,9 @@ class CommandTest : StringSpec({
             embed = { "$heading" = "$content" }
             """.trimIndent()
         ) {
-            Kagebot.processMessage(mockMessage("!embed", replyEmbeds = calls))
-            calls.size shouldBe 1
-            embedToString(calls[0]) shouldContain "\"$heading\""
-            embedToString(calls[0]) shouldContain "\"$content\""
+            TestUtil.withReplyContents(expected = listOf(heading, content)) {
+                Kagebot.processMessage(mockMessage("!embed", replyEmbeds = it))
+            }
         }
     }
     "should match contains command" {
@@ -107,15 +105,13 @@ class CommandTest : StringSpec({
             delete = true
             """.trimIndent()
         ) {
-            val replies = mutableListOf<EmbedBuilder>()
             val messageContent = "delet this"
-            val mockMessage = mockMessage(messageContent)
-            every { mockMessage.deleteMessage() } returns mockk()
-            every { mockMessage.messageAuthor.asUser() } returns Optional.of(messageableAuthor(replies))
-            Kagebot.processMessage(mockMessage)
-            verify(exactly = 1) { mockMessage.deleteMessage() }
-            replies.size shouldBe 1
-            embedToString(replies[0]) shouldContain messageContent
+            TestUtil.withReplyContents(expected = listOf(messageContent)) {
+                val mockMessage = mockMessage(messageContent)
+                every { mockMessage.deleteMessage() } returns mockk()
+                every { mockMessage.messageAuthor.asUser() } returns Optional.of(messageableAuthor(it))
+                Kagebot.processMessage(mockMessage)
+            }
         }
     }
     "should refuse command without permissions" {
@@ -253,7 +249,7 @@ class CommandTest : StringSpec({
             """.trimIndent()
         ) {
             val message = "this is a message"
-            Kagebot.processMessage(mockMessage("!redirect $message", replyEmbeds = calls))
+            Kagebot.processMessage(mockMessage("!redirect $message"))
             calls.size shouldBe 1
             embedToString(calls[0]) shouldContain "\"$message\""
         }

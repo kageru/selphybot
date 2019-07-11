@@ -103,7 +103,11 @@ object TestUtil {
         Globals.config.localization = oldLoc
     }
 
-    fun assertEmbedContents(expected: List<String>, unexpected: List<String>, op: (MutableList<EmbedBuilder>) -> Unit) {
+    fun withReplyContents(
+        expected: List<String> = emptyList(),
+        unexpected: List<String> = emptyList(),
+        op: (MutableList<EmbedBuilder>) -> Unit
+    ) {
         val replies = mutableListOf<EmbedBuilder>()
         op(replies)
         replies.size shouldBe 1

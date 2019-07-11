@@ -5,7 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.TestUtil
-import moe.kageru.kagebot.TestUtil.assertEmbedContents
+import moe.kageru.kagebot.TestUtil.withReplyContents
 import moe.kageru.kagebot.TestUtil.mockMessage
 import moe.kageru.kagebot.TestUtil.withCommands
 import moe.kageru.kagebot.config.RawHelpFeature
@@ -32,7 +32,7 @@ class HelpFeatureTest : StringSpec({
         withCommands(commandConfig) {
             val expected = listOf("!ping", "!something")
             val unexpected = listOf("not a prefix", "!prison")
-            assertEmbedContents(expected = expected, unexpected = unexpected) { replies ->
+            withReplyContents(expected = expected, unexpected = unexpected) { replies ->
                 HelpFeature(RawHelpFeature(true))
                     .handle(message = mockMessage("!help", replyEmbeds = replies))
                 //Kagebot.processMessage(TestUtil.mockMessage("!help", replyEmbeds = replies))
@@ -43,7 +43,7 @@ class HelpFeatureTest : StringSpec({
         withCommands(commandConfig) {
             val expected = listOf("!ping", "!something", "!prison")
             val unexpected = listOf("not a prefix")
-            assertEmbedContents(expected = expected, unexpected = unexpected) { replies ->
+            withReplyContents(expected = expected, unexpected = unexpected) { replies ->
                 val message = mockMessage("!help", replyEmbeds = replies)
                 every { message.messageAuthor.asUser() } returns Optional.of(mockk {
                     every { getRoles(any()) } returns listOf(
