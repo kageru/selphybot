@@ -15,7 +15,7 @@ class Config(rawConfig: RawConfig) {
 
     init {
         Globals.systemConfig = system
-        Globals.server = api.getServerById(system.serverId).orElseThrow()
+        Globals.server = api.getServerById(system.serverId).orElseThrow { IllegalArgumentException("Invalid server configured.") }
         Globals.features = rawConfig.features?.let(::Features) ?: Features(RawFeatures(null))
         // TODO: remove this
         this.features = Globals.features
