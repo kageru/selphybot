@@ -70,8 +70,12 @@ object Util {
                 ?: throw IllegalArgumentException("Channel ID $idOrName not found.")
             else -> if (idOrName.startsWith('@')) {
                 api.getCachedUserByDiscriminatedName(idOrName.removePrefix("@")).ifNotEmpty { user ->
-                    user.privateChannel.ifNotEmpty { it }
-                        ?: throw IllegalArgumentException("Could not open private channel with user $idOrName for redirection.")
+                    val channelFuture = user.openPrivateChannel()
+                    val channel = channelFuture.join()
+                    if (channelFuture.isCompletedExceptionally) {
+                        throw IllegalArgumentException("Could not open private channel with user $idOrName for redirection.")
+                    }
+                    channel
                 }
                     ?: throw IllegalArgumentException("Can’t find user $idOrName for redirection.")
             } else {
