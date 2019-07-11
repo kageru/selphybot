@@ -23,7 +23,7 @@ object Kagebot {
             return
         }
         for (command in Globals.commands) {
-            if (command.matches(event.messageContent)) {
+            if (command.matches(event.readableMessageContent)) {
                 command.execute(event)
                 break
             }
