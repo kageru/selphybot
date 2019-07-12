@@ -15,11 +15,15 @@ messageDeleted = "Your message was deleted because it contained a banned word or
 [feature.welcome]
 fallbackChannel = "555097559023222825"
 fallbackMessage = "@@ I would like to greet you, but I can’t. :("
-# This is a list of pairs where the key is the title and the value the content of the paragraph.
+# This is a list of strings like [title1, content1, title2, content2, ...]
 # Do not use empty strings to get empty headings or paragraphs. The discord API rejects those.
-[feature.welcome.content]
-"Welcome to the Server" = "This is the content of the first paragraph"
-"Second paragraph heading" = "Second paragraph content"
+content = [
+    "Welcome to the Server" , "This is the content of the first paragraph",
+    "Second paragraph heading", "Second paragraph content",
+    "3rd", "aoisd",
+    "fourth", "asasd",
+    "5th", "asdasd"
+]
 
 [[command]]
 trigger = "!ping"
@@ -37,7 +41,7 @@ matchType = "REGEX"
 
 [[command]]
 trigger = "!embed"
-embed = { "some embed heading" = "your embed content" }
+embed = [ "some embed heading", "your embed content" ]
 
 [[command]]
 trigger = "answer me"

@@ -44,7 +44,7 @@ class CommandTest : StringSpec({
             """
             [[command]]
             trigger = "!embed"
-            embed = { "$heading" = "$content" }
+            embed = [ "$heading", "$content" ]
             """.trimIndent()
         ) {
             TestUtil.withReplyContents(expected = listOf(heading, content)) {

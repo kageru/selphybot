@@ -13,7 +13,7 @@ class WelcomeFeature(rawWelcome: RawWelcomeFeature) : MessageFeature() {
     }
 
     val embed: EmbedBuilder? by lazy {
-        rawWelcome.content?.let(MessageUtil::mapToEmbed)
+        rawWelcome.content?.let(MessageUtil::listToEmbed)
     }
     val fallbackChannel: TextChannel? = rawWelcome.fallbackChannel?.let {
         if (rawWelcome.fallbackMessage == null) {

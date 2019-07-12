@@ -33,7 +33,7 @@ class Command(cmd: RawCommand) {
         permissions = cmd.permissions?.let { Permissions(it) }
         actions = cmd.actions?.let { MessageActions(it) }
         regex = if (matchType == MatchType.REGEX) Regex(trigger) else null
-        embed = cmd.embed?.let(MessageUtil::mapToEmbed)
+        embed = cmd.embed?.let(MessageUtil::listToEmbed)
         feature = cmd.feature?.let { Globals.features.findByString(it) }
     }
 

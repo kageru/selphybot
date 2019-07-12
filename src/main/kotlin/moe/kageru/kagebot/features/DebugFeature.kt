@@ -20,24 +20,16 @@ class DebugFeature : MessageFeature() {
     private fun getPerformanceStats(): EmbedBuilder {
         val osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
         val runtime = Runtime.getRuntime()
-        return MessageUtil.mapToEmbed(
-            mapOf(
-                Pair(
-                    "Bot:",
-                    getBotStats()
-                ),
-                Pair(
-                    "Memory:",
-                    getMemoryInfo(runtime, osBean)
-                ),
-                Pair(
-                    "CPU:",
-                    getCpuInfo(osBean)
-                ),
-                Pair(
-                    "System:",
-                    getOsInfo()
-                )
+        return MessageUtil.listToEmbed(
+                listOf(
+                        "Bot:",
+                        getBotStats(),
+                        "Memory:",
+                        getMemoryInfo(runtime, osBean),
+                        "CPU:",
+                        getCpuInfo(osBean),
+                        "System:",
+                        getOsInfo()
             )
         )
     }

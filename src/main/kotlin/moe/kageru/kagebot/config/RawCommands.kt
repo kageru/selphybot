@@ -8,7 +8,7 @@ class RawCommand(
     val matchType: String?,
     val permissions: RawPermissions?,
     @SerializedName("action") val actions: RawMessageActions?,
-    val embed: Map<String, String>?,
+    val embed: List<String>?,
     val feature: String?
 )
 
