@@ -23,7 +23,7 @@ class WelcomeFeatureTest : StringSpec({
                 }
             }
         )
-        sentMessages shouldBe mutableListOf(Globals.config.features.welcome!!.embed)
+        sentMessages shouldBe mutableListOf(Globals.features.welcome!!.embed)
     }
     "should send welcome fallback if DMs are disabled" {
         val message = mutableListOf<String>()

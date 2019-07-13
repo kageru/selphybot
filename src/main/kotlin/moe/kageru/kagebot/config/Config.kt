@@ -6,25 +6,20 @@ import moe.kageru.kagebot.command.Command
 import moe.kageru.kagebot.features.Features
 import java.awt.Color
 
-class Config(rawConfig: RawConfig) {
-    private val system: SystemConfig = rawConfig.system?.let(::SystemConfig)
-        ?: throw IllegalArgumentException("No [system] block in config.")
-    var localization: Localization = rawConfig.localization?.let(::Localization)
-        ?: throw IllegalArgumentException("No [localization] block in config.")
-    var features: Features
-
-    init {
-        Globals.systemConfig = system
-        Globals.server = api.getServerById(system.serverId).orElseThrow { IllegalArgumentException("Invalid server configured.") }
-        Globals.features = rawConfig.features?.let(::Features) ?: Features(RawFeatures(null))
-        // TODO: remove this
-        this.features = Globals.features
-        Globals.commands = rawConfig.commands?.map(::Command) ?: emptyList()
-        Globals.config = this
+object ConfigParser {
+    fun initialLoad(rawConfig: RawConfig) {
+        val systemConfig = rawConfig.system?.let(::SystemConfig)
+            ?: throw IllegalArgumentException("No [system] block in config.")
+        Globals.server = api.getServerById(systemConfig.serverId).orElseThrow { IllegalArgumentException("Invalid server configured.") }
+        Globals.systemConfig = systemConfig
+        reloadLocalization(rawConfig)
+        reloadFeatures(rawConfig)
+        reloadCommands(rawConfig)
     }
 
-    fun reloadLocalization(rawLocalization: RawLocalization) {
-        this.localization = Localization(rawLocalization)
+    fun reloadLocalization(rawConfig: RawConfig) {
+        Globals.localization = rawConfig.localization?.let(::Localization)
+            ?: throw IllegalArgumentException("No [localization] block in config.")
     }
 
     fun reloadCommands(rawConfig: RawConfig) {
@@ -32,8 +27,9 @@ class Config(rawConfig: RawConfig) {
             ?: throw IllegalArgumentException("No commands found in config.")
     }
 
-    fun reloadFeatures(rawFeatures: RawFeatures) {
-        this.features = Features(rawFeatures)
+    fun reloadFeatures(rawConfig: RawConfig) {
+        Globals.features = rawConfig.features?.let(::Features)
+            ?: Features(RawFeatures(null))
     }
 }
 

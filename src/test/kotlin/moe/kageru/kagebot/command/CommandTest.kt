@@ -6,7 +6,6 @@ import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
 import moe.kageru.kagebot.Globals
-import moe.kageru.kagebot.Globals.config
 import moe.kageru.kagebot.Kagebot
 import moe.kageru.kagebot.TestUtil
 import moe.kageru.kagebot.TestUtil.embedToString
@@ -133,7 +132,7 @@ class CommandTest : StringSpec({
             val replies = mutableListOf<String>()
             val mockMessage = mockMessage("!restricted", replies = replies)
             Kagebot.processMessage(mockMessage)
-            replies shouldBe mutableListOf(config.localization.permissionDenied)
+            replies shouldBe mutableListOf(Globals.localization.permissionDenied)
             withLocalization(
                 """
             [localization]
@@ -217,7 +216,7 @@ class CommandTest : StringSpec({
                 every { get().getRoles(any()) } returns emptyList()
             }
             Kagebot.processMessage(mockMessage)
-            calls shouldBe mutableListOf(config.localization.permissionDenied, "access granted")
+            calls shouldBe mutableListOf(Globals.localization.permissionDenied, "access granted")
         }
     }
     "should refuse DM only message in server channel" {
@@ -232,7 +231,7 @@ class CommandTest : StringSpec({
         ) {
             val calls = mutableListOf<String>()
             Kagebot.processMessage(mockMessage("!dm", replies = calls))
-            calls shouldBe listOf(config.localization.permissionDenied)
+            calls shouldBe listOf(Globals.localization.permissionDenied)
         }
     }
     /*

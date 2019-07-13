@@ -7,7 +7,7 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.config.ConfigParser
 import moe.kageru.kagebot.config.RawConfig
 import org.javacord.api.DiscordApi
 import org.javacord.api.entity.channel.ServerTextChannel
@@ -15,7 +15,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.user.User
 import org.javacord.api.event.message.MessageCreateEvent
 import org.javacord.core.entity.message.embed.EmbedBuilderDelegateImpl
-import java.util.Optional
+import java.util.*
 
 object TestUtil {
     fun mockMessage(
@@ -74,7 +74,7 @@ object TestUtil {
             })
         }
         Globals.api = api
-        Globals.config = Config(RawConfig.read("testconfig.toml"))
+        ConfigParser.initialLoad(RawConfig.read("testconfig.toml"))
     }
 
     fun testMessageSuccess(content: String, result: String) {
@@ -90,17 +90,17 @@ object TestUtil {
     fun <R> withCommands(config: String, test: (() -> R)) {
         val oldCmds = Globals.commands
         val rawConfig = RawConfig.readFromString(config)
-        Globals.config.reloadCommands(rawConfig)
+        ConfigParser.reloadCommands(rawConfig)
         test()
         Globals.commands = oldCmds
     }
 
     fun <R> withLocalization(config: String, test: (() -> R)) {
-        val oldLoc = Globals.config.localization
+        val oldLoc = Globals.localization
         val rawConfig = RawConfig.readFromString(config)
-        Globals.config.reloadLocalization(rawConfig.localization!!)
+        ConfigParser.reloadLocalization(rawConfig)
         test()
-        Globals.config.localization = oldLoc
+        Globals.localization = oldLoc
     }
 
     fun withReplyContents(

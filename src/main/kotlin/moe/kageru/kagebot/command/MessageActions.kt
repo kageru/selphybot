@@ -1,6 +1,6 @@
 package moe.kageru.kagebot.command
 
-import moe.kageru.kagebot.Globals.config
+import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.Log.log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.config.RawMessageActions
@@ -25,7 +25,7 @@ class MessageActions(rawActions: RawMessageActions) {
             message.messageAuthor.asUser().ifPresent { user ->
                 user.sendMessage(
                     MessageUtil.getEmbedBuilder()
-                        .addField("Blacklisted", config.localization.messageDeleted)
+                        .addField("Blacklisted", Globals.localization.messageDeleted)
                         .addField("Original:", "“${message.readableMessageContent}”")
                 )
             }

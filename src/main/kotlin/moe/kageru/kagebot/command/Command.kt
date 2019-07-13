@@ -1,7 +1,6 @@
 package moe.kageru.kagebot.command
 
 import moe.kageru.kagebot.Globals
-import moe.kageru.kagebot.Globals.config
 import moe.kageru.kagebot.Log.log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util.doIf
@@ -41,8 +40,8 @@ class Command(cmd: RawCommand) {
 
     fun execute(message: MessageCreateEvent) {
         if (permissions?.isAllowed(message) == false) {
-            if (config.localization.permissionDenied.isNotBlank()) {
-                message.channel.sendMessage(config.localization.permissionDenied)
+            if (Globals.localization.permissionDenied.isNotBlank()) {
+                message.channel.sendMessage(Globals.localization.permissionDenied)
             }
             log.info("Denying command ${this.trigger} to user ${message.messageAuthor.discriminatedName} (ID: ${message.messageAuthor.id})")
             return

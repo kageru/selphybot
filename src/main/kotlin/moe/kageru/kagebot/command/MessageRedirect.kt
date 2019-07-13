@@ -1,6 +1,6 @@
 package moe.kageru.kagebot.command
 
-import moe.kageru.kagebot.Globals.config
+import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.Log.log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util
@@ -16,7 +16,7 @@ internal class MessageRedirect(rawRedirect: RawRedirect) {
     fun execute(message: MessageCreateEvent, command: Command) {
         val embed = MessageUtil.getEmbedBuilder()
             .addField(
-                config.localization.redirectedMessage,
+                Globals.localization.redirectedMessage,
                 message.readableMessageContent.let { content ->
                     when (command.matchType) {
                         MatchType.PREFIX -> content.removePrefix(command.trigger).trim()
