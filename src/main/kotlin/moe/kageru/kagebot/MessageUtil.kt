@@ -1,5 +1,6 @@
 package moe.kageru.kagebot
 
+import moe.kageru.kagebot.config.Config
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.user.User
@@ -15,8 +16,8 @@ object MessageUtil {
 
     fun getEmbedBuilder(): EmbedBuilder {
         val builder = EmbedBuilder()
-        Globals.server.icon.ifPresent { builder.setThumbnail(it) }
-        return builder.setColor(Globals.systemConfig.color).setTimestampToNow()
+        Config.server.icon.ifPresent { builder.setThumbnail(it) }
+        return builder.setColor(Config.systemConfig.color).setTimestampToNow()
     }
 
     /*

@@ -4,7 +4,7 @@ import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
-import moe.kageru.kagebot.Globals
+import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.Kagebot
 import moe.kageru.kagebot.TestUtil
 import org.javacord.api.entity.message.embed.EmbedBuilder
@@ -23,7 +23,7 @@ class WelcomeFeatureTest : StringSpec({
                 }
             }
         )
-        sentMessages shouldBe mutableListOf(Globals.features.welcome!!.embed)
+        sentMessages shouldBe mutableListOf(Config.features.welcome!!.embed)
     }
     "should send welcome fallback if DMs are disabled" {
         val message = mutableListOf<String>()

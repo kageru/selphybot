@@ -1,8 +1,8 @@
 package moe.kageru.kagebot
 
-import moe.kageru.kagebot.Globals.api
-import moe.kageru.kagebot.Globals.server
 import moe.kageru.kagebot.Log.log
+import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.config.Config.server
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.entity.message.embed.EmbedBuilder
@@ -10,7 +10,7 @@ import org.javacord.api.entity.permission.Role
 import org.javacord.api.entity.user.User
 import org.javacord.api.event.message.MessageCreateEvent
 import java.awt.Color
-import java.util.Optional
+import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
 
@@ -69,7 +69,7 @@ object Util {
             idOrName.isEntityId() -> server.getTextChannelById(idOrName).ifNotEmpty { it }
                 ?: throw IllegalArgumentException("Channel ID $idOrName not found.")
             else -> if (idOrName.startsWith('@')) {
-                api.getCachedUserByDiscriminatedName(idOrName.removePrefix("@")).ifNotEmpty { user ->
+                Globals.api.getCachedUserByDiscriminatedName(idOrName.removePrefix("@")).ifNotEmpty { user ->
                     val channelFuture = user.openPrivateChannel()
                     val channel = channelFuture.join()
                     if (channelFuture.isCompletedExceptionally) {
@@ -111,7 +111,7 @@ object Util {
 
     fun userFromMessage(message: MessageCreateEvent): User? {
         return message.messageAuthor.id.let { id ->
-            Globals.server.getMemberById(id).orElse(null)
+            Config.server.getMemberById(id).orElse(null)
         }
     }
 }

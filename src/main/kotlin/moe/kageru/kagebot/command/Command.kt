@@ -4,6 +4,7 @@ import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.Log.log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util.doIf
+import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.RawCommand
 import moe.kageru.kagebot.features.MessageFeature
 import org.javacord.api.entity.message.MessageAuthor
@@ -33,15 +34,15 @@ class Command(cmd: RawCommand) {
         actions = cmd.actions?.let { MessageActions(it) }
         regex = if (matchType == MatchType.REGEX) Regex(trigger) else null
         embed = cmd.embed?.let(MessageUtil::listToEmbed)
-        feature = cmd.feature?.let { Globals.features.findByString(it) }
+        feature = cmd.feature?.let { Config.features.findByString(it) }
     }
 
     fun isAllowed(message: MessageCreateEvent) = permissions?.isAllowed(message) ?: true
 
     fun execute(message: MessageCreateEvent) {
         if (permissions?.isAllowed(message) == false) {
-            if (Globals.localization.permissionDenied.isNotBlank()) {
-                message.channel.sendMessage(Globals.localization.permissionDenied)
+            if (Config.localization.permissionDenied.isNotBlank()) {
+                message.channel.sendMessage(Config.localization.permissionDenied)
             }
             log.info("Denying command ${this.trigger} to user ${message.messageAuthor.discriminatedName} (ID: ${message.messageAuthor.id})")
             return

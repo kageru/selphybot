@@ -5,7 +5,7 @@ import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
-import moe.kageru.kagebot.Globals
+import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.Kagebot
 import moe.kageru.kagebot.TestUtil
 import moe.kageru.kagebot.TestUtil.embedToString
@@ -132,7 +132,7 @@ class CommandTest : StringSpec({
             val replies = mutableListOf<String>()
             val mockMessage = mockMessage("!restricted", replies = replies)
             Kagebot.processMessage(mockMessage)
-            replies shouldBe mutableListOf(Globals.localization.permissionDenied)
+            replies shouldBe mutableListOf(Config.localization.permissionDenied)
             withLocalization(
                 """
             [localization]
@@ -182,7 +182,7 @@ class CommandTest : StringSpec({
             val mockMessage = mockMessage("!restricted", replies = calls)
             every { mockMessage.messageAuthor.asUser() } returns Optional.of(mockk {
                 every { getRoles(any()) } returns listOf(
-                    Globals.server.getRolesByNameIgnoreCase("testrole")[0]
+                    Config.server.getRolesByNameIgnoreCase("testrole")[0]
                 )
             })
             Kagebot.processMessage(mockMessage)
@@ -205,7 +205,7 @@ class CommandTest : StringSpec({
             every { mockMessage.messageAuthor.asUser() } returns mockk {
                 every { isPresent } returns true
                 every { get().getRoles(any()) } returns listOf(
-                    Globals.server.getRolesByNameIgnoreCase("testrole")[0]
+                    Config.server.getRolesByNameIgnoreCase("testrole")[0]
                 )
             }
             Kagebot.processMessage(mockMessage)
@@ -216,7 +216,7 @@ class CommandTest : StringSpec({
                 every { get().getRoles(any()) } returns emptyList()
             }
             Kagebot.processMessage(mockMessage)
-            calls shouldBe mutableListOf(Globals.localization.permissionDenied, "access granted")
+            calls shouldBe mutableListOf(Config.localization.permissionDenied, "access granted")
         }
     }
     "should refuse DM only message in server channel" {
@@ -231,7 +231,7 @@ class CommandTest : StringSpec({
         ) {
             val calls = mutableListOf<String>()
             Kagebot.processMessage(mockMessage("!dm", replies = calls))
-            calls shouldBe listOf(Globals.localization.permissionDenied)
+            calls shouldBe listOf(Config.localization.permissionDenied)
         }
     }
     /*
@@ -270,7 +270,7 @@ class CommandTest : StringSpec({
             val user = mockk<User> {
                 every { addRole(capture(roles), "Requested via command.") } returns mockk()
             }
-            every { Globals.server.getMemberById(1) } returns Optional.of(user)
+            every { Config.server.getMemberById(1) } returns Optional.of(user)
             Kagebot.processMessage(mockMessage("!assign"))
             roles shouldBe mutableListOf(Util.findRole("testrole"))
         }

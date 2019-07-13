@@ -2,6 +2,7 @@ package moe.kageru.kagebot
 
 import moe.kageru.kagebot.Log.log
 import moe.kageru.kagebot.Util.checked
+import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
 import moe.kageru.kagebot.config.RawConfig
 import org.javacord.api.DiscordApiBuilder
@@ -22,7 +23,7 @@ object Kagebot {
             }
             return
         }
-        for (command in Globals.commands) {
+        for (command in Config.commands) {
             if (command.matches(event.readableMessageContent)) {
                 command.execute(event)
                 break
@@ -31,7 +32,7 @@ object Kagebot {
     }
 
     fun welcomeUser(event: ServerMemberJoinEvent) {
-        Globals.features.welcome!!.let { welcome ->
+        Config.features.welcome!!.let { welcome ->
             val message = event.user.sendMessage(welcome.embed)
             // If the user disabled direct messages, try the fallback (if defined)
             if (!Util.wasSuccessful(message) &&
@@ -64,7 +65,7 @@ object Kagebot {
         })
         log.info("kagebot Mk II running")
         Globals.api.addMessageCreateListener { checked { processMessage(it) } }
-        Globals.features.welcome?.let {
+        Config.features.welcome?.let {
             Globals.api.addServerMemberJoinListener {
                 checked { welcomeUser(it) }
             }

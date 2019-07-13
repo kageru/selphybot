@@ -3,7 +3,7 @@ package moe.kageru.kagebot.features
 import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
-import moe.kageru.kagebot.Globals
+import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.Kagebot
 import moe.kageru.kagebot.TestUtil
 import moe.kageru.kagebot.TestUtil.mockMessage
@@ -48,7 +48,7 @@ class HelpFeatureTest : StringSpec({
                 val message = mockMessage("!help", replyEmbeds = replies)
                 every { message.messageAuthor.asUser() } returns Optional.of(mockk {
                     every { getRoles(any()) } returns listOf(
-                        Globals.server.getRolesByNameIgnoreCase("testrole")[0]
+                        Config.server.getRolesByNameIgnoreCase("testrole")[0]
                     )
                 })
                 Kagebot.processMessage(message)

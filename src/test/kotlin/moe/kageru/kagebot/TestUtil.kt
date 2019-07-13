@@ -7,6 +7,7 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
 import moe.kageru.kagebot.config.RawConfig
 import org.javacord.api.DiscordApi
@@ -88,19 +89,19 @@ object TestUtil {
     }
 
     fun <R> withCommands(config: String, test: (() -> R)) {
-        val oldCmds = Globals.commands
+        val oldCmds = Config.commands
         val rawConfig = RawConfig.readFromString(config)
         ConfigParser.reloadCommands(rawConfig)
         test()
-        Globals.commands = oldCmds
+        Config.commands = oldCmds
     }
 
     fun <R> withLocalization(config: String, test: (() -> R)) {
-        val oldLoc = Globals.localization
+        val oldLoc = Config.localization
         val rawConfig = RawConfig.readFromString(config)
         ConfigParser.reloadLocalization(rawConfig)
         test()
-        Globals.localization = oldLoc
+        Config.localization = oldLoc
     }
 
     fun withReplyContents(
