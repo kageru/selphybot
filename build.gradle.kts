@@ -14,9 +14,9 @@ application {
 tasks.withType<Jar> {
     manifest {
         attributes(
-            mapOf(
-                "Main-Class" to botMainClass
-            )
+                mapOf(
+                        "Main-Class" to botMainClass
+                )
         )
     }
 }

@@ -10,7 +10,7 @@ import org.javacord.api.entity.permission.Role
 import org.javacord.api.entity.user.User
 import org.javacord.api.event.message.MessageCreateEvent
 import java.awt.Color
-import java.util.*
+import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
 
@@ -23,7 +23,7 @@ object Util {
      * Mimics the behavior of [Optional.ifPresent], but returns null if the optional is empty,
      * allowing easier fallback behavior via Kotlin’s ?: operator.
      */
-    inline fun <T, R> Optional<T>.ifNotEmpty(op: (T) -> R): R? {
+    private inline fun <T, R> Optional<T>.ifNotEmpty(op: (T) -> R): R? {
         if (this.isPresent) {
             return op(this.get())
         }

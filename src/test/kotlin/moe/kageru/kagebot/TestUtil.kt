@@ -15,7 +15,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.user.User
 import org.javacord.api.event.message.MessageCreateEvent
 import org.javacord.core.entity.message.embed.EmbedBuilderDelegateImpl
-import java.util.*
+import java.util.Optional
 
 object TestUtil {
     fun mockMessage(
