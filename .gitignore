@@ -5,3 +5,4 @@ gradle/
 kagebot.log*
 out/
 secret
+.idea/
