@@ -16,6 +16,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.user.User
 import org.javacord.api.event.message.MessageCreateEvent
 import org.javacord.core.entity.message.embed.EmbedBuilderDelegateImpl
+import java.io.File
 import java.util.*
 
 object TestUtil {
@@ -23,6 +24,7 @@ object TestUtil {
         content: String,
         replies: MutableList<String> = mutableListOf(),
         replyEmbeds: MutableList<EmbedBuilder> = mutableListOf(),
+        files: MutableList<File> = mutableListOf(),
         isBot: Boolean = false
     ): MessageCreateEvent {
         return mockk {
@@ -30,6 +32,7 @@ object TestUtil {
             every { readableMessageContent } returns content
             every { channel.sendMessage(capture(replies)) } returns mockk()
             every { channel.sendMessage(capture(replyEmbeds)) } returns mockk()
+            every { channel.sendMessage(capture(files)) } returns mockk()
             every { message.canYouDelete() } returns true
             every { isPrivateMessage } returns false
             // We can’t use a nested mock here because other fields of messageAuthor might

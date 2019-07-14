@@ -4,8 +4,11 @@ import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.command.Command
 import moe.kageru.kagebot.features.Features
 import java.awt.Color
+import java.io.File
 
 object ConfigParser {
+    val configFile: File = File(RawConfig.DEFAULT_CONFIG_PATH)
+
     fun initialLoad(rawConfig: RawConfig) {
         val systemConfig = rawConfig.system?.let(::SystemConfig)
             ?: throw IllegalArgumentException("No [system] block in config.")

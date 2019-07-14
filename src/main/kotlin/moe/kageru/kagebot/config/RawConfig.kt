@@ -13,7 +13,7 @@ class RawConfig(
     val features: RawFeatures?
 ) {
     companion object {
-        private const val DEFAULT_CONFIG_PATH = "config.toml"
+        const val DEFAULT_CONFIG_PATH = "config.toml"
 
         fun readFromString(tomlContent: String): RawConfig = Toml().read(tomlContent).to(RawConfig::class.java)
 

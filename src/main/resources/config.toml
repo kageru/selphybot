@@ -106,3 +106,7 @@ feature = "welcome"
 [[command]]
 trigger = "!help"
 feature = "help"
+
+[[command]]
+trigger = "!getConfig"
+feature = "getConfig"
