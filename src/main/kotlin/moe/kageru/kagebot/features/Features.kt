@@ -6,20 +6,23 @@ class Features(
     val welcome: WelcomeFeature?,
     debug: DebugFeature,
     help: HelpFeature,
-    getConfig: GetConfigFeature
+    getConfig: GetConfigFeature,
+    setConfig: SetConfigFeature
 ) {
     constructor(rawFeatures: RawFeatures) : this(
         rawFeatures.welcome?.let(::WelcomeFeature),
         DebugFeature(),
         HelpFeature(),
-        GetConfigFeature()
+        GetConfigFeature(),
+        SetConfigFeature()
     )
 
     private val featureMap = mapOf(
         "help" to help,
         "debug" to debug,
         "welcome" to welcome,
-        "getConfig" to getConfig
+        "getConfig" to getConfig,
+        "setConfig" to setConfig
     )
 
     fun findByString(feature: String) = featureMap[feature]

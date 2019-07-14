@@ -110,3 +110,7 @@ feature = "help"
 [[command]]
 trigger = "!getConfig"
 feature = "getConfig"
+
+[[command]]
+trigger = "!setConfig"
+feature = "setConfig"
