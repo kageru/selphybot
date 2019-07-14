@@ -1,13 +1,14 @@
 package moe.kageru.kagebot.features
 
-import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.command.MatchType
+import moe.kageru.kagebot.config.Config
 import org.javacord.api.event.message.MessageCreateEvent
 
 class HelpFeature : MessageFeature() {
     override fun handleInternal(message: MessageCreateEvent) {
-        message.channel.sendMessage(
+        MessageUtil.sendEmbed(
+            message.channel,
             MessageUtil.getEmbedBuilder()
                 .addField("Commands:", listCommands(message))
         )

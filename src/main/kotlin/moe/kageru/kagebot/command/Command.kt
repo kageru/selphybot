@@ -54,7 +54,7 @@ class Command(cmd: RawCommand) {
             message.channel.sendMessage(respond(message.messageAuthor, it))
         }
         this.embed?.let {
-            message.channel.sendMessage(embed)
+            MessageUtil.sendEmbed(message.channel, embed)
         }
         this.feature?.handle(message)
     }

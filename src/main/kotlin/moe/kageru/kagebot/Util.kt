@@ -95,7 +95,7 @@ object Util {
             op()
         } catch (e: Exception) {
             log.warning("An uncaught exception occurred.\n$e")
-            Globals.api.owner.get().sendMessage(
+            MessageUtil.sendEmbed(Globals.api.owner.get(),
                 EmbedBuilder()
                     .setTimestampToNow()
                     .setColor(Color.RED)

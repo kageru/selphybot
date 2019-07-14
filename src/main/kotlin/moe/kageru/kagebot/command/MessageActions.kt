@@ -1,8 +1,8 @@
 package moe.kageru.kagebot.command
 
-import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.Log.log
 import moe.kageru.kagebot.MessageUtil
+import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.RawMessageActions
 import org.javacord.api.event.message.MessageCreateEvent
 
@@ -23,7 +23,8 @@ class MessageActions(rawActions: RawMessageActions) {
         if (message.message.canYouDelete()) {
             message.deleteMessage()
             message.messageAuthor.asUser().ifPresent { user ->
-                user.sendMessage(
+                MessageUtil.sendEmbed(
+                    user,
                     MessageUtil.getEmbedBuilder()
                         .addField("Blacklisted", Config.localization.messageDeleted)
                         .addField("Original:", "“${message.readableMessageContent}”")

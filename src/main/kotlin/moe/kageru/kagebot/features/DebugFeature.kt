@@ -13,7 +13,7 @@ class DebugFeature : MessageFeature() {
 
     override fun handleInternal(message: MessageCreateEvent) {
         if (message.messageAuthor.isBotOwner) {
-            message.channel.sendMessage(getPerformanceStats())
+            MessageUtil.sendEmbed(message.channel, getPerformanceStats())
         }
     }
 
