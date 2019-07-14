@@ -33,6 +33,8 @@ class SetConfigFeature : MessageFeature() {
             ConfigParser.reloadLocalization(rawConfig)
             ConfigParser.reloadFeatures(rawConfig)
             ConfigParser.reloadCommands(rawConfig)
+            ConfigParser.configFile.writeText(newConfig)
+            message.channel.sendMessage("Config reloaded.")
         } catch (e: IllegalArgumentException) {
             MessageUtil.sendEmbed(
                 message.channel,
