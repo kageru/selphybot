@@ -10,7 +10,7 @@ import org.javacord.api.event.message.MessageCreateEvent
 class WelcomeFeature(rawWelcome: RawWelcomeFeature) : MessageFeature() {
     override fun handleInternal(message: MessageCreateEvent) {
         embed?.let {
-            MessageUtil.sendEmbed(message.channel, embed!!)
+            MessageUtil.sendEmbed(message.channel, it)
         }
     }
 

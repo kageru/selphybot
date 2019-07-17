@@ -1,7 +1,7 @@
 package moe.kageru.kagebot.features
 
 import moe.kageru.kagebot.Log
-import moe.kageru.kagebot.MessageUtil
+import moe.kageru.kagebot.MessageUtil.sendEmbed
 import moe.kageru.kagebot.config.ConfigParser
 import moe.kageru.kagebot.config.RawConfig
 import org.javacord.api.event.message.MessageCreateEvent
@@ -17,14 +17,12 @@ class SetConfigFeature : MessageFeature() {
         val rawConfig = try {
             RawConfig.readFromString(newConfig)
         } catch (e: IllegalStateException) {
-            MessageUtil.sendEmbed(
-                message.channel,
-                MessageUtil.getEmbedBuilder()
-                    .addField(
-                        "An unexpected error occured. This is probably caused by a malformed config file. Perhaps this can help:",
-                        "```$e: ${e.message}"
-                    )
-            )
+            message.channel.sendEmbed {
+                addField(
+                    "An unexpected error occured. This is probably caused by a malformed config file. Perhaps this can help:",
+                    "```$e: ${e.message}"
+                )
+            }
             Log.info("Could not parse new config: $e: ${e.message}")
             return
         }
@@ -35,11 +33,9 @@ class SetConfigFeature : MessageFeature() {
             ConfigParser.configFile.writeText(newConfig)
             message.channel.sendMessage("Config reloaded.")
         } catch (e: IllegalArgumentException) {
-            MessageUtil.sendEmbed(
-                message.channel,
-                MessageUtil.getEmbedBuilder()
-                    .addField("Error", "```${e.message}```")
-            )
+            message.channel.sendEmbed {
+                addField("Error", "```${e.message}```")
+            }
         }
     }
 }

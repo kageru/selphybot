@@ -97,7 +97,6 @@ object Util {
             MessageUtil.sendEmbed(
                 Globals.api.owner.get(),
                 EmbedBuilder()
-                    .setTimestampToNow()
                     .setColor(Color.RED)
                     .addField("Error", "kagebot has encountered an error")
                     .addField(

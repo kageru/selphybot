@@ -1,9 +1,9 @@
 package moe.kageru.kagebot
 
 import moe.kageru.kagebot.config.Config
-import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.Message
 import org.javacord.api.entity.message.MessageAuthor
+import org.javacord.api.entity.message.Messageable
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.user.User
 import java.util.concurrent.CompletableFuture
@@ -23,15 +23,17 @@ object MessageUtil {
         return builder.setColor(Config.systemConfig.color)
     }
 
+    fun Messageable.sendEmbed(op: EmbedBuilder.() -> Unit) {
+        val embed = getEmbedBuilder().setTimestampToNow()
+        embed.op()
+        this.sendMessage(embed)
+    }
+
     /**
      * Send and embed and add the current time to it.
      * The time is not set in [getEmbedBuilder] because of https://git.kageru.moe/kageru/discord-kagebot/issues/13.
      */
-    fun sendEmbed(target: TextChannel, embed: EmbedBuilder): CompletableFuture<Message> {
-        return target.sendMessage(embed.setTimestampToNow())
-    }
-
-    fun sendEmbed(target: User, embed: EmbedBuilder): CompletableFuture<Message> {
+    fun sendEmbed(target: Messageable, embed: EmbedBuilder): CompletableFuture<Message> {
         return target.sendMessage(embed.setTimestampToNow())
     }
 
