@@ -53,13 +53,13 @@ object Util {
         }
     }
 
-    fun <T> wasSuccessful(future: CompletableFuture<T>): Boolean {
+    fun <T> CompletableFuture<T>.failed(): Boolean {
         try {
-            future.join()
+            join()
         } catch (e: CompletionException) {
             // we don’t care about this error, but I don’t want to spam stdout
         }
-        return !future.isCompletedExceptionally
+        return isCompletedExceptionally
     }
 
     @Throws(IllegalArgumentException::class)

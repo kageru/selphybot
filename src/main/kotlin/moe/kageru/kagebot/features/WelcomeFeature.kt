@@ -14,6 +14,8 @@ class WelcomeFeature(rawWelcome: RawWelcomeFeature) : MessageFeature() {
         }
     }
 
+    fun hasFallback(): Boolean = fallbackChannel != null && fallbackMessage != null
+
     val embed: EmbedBuilder? by lazy {
         rawWelcome.content?.let(MessageUtil::listToEmbed)
     }

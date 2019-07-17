@@ -1,6 +1,7 @@
 package moe.kageru.kagebot
 
 import moe.kageru.kagebot.Util.checked
+import moe.kageru.kagebot.Util.failed
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
 import moe.kageru.kagebot.config.RawConfig
@@ -18,7 +19,9 @@ object Kagebot {
     fun processMessage(event: MessageCreateEvent) {
         if (event.messageAuthor.isBotUser) {
             if (event.messageAuthor.isYourself) {
-                Log.info("<Self> ${event.readableMessageContent}")
+                val loggedMessage =
+                    if (event.readableMessageContent.isBlank()) "[embed]" else event.readableMessageContent
+                Log.info("<Self> $loggedMessage")
             }
             return
         }
@@ -31,24 +34,18 @@ object Kagebot {
     }
 
     fun welcomeUser(event: ServerMemberJoinEvent) {
-        Config.features.welcome!!.let { welcome ->
-            val message = event.user.sendMessage(welcome.embed)
+        Config.features.welcome!!.run {
+            val message = event.user.sendMessage(embed)
             // If the user disabled direct messages, try the fallback (if defined)
-            if (!Util.wasSuccessful(message) &&
-                welcome.fallbackChannel != null &&
-                welcome.fallbackMessage != null
-            ) {
-                welcome.fallbackChannel.sendMessage(
-                    welcome.fallbackMessage.replace(
-                        "@@",
-                        MessageUtil.mention(event.user)
-                    )
+            if (message.failed() && hasFallback()) {
+                fallbackChannel!!.sendMessage(
+                    fallbackMessage!!.replace("@@", MessageUtil.mention(event.user))
                 )
             }
         }
     }
 
-    private fun getSecret() = File("secret").readText().replace("\n", "")
+    private fun getSecret() = File("secret").readText().trim()
 
     fun init() {
         Globals.api = DiscordApiBuilder().setToken(getSecret()).login().join()

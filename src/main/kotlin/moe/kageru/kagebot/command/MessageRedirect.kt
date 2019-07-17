@@ -4,6 +4,7 @@ import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.Util.applyIf
+import moe.kageru.kagebot.Util.failed
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.RawRedirect
 import org.javacord.api.entity.channel.TextChannel
@@ -32,7 +33,7 @@ internal class MessageRedirect(rawRedirect: RawRedirect) {
             }
         }
 
-        if (!Util.wasSuccessful(MessageUtil.sendEmbed(target, embed))) {
+        if (MessageUtil.sendEmbed(target, embed).failed()) {
             Log.warn("Could not redirect message to channel $target")
         }
     }
