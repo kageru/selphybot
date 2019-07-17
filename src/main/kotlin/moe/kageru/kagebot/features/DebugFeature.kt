@@ -21,15 +21,11 @@ class DebugFeature : MessageFeature() {
         val osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
         val runtime = Runtime.getRuntime()
         return MessageUtil.listToEmbed(
-                listOf(
-                        "Bot:",
-                        getBotStats(),
-                        "Memory:",
-                        getMemoryInfo(runtime, osBean),
-                        "CPU:",
-                        getCpuInfo(osBean),
-                        "System:",
-                        getOsInfo()
+            listOf(
+                "Bot:", getBotStats(),
+                "Memory:", getMemoryInfo(runtime, osBean),
+                "CPU:", getCpuInfo(osBean),
+                "System:", getOsInfo()
             )
         )
     }
