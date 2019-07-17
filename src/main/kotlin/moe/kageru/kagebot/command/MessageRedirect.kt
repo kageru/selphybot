@@ -14,8 +14,8 @@ internal class MessageRedirect(rawRedirect: RawRedirect) {
     private val anonymous: Boolean = rawRedirect.anonymous
 
     fun execute(message: MessageCreateEvent, command: Command) {
-        val embed = MessageUtil.getEmbedBuilder()
-            .addField(
+        val embed = MessageUtil.withEmbed {
+            addField(
                 Config.localization.redirectedMessage,
                 message.readableMessageContent.let { content ->
                     when (command.matchType) {
@@ -24,6 +24,7 @@ internal class MessageRedirect(rawRedirect: RawRedirect) {
                     }
                 }
             )
+        }
         // No inlined if/else because the types are different.
         // Passing the full message author will also include the avatar in the embed.
         embed.apply {

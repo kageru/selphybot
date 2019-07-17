@@ -113,4 +113,15 @@ object Util {
             Config.server.getMemberById(id).orElse(null)
         }
     }
+
+    /**
+     * Convert a list of elements to pairs, retaining order.
+     * The last element is dropped if the input size is odd.
+     * [1, 2, 3, 4, 5] -> [[1, 2], [3, 4]]
+     */
+    fun <T> Collection<T>.toPairs(): List<Pair<T, T>> = this.iterator().run {
+        (0 until size / 2).map {
+            Pair(next(), next())
+        }
+    }
 }

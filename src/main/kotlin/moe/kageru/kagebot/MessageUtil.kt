@@ -1,6 +1,7 @@
 package moe.kageru.kagebot
 
 import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.Util.toPairs
 import org.javacord.api.entity.message.Message
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.entity.message.Messageable
@@ -17,21 +18,25 @@ object MessageUtil {
         return "<@${user.id}>"
     }
 
-    fun getEmbedBuilder(): EmbedBuilder {
+    fun withEmbed(op: EmbedBuilder.() -> Unit): EmbedBuilder {
         val builder = EmbedBuilder()
         Config.server.icon.ifPresent { builder.setThumbnail(it) }
-        return builder.setColor(Config.systemConfig.color)
+        builder.setColor(Config.systemConfig.color)
+        builder.op()
+        return builder
     }
 
     fun Messageable.sendEmbed(op: EmbedBuilder.() -> Unit) {
-        val embed = getEmbedBuilder().setTimestampToNow()
-        embed.op()
-        this.sendMessage(embed)
+        val embed = withEmbed {
+            setTimestampToNow()
+            op()
+        }
+        sendMessage(embed)
     }
 
     /**
      * Send and embed and add the current time to it.
-     * The time is not set in [getEmbedBuilder] because of https://git.kageru.moe/kageru/discord-kagebot/issues/13.
+     * The time is not set in [withEmbed] because of https://git.kageru.moe/kageru/discord-kagebot/issues/13.
      */
     fun sendEmbed(target: Messageable, embed: EmbedBuilder): CompletableFuture<Message> {
         return target.sendMessage(embed.setTimestampToNow())
@@ -45,12 +50,10 @@ object MessageUtil {
         if (contents.size % 2 == 1) {
             throw IllegalStateException("Embed must have even number of content strings (title/content pairs)")
         }
-        val builder = getEmbedBuilder()
-        contents.zip(1..contents.size).filter { it.second % 2 == 0 }
-        for ((heading, content) in contents.withIndex().filter { it.index % 2 == 0 }
-                zip contents.withIndex().filter { it.index % 2 == 1 }) {
-            builder.addField(heading.value, content.value)
+        return withEmbed {
+            contents.toPairs().forEach { (heading, content) ->
+                addField(heading, content)
+            }
         }
-        return builder
     }
 }
