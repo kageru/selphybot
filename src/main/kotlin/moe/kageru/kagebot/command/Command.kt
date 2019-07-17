@@ -1,7 +1,7 @@
 package moe.kageru.kagebot.command
 
 import moe.kageru.kagebot.Globals
-import moe.kageru.kagebot.Log.log
+import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util.doIf
 import moe.kageru.kagebot.config.Config
@@ -44,10 +44,10 @@ class Command(cmd: RawCommand) {
             if (Config.localization.permissionDenied.isNotBlank()) {
                 message.channel.sendMessage(Config.localization.permissionDenied)
             }
-            log.info("Denying command ${this.trigger} to user ${message.messageAuthor.discriminatedName} (ID: ${message.messageAuthor.id})")
+            Log.info("Denying command ${this.trigger} to user ${message.messageAuthor.discriminatedName} (ID: ${message.messageAuthor.id})")
             return
         }
-        log.info("Executing command ${this.trigger} triggered by user ${message.messageAuthor.discriminatedName} (ID: ${message.messageAuthor.id})")
+        Log.info("Executing command ${this.trigger} triggered by user ${message.messageAuthor.discriminatedName} (ID: ${message.messageAuthor.id})")
         Globals.commandCounter.incrementAndGet()
         this.actions?.run(message, this)
         this.response?.let {

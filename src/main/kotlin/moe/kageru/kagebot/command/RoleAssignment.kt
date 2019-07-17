@@ -1,6 +1,6 @@
 package moe.kageru.kagebot.command
 
-import moe.kageru.kagebot.Log.log
+import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.config.RawAssignment
 import org.javacord.api.event.message.MessageCreateEvent
@@ -12,6 +12,6 @@ internal class RoleAssignment(rawAssignment: RawAssignment) {
 
     fun assign(message: MessageCreateEvent) {
         Util.userFromMessage(message)?.addRole(role, "Requested via command.")
-            ?: log.warning("Could not find user ${message.messageAuthor.name} for role assign")
+            ?: Log.warn("Could not find user ${message.messageAuthor.name} for role assign")
     }
 }

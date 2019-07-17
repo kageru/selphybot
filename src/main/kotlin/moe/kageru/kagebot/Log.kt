@@ -8,13 +8,21 @@ import java.util.logging.LogRecord
 import java.util.logging.Logger
 
 object Log {
-    val log: Logger by lazy {
+    private val log: Logger by lazy {
         val log = Logger.getGlobal()
         val fh = FileHandler("kagebot.log", true)
         val formatter = LogFormatter()
         fh.formatter = formatter
         log.addHandler(fh)
         return@lazy log
+    }
+
+    fun info(message: String) {
+        log.info(message)
+    }
+
+    fun warn(message: String) {
+        log.warning(message)
     }
 }
 

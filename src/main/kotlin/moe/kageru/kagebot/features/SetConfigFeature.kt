@@ -5,7 +5,6 @@ import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.config.ConfigParser
 import moe.kageru.kagebot.config.RawConfig
 import org.javacord.api.event.message.MessageCreateEvent
-import java.lang.IllegalArgumentException
 
 class SetConfigFeature : MessageFeature() {
     @ExperimentalStdlibApi
@@ -26,7 +25,7 @@ class SetConfigFeature : MessageFeature() {
                         "```$e: ${e.message}"
                     )
             )
-            Log.log.info("Could not parse new config: $e: ${e.message}")
+            Log.info("Could not parse new config: $e: ${e.message}")
             return
         }
         try {

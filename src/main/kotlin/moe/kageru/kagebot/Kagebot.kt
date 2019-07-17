@@ -1,6 +1,5 @@
 package moe.kageru.kagebot
 
-import moe.kageru.kagebot.Log.log
 import moe.kageru.kagebot.Util.checked
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
@@ -19,7 +18,7 @@ object Kagebot {
     fun processMessage(event: MessageCreateEvent) {
         if (event.messageAuthor.isBotUser) {
             if (event.messageAuthor.isYourself) {
-                log.info("<Self> ${event.readableMessageContent}")
+                Log.info("<Self> ${event.readableMessageContent}")
             }
             return
         }
@@ -60,10 +59,10 @@ object Kagebot {
             exitProcess(1)
         }
         Runtime.getRuntime().addShutdownHook(Thread {
-            log.info("Bot has been interrupted. Shutting down.")
+            Log.info("Bot has been interrupted. Shutting down.")
             Globals.api.disconnect()
         })
-        log.info("kagebot Mk II running")
+        Log.info("kagebot Mk II running")
         Globals.api.addMessageCreateListener { checked { processMessage(it) } }
         Config.features.welcome?.let {
             Globals.api.addServerMemberJoinListener {

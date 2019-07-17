@@ -1,6 +1,5 @@
 package moe.kageru.kagebot
 
-import moe.kageru.kagebot.Log.log
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.Config.server
 import org.javacord.api.entity.channel.TextChannel
@@ -94,8 +93,9 @@ object Util {
         try {
             op()
         } catch (e: Exception) {
-            log.warning("An uncaught exception occurred.\n$e")
-            MessageUtil.sendEmbed(Globals.api.owner.get(),
+            Log.warn("An uncaught exception occurred.\n$e")
+            MessageUtil.sendEmbed(
+                Globals.api.owner.get(),
                 EmbedBuilder()
                     .setTimestampToNow()
                     .setColor(Color.RED)

@@ -1,6 +1,6 @@
 package moe.kageru.kagebot.command
 
-import moe.kageru.kagebot.Log.log
+import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.config.Config
@@ -35,7 +35,7 @@ internal class MessageRedirect(rawRedirect: RawRedirect) {
         }
 
         if (!Util.wasSuccessful(MessageUtil.sendEmbed(target, embed))) {
-            log.warning("Could not redirect message to channel $target")
+            Log.warn("Could not redirect message to channel $target")
         }
     }
 }

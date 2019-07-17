@@ -1,6 +1,6 @@
 package moe.kageru.kagebot.command
 
-import moe.kageru.kagebot.Log.log
+import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.RawMessageActions
@@ -31,7 +31,7 @@ class MessageActions(rawActions: RawMessageActions) {
                 )
             }
         } else {
-            log.info("Tried to delete a message without the necessary permissions. Channel: ${message.channel.id}")
+            Log.info("Tried to delete a message without the necessary permissions. Channel: ${message.channel.id}")
         }
     }
 }
