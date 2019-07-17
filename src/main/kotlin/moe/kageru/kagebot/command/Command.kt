@@ -3,7 +3,7 @@ package moe.kageru.kagebot.command
 import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil
-import moe.kageru.kagebot.Util.doIf
+import moe.kageru.kagebot.Util.applyIf
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.RawCommand
 import moe.kageru.kagebot.features.MessageFeature
@@ -61,7 +61,7 @@ class Command(cmd: RawCommand) {
 
     fun matches(msg: String) = this.matchType.matches(msg, this)
 
-    private fun respond(author: MessageAuthor, response: String) = response.doIf({ it.contains(AUTHOR_PLACEHOLDER) }) {
+    private fun respond(author: MessageAuthor, response: String) = response.applyIf(response.contains(AUTHOR_PLACEHOLDER)) {
         it.replace(AUTHOR_PLACEHOLDER, MessageUtil.mention(author))
     }
 }

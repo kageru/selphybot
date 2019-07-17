@@ -3,6 +3,7 @@ package moe.kageru.kagebot.command
 import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util
+import moe.kageru.kagebot.Util.applyIf
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.RawRedirect
 import org.javacord.api.entity.channel.TextChannel
@@ -15,15 +16,11 @@ internal class MessageRedirect(rawRedirect: RawRedirect) {
 
     fun execute(message: MessageCreateEvent, command: Command) {
         val embed = MessageUtil.withEmbed {
-            addField(
-                Config.localization.redirectedMessage,
-                message.readableMessageContent.let { content ->
-                    when (command.matchType) {
-                        MatchType.PREFIX -> content.removePrefix(command.trigger).trim()
-                        else -> content
-                    }
+            val redirectedText = message.readableMessageContent
+                .applyIf(command.matchType == MatchType.PREFIX) { content ->
+                    content.removePrefix(command.trigger).trim()
                 }
-            )
+            addField(Config.localization.redirectedMessage, redirectedText)
         }
         // No inlined if/else because the types are different.
         // Passing the full message author will also include the avatar in the embed.

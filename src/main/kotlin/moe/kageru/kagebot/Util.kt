@@ -14,8 +14,8 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
 
 object Util {
-    inline fun <T> T.doIf(condition: (T) -> Boolean, op: (T) -> T): T {
-        return if (condition(this)) op(this) else this
+    inline fun <T> T.applyIf(condition: Boolean, op: (T) -> T): T {
+        return if (condition) op(this) else this
     }
 
     /**
