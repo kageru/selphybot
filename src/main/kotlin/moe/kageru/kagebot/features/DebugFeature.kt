@@ -9,9 +9,9 @@ import java.lang.management.ManagementFactory
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
-class DebugFeature : MessageFeature() {
+class DebugFeature : MessageFeature {
 
-    override fun handleInternal(message: MessageCreateEvent) {
+    override fun handle(message: MessageCreateEvent) {
         if (message.messageAuthor.isBotOwner) {
             MessageUtil.sendEmbed(message.channel, getPerformanceStats())
         }

@@ -1,13 +1,11 @@
 package moe.kageru.kagebot
 
 import moe.kageru.kagebot.Util.checked
-import moe.kageru.kagebot.Util.failed
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
 import moe.kageru.kagebot.config.RawConfig
 import org.javacord.api.DiscordApiBuilder
 import org.javacord.api.event.message.MessageCreateEvent
-import org.javacord.api.event.server.member.ServerMemberJoinEvent
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -17,7 +15,7 @@ fun main() {
 
 object Kagebot {
     fun MessageCreateEvent.process() {
-         if (messageAuthor.isBotUser) {
+        if (messageAuthor.isBotUser) {
             if (messageAuthor.isYourself) {
                 val loggedMessage =
                     if (readableMessageContent.isBlank()) "[embed]" else readableMessageContent
@@ -29,18 +27,6 @@ object Kagebot {
             if (command.matches(readableMessageContent)) {
                 command.execute(this)
                 break
-            }
-        }
-    }
-
-    fun welcomeUser(event: ServerMemberJoinEvent) {
-        Config.features.welcome!!.run {
-            val message = event.user.sendMessage(embed)
-            // If the user disabled direct messages, try the fallback (if defined)
-            if (message.failed() && hasFallback()) {
-                fallbackChannel!!.sendMessage(
-                    fallbackMessage!!.replace("@@", MessageUtil.mention(event.user))
-                )
             }
         }
     }
@@ -61,10 +47,6 @@ object Kagebot {
         })
         Log.info("kagebot Mk II running")
         Globals.api.addMessageCreateListener { checked { it.process() } }
-        Config.features.welcome?.let {
-            Globals.api.addServerMemberJoinListener {
-                checked { welcomeUser(it) }
-            }
-        }
+        Config.features.eventFeatures().forEach { it.register(Globals.api) }
     }
 }

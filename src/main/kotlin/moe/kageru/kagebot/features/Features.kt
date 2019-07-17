@@ -17,6 +17,7 @@ class Features(
         SetConfigFeature()
     )
 
+    private val all = listOf(welcome, debug, help, getConfig, setConfig)
     private val featureMap = mapOf(
         "help" to help,
         "debug" to debug,
@@ -26,4 +27,5 @@ class Features(
     )
 
     fun findByString(feature: String) = featureMap[feature]
+    fun eventFeatures() = all.filterIsInstance<EventFeature>()
 }

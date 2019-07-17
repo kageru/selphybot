@@ -8,6 +8,7 @@ import io.mockk.mockk
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.features.SetConfigFeature
 
+@ExperimentalStdlibApi
 class ConfigTest : ShouldSpec({
     TestUtil.prepareTestEnvironment()
     "should properly parse test config" {
