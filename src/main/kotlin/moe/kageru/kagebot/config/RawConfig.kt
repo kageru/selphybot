@@ -17,15 +17,17 @@ class RawConfig(
 
         fun readFromString(tomlContent: String): RawConfig = Toml().read(tomlContent).to(RawConfig::class.java)
 
+        private fun getFile(path: String): File {
+            val file = File(path)
+            if (file.isFile) {
+                return file
+            }
+            println("Config not found, falling back to defaults...")
+            return File(this::class.java.classLoader.getResource(path)!!.toURI())
+        }
+
         fun read(path: String = DEFAULT_CONFIG_PATH): RawConfig {
-            val toml: Toml = Toml().read(run {
-                val file = File(path)
-                if (file.isFile) {
-                    return@run file
-                }
-                println("Config not found, falling back to defaults...")
-                File(this::class.java.classLoader.getResource(path)!!.toURI())
-            })
+            val toml: Toml = Toml().read(getFile(path))
             return toml.to(RawConfig::class.java)
         }
     }
