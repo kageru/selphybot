@@ -7,6 +7,7 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import moe.kageru.kagebot.Kagebot.process
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
 import moe.kageru.kagebot.config.RawConfig
@@ -83,7 +84,7 @@ object TestUtil {
 
     fun testMessageSuccess(content: String, result: String) {
         val calls = mutableListOf<String>()
-        Kagebot.processMessage(mockMessage(content, replies = calls))
+        mockMessage(content, replies = calls).process()
         calls shouldBe mutableListOf(result)
     }
 

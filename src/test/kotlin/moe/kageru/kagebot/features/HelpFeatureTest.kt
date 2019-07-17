@@ -4,7 +4,7 @@ import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
 import moe.kageru.kagebot.config.Config
-import moe.kageru.kagebot.Kagebot
+import moe.kageru.kagebot.Kagebot.process
 import moe.kageru.kagebot.TestUtil
 import moe.kageru.kagebot.TestUtil.mockMessage
 import moe.kageru.kagebot.TestUtil.withCommands
@@ -36,7 +36,7 @@ class HelpFeatureTest : StringSpec({
             val expected = listOf("!ping", "!something")
             val unexpected = listOf("not a prefix", "!prison")
             withReplyContents(expected = expected, unexpected = unexpected) { replies ->
-                Kagebot.processMessage(mockMessage("!help", replyEmbeds = replies))
+                mockMessage("!help", replyEmbeds = replies).process()
             }
         }
     }
@@ -51,7 +51,7 @@ class HelpFeatureTest : StringSpec({
                         Config.server.getRolesByNameIgnoreCase("testrole")[0]
                     )
                 })
-                Kagebot.processMessage(message)
+                message.process()
             }
         }
     }

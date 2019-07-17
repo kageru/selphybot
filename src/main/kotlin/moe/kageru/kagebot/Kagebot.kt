@@ -16,18 +16,18 @@ fun main() {
 }
 
 object Kagebot {
-    fun processMessage(event: MessageCreateEvent) {
-        if (event.messageAuthor.isBotUser) {
-            if (event.messageAuthor.isYourself) {
+    fun MessageCreateEvent.process() {
+         if (messageAuthor.isBotUser) {
+            if (messageAuthor.isYourself) {
                 val loggedMessage =
-                    if (event.readableMessageContent.isBlank()) "[embed]" else event.readableMessageContent
+                    if (readableMessageContent.isBlank()) "[embed]" else readableMessageContent
                 Log.info("<Self> $loggedMessage")
             }
             return
         }
         for (command in Config.commands) {
-            if (command.matches(event.readableMessageContent)) {
-                command.execute(event)
+            if (command.matches(readableMessageContent)) {
+                command.execute(this)
                 break
             }
         }
@@ -60,7 +60,7 @@ object Kagebot {
             Globals.api.disconnect()
         })
         Log.info("kagebot Mk II running")
-        Globals.api.addMessageCreateListener { checked { processMessage(it) } }
+        Globals.api.addMessageCreateListener { checked { it.process() } }
         Config.features.welcome?.let {
             Globals.api.addServerMemberJoinListener {
                 checked { welcomeUser(it) }

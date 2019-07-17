@@ -6,7 +6,7 @@ import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
 import moe.kageru.kagebot.config.Config
-import moe.kageru.kagebot.Kagebot
+import moe.kageru.kagebot.Kagebot.process
 import moe.kageru.kagebot.TestUtil
 import moe.kageru.kagebot.TestUtil.embedToString
 import moe.kageru.kagebot.TestUtil.messageableAuthor
@@ -47,7 +47,7 @@ class CommandTest : StringSpec({
             """.trimIndent()
         ) {
             TestUtil.withReplyContents(expected = listOf(heading, content)) {
-                Kagebot.processMessage(mockMessage("!embed", replyEmbeds = it))
+                mockMessage("!embed", replyEmbeds = it).process()
             }
         }
     }
@@ -95,7 +95,7 @@ class CommandTest : StringSpec({
             """.trimIndent()
         ) {
             val calls = mutableListOf<String>()
-            Kagebot.processMessage(mockMessage("!ping", replies = calls, isBot = true))
+            mockMessage("!ping", replies = calls, isBot = true).process()
             calls shouldBe mutableListOf()
         }
     }
@@ -113,7 +113,7 @@ class CommandTest : StringSpec({
                 val mockMessage = mockMessage(messageContent)
                 every { mockMessage.deleteMessage() } returns mockk()
                 every { mockMessage.messageAuthor.asUser() } returns Optional.of(messageableAuthor(it))
-                Kagebot.processMessage(mockMessage)
+                mockMessage.process()
             }
         }
     }
@@ -131,7 +131,7 @@ class CommandTest : StringSpec({
         ) {
             val replies = mutableListOf<String>()
             val mockMessage = mockMessage("!restricted", replies = replies)
-            Kagebot.processMessage(mockMessage)
+            mockMessage.process()
             replies shouldBe mutableListOf(Config.localization.permissionDenied)
             withLocalization(
                 """
@@ -141,7 +141,7 @@ class CommandTest : StringSpec({
             redirectedMessage = "asdja"
             """.trimIndent()
             ) {
-                Kagebot.processMessage(mockMessage)
+                mockMessage.process()
                 // still one string in there from earlier, nothing new was added
                 replies.size shouldBe 1
             }
@@ -162,7 +162,7 @@ class CommandTest : StringSpec({
             val calls = mutableListOf<String>()
             val mockMessage = mockMessage("!restricted", replies = calls)
             every { mockMessage.messageAuthor.isBotOwner } returns true
-            Kagebot.processMessage(mockMessage)
+            mockMessage.process()
             calls shouldBe mutableListOf("access granted")
         }
     }
@@ -185,7 +185,7 @@ class CommandTest : StringSpec({
                     Config.server.getRolesByNameIgnoreCase("testrole")[0]
                 )
             })
-            Kagebot.processMessage(mockMessage)
+            mockMessage.process()
             calls shouldBe mutableListOf("access granted")
         }
     }
@@ -208,14 +208,14 @@ class CommandTest : StringSpec({
                     Config.server.getRolesByNameIgnoreCase("testrole")[0]
                 )
             }
-            Kagebot.processMessage(mockMessage)
+            mockMessage.process()
 
             // without the role
             every { mockMessage.messageAuthor.asUser() } returns mockk {
                 every { isPresent } returns true
                 every { get().getRoles(any()) } returns emptyList()
             }
-            Kagebot.processMessage(mockMessage)
+            mockMessage.process()
             calls shouldBe mutableListOf(Config.localization.permissionDenied, "access granted")
         }
     }
@@ -230,7 +230,7 @@ class CommandTest : StringSpec({
             """.trimIndent()
         ) {
             val calls = mutableListOf<String>()
-            Kagebot.processMessage(mockMessage("!dm", replies = calls))
+            mockMessage("!dm", replies = calls).process()
             calls shouldBe listOf(Config.localization.permissionDenied)
         }
     }
@@ -252,7 +252,7 @@ class CommandTest : StringSpec({
             """.trimIndent()
         ) {
             val message = "this is a message"
-            Kagebot.processMessage(mockMessage("!redirect $message"))
+            mockMessage("!redirect $message").process()
             calls.size shouldBe 1
             embedToString(calls[0]) shouldContain "\"$message\""
         }
@@ -271,7 +271,7 @@ class CommandTest : StringSpec({
                 every { addRole(capture(roles), "Requested via command.") } returns mockk()
             }
             every { Config.server.getMemberById(1) } returns Optional.of(user)
-            Kagebot.processMessage(mockMessage("!assign"))
+            mockMessage("!assign").process()
             roles shouldBe mutableListOf(Util.findRole("testrole"))
         }
     }

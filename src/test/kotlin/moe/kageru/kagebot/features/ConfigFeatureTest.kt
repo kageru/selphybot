@@ -2,7 +2,7 @@ package moe.kageru.kagebot.features
 
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.ShouldSpec
-import moe.kageru.kagebot.Kagebot
+import moe.kageru.kagebot.Kagebot.process
 import moe.kageru.kagebot.TestUtil
 import moe.kageru.kagebot.TestUtil.mockMessage
 import moe.kageru.kagebot.TestUtil.withCommands
@@ -17,7 +17,7 @@ class ConfigFeatureTest : ShouldSpec({
         feature = "getConfig"
         """.trimIndent()) {
             val calls = mutableListOf<File>()
-            Kagebot.processMessage(mockMessage("!getConfig", files = calls))
+            mockMessage("!getConfig", files = calls).process()
             calls.size shouldBe 1
         }
     }
