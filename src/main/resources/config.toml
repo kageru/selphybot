@@ -25,6 +25,9 @@ content = [
     "5th", "asdasd"
 ]
 
+[feature.timeout]
+role = "timeout"
+
 [[command]]
 trigger = "!ping"
 response = "pong"
@@ -114,3 +117,7 @@ feature = "getConfig"
 [[command]]
 trigger = "!setConfig"
 feature = "setConfig"
+
+[[command]]
+trigger = "!prison"
+feature = "timeout"

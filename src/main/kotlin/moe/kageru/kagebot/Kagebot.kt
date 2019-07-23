@@ -4,6 +4,7 @@ import moe.kageru.kagebot.Util.checked
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
 import moe.kageru.kagebot.config.RawConfig
+import moe.kageru.kagebot.cron.CronD
 import org.javacord.api.DiscordApiBuilder
 import org.javacord.api.event.message.MessageCreateEvent
 import java.io.File
@@ -48,5 +49,6 @@ object Kagebot {
         Log.info("kagebot Mk II running")
         Globals.api.addMessageCreateListener { checked { it.process() } }
         Config.features.eventFeatures().forEach { it.register(Globals.api) }
+        CronD.startAll()
     }
 }

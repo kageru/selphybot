@@ -22,7 +22,7 @@ object Util {
      * Mimics the behavior of [Optional.ifPresent], but returns null if the optional is empty,
      * allowing easier fallback behavior via Kotlin’s ?: operator.
      */
-    private inline fun <T, R> Optional<T>.ifNotEmpty(op: (T) -> R): R? {
+    internal inline fun <T, R> Optional<T>.ifNotEmpty(op: (T) -> R): R? {
         if (this.isPresent) {
             return op(this.get())
         }
@@ -48,6 +48,22 @@ object Util {
                     0 -> throw IllegalArgumentException("Role $idOrName not found.")
                     1 -> it[0]
                     else -> throw IllegalArgumentException("More than one role found with name $idOrName. Please specify the role ID instead")
+                }
+            }
+        }
+    }
+
+    private fun <T> Optional<T>.toNullable(): T? {
+        return ifNotEmpty { it }
+    }
+
+    fun findUser(idOrName: String): User? {
+        return when {
+            idOrName.isEntityId() -> server.getMemberById(idOrName).toNullable()
+            else -> {
+                when {
+                    idOrName.contains('#') -> server.getMemberByDiscriminatedNameIgnoreCase(idOrName).toNullable()
+                    else -> server.getMembersByName(idOrName).firstOrNull()
                 }
             }
         }
@@ -94,6 +110,7 @@ object Util {
             op()
         } catch (e: Exception) {
             Log.warn("An uncaught exception occurred.\n$e")
+            Log.warn(e.stackTrace.joinToString("\n"))
             MessageUtil.sendEmbed(
                 Globals.api.owner.get(),
                 EmbedBuilder()
@@ -102,7 +119,7 @@ object Util {
                     .addField(
                         "$e", """```
                        ${e.stackTrace.joinToString("\n")}
-                    ```""".trimIndent()
+                    ```""".trimIndent().run { applyIf(length > 1800) { substring(1..1800) } }
                     )
             )
         }

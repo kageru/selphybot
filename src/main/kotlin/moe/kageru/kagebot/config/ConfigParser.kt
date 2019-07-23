@@ -31,7 +31,7 @@ object ConfigParser {
 
     fun reloadFeatures(rawConfig: RawConfig) {
         Config.features = rawConfig.features?.let(::Features)
-            ?: Features(RawFeatures(null))
+            ?: Features(RawFeatures(null, null))
     }
 }
 

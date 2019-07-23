@@ -5,13 +5,17 @@ import org.mapdb.Serializer
 
 object Dao {
     private val db = DBMaker.fileDB("kagebot.db").fileMmapEnable().closeOnJvmShutdown().make()
-    private val strings = db.hashMap("main", Serializer.STRING, Serializer.STRING).createOrOpen()
+    private val prisoners = db.hashMap("timeout", Serializer.LONG, Serializer.LONG_ARRAY).createOrOpen()
 
-    fun store(key: String, value: String) {
-        strings[key] = value
+    fun saveTimeout(releaseTime: Long, roles: List<Long>) {
+        prisoners[releaseTime] = roles.toLongArray()
     }
 
-    fun get(key: String): String? {
-        return strings[key]
+    fun getAllTimeouts() = prisoners.keys
+
+    fun deleteTimeout(releaseTime: Long): LongArray {
+        val timeout = prisoners[releaseTime]!!
+        prisoners.remove(releaseTime)
+        return timeout
     }
 }

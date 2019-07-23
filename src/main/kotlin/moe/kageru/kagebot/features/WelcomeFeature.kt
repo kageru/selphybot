@@ -36,16 +36,16 @@ class WelcomeFeature(rawWelcome: RawWelcomeFeature) : MessageFeature, EventFeatu
         }
     }
 
-    fun hasFallback(): Boolean = fallbackChannel != null && fallbackMessage != null
+    private fun hasFallback(): Boolean = fallbackChannel != null && fallbackMessage != null
 
     val embed: EmbedBuilder? by lazy {
         rawWelcome.content?.let(MessageUtil::listToEmbed)
     }
-    val fallbackChannel: TextChannel? = rawWelcome.fallbackChannel?.let {
+    private val fallbackChannel: TextChannel? = rawWelcome.fallbackChannel?.let {
         if (rawWelcome.fallbackMessage == null) {
             throw IllegalArgumentException("[feature.welcome.fallbackMessage] must not be null if fallbackChannel is defined")
         }
         Util.findChannel(it)
     }
-    val fallbackMessage: String? = rawWelcome.fallbackMessage
+    private val fallbackMessage: String? = rawWelcome.fallbackMessage
 }

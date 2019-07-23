@@ -7,23 +7,26 @@ class Features(
     debug: DebugFeature,
     help: HelpFeature,
     getConfig: GetConfigFeature,
-    setConfig: SetConfigFeature
+    setConfig: SetConfigFeature,
+    val timeout: TimeoutFeature?
 ) {
     constructor(rawFeatures: RawFeatures) : this(
         rawFeatures.welcome?.let(::WelcomeFeature),
         DebugFeature(),
         HelpFeature(),
         GetConfigFeature(),
-        SetConfigFeature()
+        SetConfigFeature(),
+        rawFeatures.timeout?.let(::TimeoutFeature)
     )
 
-    private val all = listOf(welcome, debug, help, getConfig, setConfig)
+    private val all = listOf(welcome, debug, help, getConfig, setConfig, timeout)
     private val featureMap = mapOf(
         "help" to help,
         "debug" to debug,
         "welcome" to welcome,
         "getConfig" to getConfig,
-        "setConfig" to setConfig
+        "setConfig" to setConfig,
+        "timeout" to timeout
     )
 
     fun findByString(feature: String) = featureMap[feature]

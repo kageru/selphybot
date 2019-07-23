@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.40"
+    kotlin("jvm") version "1.3.41"
     id("com.github.johnrengelman.shadow") version "5.1.0" apply true
     application
 }
@@ -14,9 +14,9 @@ application {
 tasks.withType<Jar> {
     manifest {
         attributes(
-                mapOf(
-                        "Main-Class" to botMainClass
-                )
+            mapOf(
+                "Main-Class" to botMainClass
+            )
         )
     }
 }
@@ -38,6 +38,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.javacord:javacord:3.0.4")
     implementation("org.mapdb:mapdb:3.0.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-RC")
 
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")
     testImplementation("io.mockk:mockk:1.9.3")
