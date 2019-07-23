@@ -1,5 +1,6 @@
 package moe.kageru.kagebot.features
 
+import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.Util.checked
@@ -19,6 +20,7 @@ class WelcomeFeature(rawWelcome: RawWelcomeFeature) : MessageFeature, EventFeatu
     }
 
     fun welcomeUser(event: ServerMemberJoinEvent) {
+        Log.info("User ${event.user.discriminatedName} joined")
         val message = event.user.sendMessage(embed)
         // If the user disabled direct messages, try the fallback (if defined)
         if (message.failed() && hasFallback()) {

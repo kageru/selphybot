@@ -16,6 +16,7 @@ class WelcomeFeatureTest : StringSpec({
         Config.features.welcome!!.welcomeUser(
             mockk {
                 every { user } returns mockk {
+                    every { discriminatedName } returns "testuser#1234"
                     every { sendMessage(capture(sentMessages)) } returns mockk {
                         every { join() } returns mockk()
                         every { isCompletedExceptionally } returns false
@@ -31,6 +32,7 @@ class WelcomeFeatureTest : StringSpec({
         Config.features.welcome!!.welcomeUser(
             mockk {
                 every { user } returns mockk {
+                    every { discriminatedName } returns "testuser#1234"
                     every { id } returns 123
                     every { sendMessage(any<EmbedBuilder>()) } returns mockk {
                         every { join() } returns mockk()
