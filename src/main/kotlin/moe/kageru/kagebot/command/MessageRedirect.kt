@@ -22,6 +22,7 @@ internal class MessageRedirect(rawRedirect: RawRedirect) {
                     content.removePrefix(command.trigger).trim()
                 }
             addField(Config.localization.redirectedMessage, redirectedText)
+            Log.info("Redirected message: $redirectedText")
         }
         // No inlined if/else because the types are different.
         // Passing the full message author will also include the avatar in the embed.

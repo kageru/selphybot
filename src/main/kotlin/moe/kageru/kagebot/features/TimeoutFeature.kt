@@ -20,10 +20,12 @@ class TimeoutFeature(raw: RawTimeoutFeature) : MessageFeature {
     override fun handle(message: MessageCreateEvent) {
         val (_, target, time) = message.readableMessageContent.split(' ', limit = 3)
         findUser(target)?.let { user ->
-            val oldRoles = user.getRoles(Config.server).map { role ->
-                user.removeRole(role)
-                role.id
-            }
+            val oldRoles = user.getRoles(Config.server)
+                .filter { !it.isManaged }
+                .map { role ->
+                    user.removeRole(role)
+                    role.id
+                }
             user.addRole(timeoutRole)
             val releaseTime = Instant.now().plus(Duration.ofMinutes(time.toLong())).epochSecond
             Dao.saveTimeout(releaseTime, listOf(user.id) + oldRoles)
