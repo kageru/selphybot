@@ -35,6 +35,7 @@ internal class MessageRedirect(rawRedirect: RawRedirect) {
         }
 
         if (MessageUtil.sendEmbed(target, embed).failed()) {
+            target.sendMessage("Error: could not redirect message.")
             Log.warn("Could not redirect message to channel $target")
         }
     }

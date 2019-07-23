@@ -11,6 +11,8 @@ object Dao {
         prisoners[releaseTime] = roles.toLongArray()
     }
 
+    fun close() = db.close()
+
     fun getAllTimeouts() = prisoners.keys
 
     fun deleteTimeout(releaseTime: Long): LongArray {

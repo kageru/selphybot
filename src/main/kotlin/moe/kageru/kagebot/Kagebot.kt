@@ -5,6 +5,7 @@ import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
 import moe.kageru.kagebot.config.RawConfig
 import moe.kageru.kagebot.cron.CronD
+import moe.kageru.kagebot.persistence.Dao
 import org.javacord.api.DiscordApiBuilder
 import org.javacord.api.event.message.MessageCreateEvent
 import java.io.File
@@ -44,6 +45,7 @@ object Kagebot {
         }
         Runtime.getRuntime().addShutdownHook(Thread {
             Log.info("Bot has been interrupted. Shutting down.")
+            Dao.close()
             Globals.api.disconnect()
         })
         Log.info("kagebot Mk II running")
