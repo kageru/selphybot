@@ -18,7 +18,12 @@ class TimeoutFeature(raw: RawTimeoutFeature) : MessageFeature {
         ?: throw IllegalArgumentException("No timeout role defined")
 
     override fun handle(message: MessageCreateEvent) {
-        val (_, target, time) = message.readableMessageContent.split(' ', limit = 3)
+        val (_, target, time) = message.readableMessageContent.split(' ', limit = 3).apply {
+            if (size != 3) {
+                message.channel.sendMessage("Error: expected “<command> <user> <time>”. If the name contains spaces, please use the user ID instead.")
+                return
+            }
+        }
         findUser(target)?.let { user ->
             val oldRoles = user.getRoles(Config.server)
                 .filter { !it.isManaged }
@@ -29,6 +34,7 @@ class TimeoutFeature(raw: RawTimeoutFeature) : MessageFeature {
             user.addRole(timeoutRole)
             val releaseTime = Instant.now().plus(Duration.ofMinutes(time.toLong())).epochSecond
             Dao.saveTimeout(releaseTime, listOf(user.id) + oldRoles)
+            Log.info("Removed roles ${oldRoles.joinToString()} from user ${user.discriminatedName}")
         } ?: message.channel.sendMessage("Could not find user $target. Consider using the user ID.")
     }
 
@@ -46,6 +52,7 @@ class TimeoutFeature(raw: RawTimeoutFeature) : MessageFeature {
                         user.addRole(findRole("$roleId"))
                     }
                     user.removeRole(timeoutRole)
+                    Log.info("Lifted timeout from user ${user.discriminatedName}. Stored roles ${roleIds.joinToString()}")
                 } ?: Log.warn("Tried to free user $userId, but couldn’t find them on the server anymore")
             }
     }
