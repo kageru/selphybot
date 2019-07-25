@@ -8,6 +8,8 @@ permissionDenied = "You do not have permission to use this command."
 # results in <name> says <message>
 redirectedMessage = "says"
 messageDeleted = "Your message was deleted because it contained a banned word or phrase."
+# @@ will be replaced with the time
+timeout = "You have been timed out for @@ minutes"
 
 # If this is enable, every new user will receive a welcome message.
 # If the user has disabled their DMs, the fallbackMessage will be sent in the fallbackChannel instead.

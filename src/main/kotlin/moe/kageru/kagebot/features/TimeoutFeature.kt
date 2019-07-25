@@ -1,6 +1,7 @@
 package moe.kageru.kagebot.features
 
 import moe.kageru.kagebot.Log
+import moe.kageru.kagebot.MessageUtil.sendEmbed
 import moe.kageru.kagebot.Util.findRole
 import moe.kageru.kagebot.Util.findUser
 import moe.kageru.kagebot.Util.ifNotEmpty
@@ -39,6 +40,9 @@ class TimeoutFeature(raw: RawTimeoutFeature) : MessageFeature {
             user.addRole(timeoutRole)
             val releaseTime = Instant.now().plus(Duration.ofMinutes(time)).epochSecond
             Dao.saveTimeout(releaseTime, listOf(user.id) + oldRoles)
+            user.sendEmbed {
+                addField("Timeout", Config.localization.timeout.replace("@@", time.toString()))
+            }
             Log.info("Removed roles ${oldRoles.joinToString()} from user ${user.discriminatedName}")
         } ?: message.channel.sendMessage("Could not find user $target. Consider using the user ID.")
     }

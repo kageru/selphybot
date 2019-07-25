@@ -34,4 +34,9 @@ class RawConfig(
 }
 
 class RawSystemConfig(val serverId: String?, val color: String?)
-class RawLocalization(val permissionDenied: String?, val redirectedMessage: String?, val messageDeleted: String?)
+class RawLocalization(
+    val permissionDenied: String?,
+    val redirectedMessage: String?,
+    val messageDeleted: String?,
+    val timeout: String?
+)

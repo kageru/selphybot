@@ -139,6 +139,7 @@ class CommandTest : StringSpec({
             permissionDenied = ""
             messageDeleted = "whatever"
             redirectedMessage = "asdja"
+            timeout = "asdasd"
             """.trimIndent()
             ) {
                 mockMessage.process()

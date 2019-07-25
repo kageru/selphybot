@@ -15,7 +15,7 @@ class ConfigTest : ShouldSpec({
         Config.systemConfig shouldNotBe null
         Config.localization shouldNotBe null
         Config.features shouldNotBe null
-        Config.commands.size shouldBe 2
+        Config.commands.size shouldBe 3
     }
 
     "should parse test config via command" {
@@ -25,6 +25,7 @@ class ConfigTest : ShouldSpec({
         permissionDenied = "$denied"
         redirectedMessage = "says"
         messageDeleted = "dongered"
+        timeout = "timeout"
         
         [[command]]
         response = "this command is broken"

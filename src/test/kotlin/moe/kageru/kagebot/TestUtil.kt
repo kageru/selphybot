@@ -52,7 +52,7 @@ object TestUtil {
             every { messageAuthor.isBotUser } returns isBot
             every { messageAuthor.isYourself } returns isBot
             every { messageAuthor.isBotOwner } returns false
-            every { messageAuthor.asUser() } returns Optional.of(messageableAuthor())
+            every { messageAuthor.asUser() } returns Optional.of(messageableAuthor(replyEmbeds))
         }
     }
 

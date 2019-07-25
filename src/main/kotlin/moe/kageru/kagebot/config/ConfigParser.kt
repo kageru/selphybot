@@ -12,7 +12,8 @@ object ConfigParser {
     fun initialLoad(rawConfig: RawConfig) {
         val systemConfig = rawConfig.system?.let(::SystemConfig)
             ?: throw IllegalArgumentException("No [system] block in config.")
-        Config.server = Globals.api.getServerById(systemConfig.serverId).orElseThrow { IllegalArgumentException("Invalid server configured.") }
+        Config.server = Globals.api.getServerById(systemConfig.serverId)
+            .orElseThrow { IllegalArgumentException("Invalid server configured.") }
         Config.systemConfig = systemConfig
         reloadLocalization(rawConfig)
         reloadFeatures(rawConfig)
@@ -42,13 +43,21 @@ class SystemConfig(val serverId: String, val color: Color) {
     )
 }
 
-class Localization(val permissionDenied: String, val redirectedMessage: String, val messageDeleted: String) {
+class Localization(
+    val permissionDenied: String,
+    val redirectedMessage: String,
+    val messageDeleted: String,
+    val timeout: String
+) {
+
     constructor(rawLocalization: RawLocalization) : this(
         permissionDenied = rawLocalization.permissionDenied
             ?: throw IllegalArgumentException("No [localization.permissionDenied] defined"),
         redirectedMessage = rawLocalization.redirectedMessage
             ?: throw IllegalArgumentException("No [localization.redirectMessage] defined"),
         messageDeleted = rawLocalization.messageDeleted
-            ?: throw IllegalArgumentException("No [localization.messageDeleted] defined")
+            ?: throw IllegalArgumentException("No [localization.messageDeleted] defined"),
+        timeout = rawLocalization.timeout
+            ?: throw IllegalArgumentException("No [localization.timeout] defined")
     )
 }
