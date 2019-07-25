@@ -9,7 +9,6 @@ import moe.kageru.kagebot.config.RawTimeoutFeature
 import moe.kageru.kagebot.persistence.Dao
 import org.javacord.api.entity.permission.Role
 import org.javacord.api.event.message.MessageCreateEvent
-import java.lang.IllegalArgumentException
 import java.time.Duration
 import java.time.Instant
 
@@ -18,11 +17,17 @@ class TimeoutFeature(raw: RawTimeoutFeature) : MessageFeature {
         ?: throw IllegalArgumentException("No timeout role defined")
 
     override fun handle(message: MessageCreateEvent) {
-        val (_, target, time) = message.readableMessageContent.split(' ', limit = 3).apply {
-            if (size != 3) {
+        val (target, time) = message.readableMessageContent.split(' ', limit = 3).let {
+            if (it.size != 3) {
                 message.channel.sendMessage("Error: expected “<command> <user> <time>”. If the name contains spaces, please use the user ID instead.")
                 return
             }
+            val time = it[2].toLongOrNull()
+            if (time == null) {
+                message.channel.sendMessage("Error: malformed time")
+                return
+            }
+            Pair(it[1], time)
         }
         findUser(target)?.let { user ->
             val oldRoles = user.getRoles(Config.server)
@@ -32,7 +37,7 @@ class TimeoutFeature(raw: RawTimeoutFeature) : MessageFeature {
                     role.id
                 }
             user.addRole(timeoutRole)
-            val releaseTime = Instant.now().plus(Duration.ofMinutes(time.toLong())).epochSecond
+            val releaseTime = Instant.now().plus(Duration.ofMinutes(time)).epochSecond
             Dao.saveTimeout(releaseTime, listOf(user.id) + oldRoles)
             Log.info("Removed roles ${oldRoles.joinToString()} from user ${user.discriminatedName}")
         } ?: message.channel.sendMessage("Could not find user $target. Consider using the user ID.")

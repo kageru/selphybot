@@ -14,6 +14,7 @@ import moe.kageru.kagebot.config.RawConfig
 import org.javacord.api.DiscordApi
 import org.javacord.api.entity.channel.ServerTextChannel
 import org.javacord.api.entity.message.embed.EmbedBuilder
+import org.javacord.api.entity.permission.Role
 import org.javacord.api.entity.user.User
 import org.javacord.api.event.message.MessageCreateEvent
 import org.javacord.core.entity.message.embed.EmbedBuilderDelegateImpl
@@ -21,6 +22,14 @@ import java.io.File
 import java.util.*
 
 object TestUtil {
+    val TIMEOUT_ROLE = mockk<Role> {
+        every { id } returns 123
+    }
+    val TEST_ROLE = mockk<Role> {
+        every { id } returns 1
+        every { isManaged } returns false
+    }
+
     fun mockMessage(
         content: String,
         replies: MutableList<String> = mutableListOf(),
@@ -58,7 +67,7 @@ object TestUtil {
         sentEmbeds: MutableList<EmbedBuilder> = mutableListOf(),
         sentMessages: MutableList<String> = mutableListOf()
     ) {
-        val channel = mockk<Optional<ServerTextChannel>> {
+        val channel = mockk<Optional<ServerTextChannel>>(relaxed = true) {
             every { isPresent } returns true
             every { get() } returns mockk {
                 every { sendMessage(capture(sentEmbeds)) } returns mockk {
@@ -73,8 +82,11 @@ object TestUtil {
                 every { icon.ifPresent(any()) } just Runs
                 every { getTextChannelById(any<String>()) } returns channel
                 every { getTextChannelsByName(any()) } returns listOf(channel.get())
-                every { getRolesByNameIgnoreCase("testrole") } returns listOf(mockk {
-                    every { id } returns 1
+                every { getRolesByNameIgnoreCase("testrole") } returns listOf(TEST_ROLE)
+                every { getRolesByNameIgnoreCase("timeout") } returns listOf(TIMEOUT_ROLE)
+                every { getMembersByName(any()) } returns listOf(mockk(relaxed = true) {
+                    every { id } returns 123
+                    every { getRoles(any()) } returns listOf(TEST_ROLE)
                 })
             })
         }

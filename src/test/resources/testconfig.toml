@@ -17,6 +17,9 @@ content = [
     "Second paragraph heading", "Second paragraph content"
 ]
 
+[feature.timeout]
+role = "timeout"
+
 [[command]]
 trigger = "!debug"
 feature = "debug"
@@ -24,3 +27,7 @@ feature = "debug"
 [[command]]
 trigger = "!welcome"
 feature = "welcome"
+
+[[command]]
+trigger = "!timeout"
+feature = "timeout"
