@@ -18,19 +18,19 @@ class TimeoutFeature(raw: RawTimeoutFeature) : MessageFeature {
         ?: throw IllegalArgumentException("No timeout role defined")
 
     override fun handle(message: MessageCreateEvent) {
-        val (target, time) = message.readableMessageContent.split(' ', limit = 3).let {
-            if (it.size != 3) {
-                message.channel.sendMessage("Error: expected “<command> <user> <time>”. If the name contains spaces, please use the user ID instead.")
+        val timeout = message.readableMessageContent.split(' ', limit = 4).let { args ->
+            if (args.size < 3) {
+                message.channel.sendMessage("Error: expected “<command> <user> <time> [<reason>]”. If the name contains spaces, please use the user ID instead.")
                 return
             }
-            val time = it[2].toLongOrNull()
+            val time = args[2].toLongOrNull()
             if (time == null) {
                 message.channel.sendMessage("Error: malformed time")
                 return
             }
-            Pair(it[1], time)
+            ParsedTimeout(args[1], time, args.getOrNull(3))
         }
-        findUser(target)?.let { user ->
+        findUser(timeout.target)?.let { user ->
             val oldRoles = user.getRoles(Config.server)
                 .filter { !it.isManaged }
                 .map { role ->
@@ -38,13 +38,16 @@ class TimeoutFeature(raw: RawTimeoutFeature) : MessageFeature {
                     role.id
                 }
             user.addRole(timeoutRole)
-            val releaseTime = Instant.now().plus(Duration.ofMinutes(time)).epochSecond
+            val releaseTime = Instant.now().plus(Duration.ofMinutes(timeout.duration)).epochSecond
             Dao.saveTimeout(releaseTime, listOf(user.id) + oldRoles)
             user.sendEmbed {
-                addField("Timeout", Config.localization.timeout.replace("@@", time.toString()))
+                addField("Timeout", Config.localization.timeout.replace("@@", timeout.duration.toString()))
+                timeout.reason?.let {
+                    addField("Reason", it)
+                }
             }
             Log.info("Removed roles ${oldRoles.joinToString()} from user ${user.discriminatedName}")
-        } ?: message.channel.sendMessage("Could not find user $target. Consider using the user ID.")
+        } ?: message.channel.sendMessage("Could not find user ${timeout.target}. Consider using the user ID.")
     }
 
     fun checkAndRelease() {
@@ -78,3 +81,5 @@ class UserInTimeout(private val id: Long, private val roles: List<Long>) {
         }
     }
 }
+
+class ParsedTimeout(val target: String, val duration: Long, val reason: String?)

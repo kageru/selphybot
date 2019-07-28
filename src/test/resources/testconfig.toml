@@ -6,7 +6,7 @@ color = "#1793d0"
 permissionDenied = "no permissions"
 redirectedMessage = "says"
 messageDeleted = "message dongered"
-timeout = "timeout"
+timeout = "timeout @@ minutes"
 
 [feature.welcome]
 fallbackChannel = "123"

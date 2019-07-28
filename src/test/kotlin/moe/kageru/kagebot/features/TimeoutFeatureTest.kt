@@ -7,6 +7,7 @@ import moe.kageru.kagebot.Kagebot.process
 import moe.kageru.kagebot.TestUtil
 import moe.kageru.kagebot.TestUtil.TEST_ROLE
 import moe.kageru.kagebot.persistence.Dao
+import org.javacord.api.entity.message.embed.EmbedBuilder
 
 class TimeoutFeatureTest : StringSpec({
     TestUtil.prepareTestEnvironment()
@@ -17,6 +18,16 @@ class TimeoutFeatureTest : StringSpec({
             val user = Dao.deleteTimeout(it.first())
             user shouldBe arrayOf(123, TEST_ROLE.id)
         }
+        clearTimeouts()
+    }
+    "should announce timeout via DM" {
+        val dms = mutableListOf<EmbedBuilder>()
+        TestUtil.prepareTestEnvironment(dmEmbeds = dms)
+        val time = "1235436"
+        TestUtil.mockMessage("!timeout kageru $time").process()
+        dms.size shouldBe 1
+        TestUtil.embedToString(dms[0]) shouldContain time
+        clearTimeouts()
     }
     "should return error for invalid input" {
         val replies = mutableListOf<String>()
@@ -30,4 +41,21 @@ class TimeoutFeatureTest : StringSpec({
         replies.size shouldBe 1
         replies[0] shouldContain "Error"
     }
-})
+    "should print optional reason" {
+        val dms = mutableListOf<EmbedBuilder>()
+        TestUtil.prepareTestEnvironment(dmEmbeds = dms)
+        val reason = "because I don’t like you"
+        TestUtil.mockMessage("!timeout kageru 1 $reason").process()
+        dms.size shouldBe 1
+        TestUtil.embedToString(dms[0]) shouldContain reason
+        clearTimeouts()
+    }
+}) {
+    companion object {
+        private fun clearTimeouts() {
+            Dao.getAllTimeouts().forEach { to ->
+                Dao.deleteTimeout(to)
+            }
+        }
+    }
+}

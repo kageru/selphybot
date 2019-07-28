@@ -65,7 +65,8 @@ object TestUtil {
 
     fun prepareTestEnvironment(
         sentEmbeds: MutableList<EmbedBuilder> = mutableListOf(),
-        sentMessages: MutableList<String> = mutableListOf()
+        sentMessages: MutableList<String> = mutableListOf(),
+        dmEmbeds: MutableList<EmbedBuilder> = mutableListOf()
     ) {
         val channel = mockk<Optional<ServerTextChannel>>(relaxed = true) {
             every { isPresent } returns true
@@ -87,6 +88,7 @@ object TestUtil {
                 every { getMembersByName(any()) } returns listOf(mockk(relaxed = true) {
                     every { id } returns 123
                     every { getRoles(any()) } returns listOf(TEST_ROLE)
+                    every { sendMessage(capture(dmEmbeds)) } returns mockk()
                 })
             })
         }
