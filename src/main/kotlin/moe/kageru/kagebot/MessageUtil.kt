@@ -1,7 +1,6 @@
 package moe.kageru.kagebot
 
 import moe.kageru.kagebot.config.Config
-import moe.kageru.kagebot.Util.toPairs
 import org.javacord.api.entity.message.Message
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.entity.message.Messageable
@@ -51,7 +50,7 @@ object MessageUtil {
             throw IllegalStateException("Embed must have even number of content strings (title/content pairs)")
         }
         return withEmbed {
-            contents.toPairs().forEach { (heading, content) ->
+            contents.zipWithNext().forEach { (heading, content) ->
                 addField(heading, content)
             }
         }
