@@ -6,6 +6,7 @@ import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
 import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.Kagebot.process
 import moe.kageru.kagebot.TestUtil
 import moe.kageru.kagebot.TestUtil.embedToString
@@ -23,7 +24,20 @@ import java.util.*
 
 class CommandTest : StringSpec({
     prepareTestEnvironment()
-    "should match prefix command" {
+    "should increment command counter" {
+        withCommands(
+            """
+            [[command]]
+            trigger = "!ping"
+            response = "pong"
+            """.trimIndent()
+        ) {
+            val before = Globals.commandCounter.get()
+            testMessageSuccess("!ping", "pong")
+            Globals.commandCounter.get() shouldBe (before + 1)
+        }
+    }
+     "should match prefix command" {
         withCommands(
             """
             [[command]]

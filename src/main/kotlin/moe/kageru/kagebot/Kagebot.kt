@@ -22,8 +22,12 @@ object Kagebot {
             return
         }
         for (command in Config.commands) {
-            // execute returns true if the command was actually executed (not denied due to permissions)
-            command.matches(readableMessageContent) && command.execute(this) && break
+            if (command.matches(readableMessageContent)) {
+                // only break if we have the permissions to execute this command, else keep searching
+                if (command.execute(this)) {
+                    break
+                }
+            }
         }
     }
 
@@ -47,6 +51,7 @@ object Kagebot {
         }
         Runtime.getRuntime().addShutdownHook(Thread {
             Log.info("Bot has been interrupted. Shutting down.")
+            Dao.setCommandCounter(Globals.commandCounter.get())
             Dao.close()
             api.disconnect()
         })
