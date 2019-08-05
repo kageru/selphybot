@@ -40,9 +40,15 @@ object TestUtil {
         return mockk {
             every { messageContent } returns content
             every { readableMessageContent } returns content
-            every { channel.sendMessage(capture(replies)) } returns mockk()
-            every { channel.sendMessage(capture(replyEmbeds)) } returns mockk()
-            every { channel.sendMessage(capture(files)) } returns mockk()
+            every { channel.sendMessage(capture(replies)) } returns mockk(relaxed = true) {
+                every { isCompletedExceptionally } returns false
+            }
+            every { channel.sendMessage(capture(replyEmbeds)) } returns mockk(relaxed = true) {
+                every { isCompletedExceptionally } returns false
+            }
+            every { channel.sendMessage(capture(files)) } returns mockk(relaxed = true) {
+                every { isCompletedExceptionally } returns false
+            }
             every { message.canYouDelete() } returns true
             every { isPrivateMessage } returns false
             // We can’t use a nested mock here because other fields of messageAuthor might
@@ -59,7 +65,7 @@ object TestUtil {
     fun messageableAuthor(messages: MutableList<EmbedBuilder> = mutableListOf()): User {
         return mockk {
             every { getRoles(any()) } returns emptyList()
-            every { sendMessage(capture(messages)) } returns mockk()
+            every { sendMessage(capture(messages)) } returns mockk(relaxed = true)
         }
     }
 
@@ -71,11 +77,13 @@ object TestUtil {
         val channel = mockk<Optional<ServerTextChannel>>(relaxed = true) {
             every { isPresent } returns true
             every { get() } returns mockk {
-                every { sendMessage(capture(sentEmbeds)) } returns mockk {
-                    every { join() } returns mockk()
+                every { sendMessage(capture(sentEmbeds)) } returns mockk(relaxed = true) {
+                    every { join() } returns mockk {
+                        every { isCompletedExceptionally } returns false
+                    }
                     every { isCompletedExceptionally } returns false
                 }
-                every { sendMessage(capture(sentMessages)) } returns mockk()
+                every { sendMessage(capture(sentMessages)) } returns mockk(relaxed = true)
             }
         }
         val api = mockk<DiscordApi> {
@@ -88,7 +96,9 @@ object TestUtil {
                 every { getMembersByName(any()) } returns listOf(mockk(relaxed = true) {
                     every { id } returns 123
                     every { getRoles(any()) } returns listOf(TEST_ROLE)
-                    every { sendMessage(capture(dmEmbeds)) } returns mockk()
+                    every { sendMessage(capture(dmEmbeds)) } returns mockk(relaxed = true) {
+                        every { isCompletedExceptionally } returns false
+                    }
                 })
             })
         }

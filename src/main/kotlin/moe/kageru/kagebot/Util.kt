@@ -73,6 +73,11 @@ object Util {
         try {
             join()
         } catch (e: CompletionException) {
+            Log.warn("""Error during CompletableFuture:
+                |$e
+                |${e.localizedMessage}
+                |${e.stackTrace.joinToString("\n\t")}
+            """.trimMargin())
             // we don’t care about this error, but I don’t want to spam stdout
         }
         return isCompletedExceptionally

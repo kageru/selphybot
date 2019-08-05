@@ -1,5 +1,6 @@
 package moe.kageru.kagebot
 
+import moe.kageru.kagebot.Util.failed
 import moe.kageru.kagebot.config.Config
 import org.javacord.api.entity.message.Message
 import org.javacord.api.entity.message.MessageAuthor
@@ -30,7 +31,10 @@ object MessageUtil {
             setTimestampToNow()
             op()
         }
-        sendMessage(embed)
+        val sent = sendMessage(embed)
+        if (sent.failed()) {
+            // for logging
+        }
     }
 
     /**

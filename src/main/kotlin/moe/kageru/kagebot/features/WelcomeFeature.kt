@@ -32,8 +32,10 @@ class WelcomeFeature(rawWelcome: RawWelcomeFeature) : MessageFeature, EventFeatu
 
     override fun handle(message: MessageCreateEvent) {
         embed?.let {
-            MessageUtil.sendEmbed(message.channel, it)
-        }
+            val sent = MessageUtil.sendEmbed(message.channel, it)
+            // invoke this for logging
+            sent.failed()
+        } ?: Log.info("Welcome command was triggered, but no welcome embed defined.")
     }
 
     private fun hasFallback(): Boolean = fallbackChannel != null && fallbackMessage != null

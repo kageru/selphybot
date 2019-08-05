@@ -12,6 +12,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder
 class TimeoutFeatureTest : StringSpec({
     TestUtil.prepareTestEnvironment()
     "should remove and store roles" {
+        clearTimeouts()
         TestUtil.mockMessage("!timeout kageru 99999999").process()
         Dao.getAllTimeouts().let {
             it.size shouldBe 1
