@@ -27,8 +27,9 @@ object Kagebot {
         }
         for (command in Config.commands) {
             if (command.matches(readableMessageContent)) {
-                command.execute(this)
-                break
+                if (command.execute(this)) {
+                    break
+                }
             }
         }
     }

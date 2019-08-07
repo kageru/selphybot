@@ -39,13 +39,13 @@ class Command(cmd: RawCommand) {
 
     fun isAllowed(message: MessageCreateEvent) = permissions?.isAllowed(message) ?: true
 
-    fun execute(message: MessageCreateEvent) {
+    fun execute(message: MessageCreateEvent): Boolean {
         if (permissions?.isAllowed(message) == false) {
             if (Config.localization.permissionDenied.isNotBlank()) {
                 message.channel.sendMessage(Config.localization.permissionDenied)
             }
             Log.info("Denying command ${this.trigger} to user ${message.messageAuthor.discriminatedName} (ID: ${message.messageAuthor.id})")
-            return
+            return false
         }
         Log.info("Executing command ${this.trigger} triggered by user ${message.messageAuthor.discriminatedName} (ID: ${message.messageAuthor.id})")
         Globals.commandCounter.incrementAndGet()
@@ -57,6 +57,7 @@ class Command(cmd: RawCommand) {
             MessageUtil.sendEmbed(message.channel, embed)
         }
         this.feature?.handle(message)
+        return true
     }
 
     fun matches(msg: String) = this.matchType.matches(msg, this)
