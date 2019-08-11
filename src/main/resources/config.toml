@@ -64,15 +64,15 @@ trigger = "!restricted"
 response = "access granted"
 [command.permissions]
 hasOneOf = [
-    "452034011393425409",
-    "446668543816106004"
+    "new role",
+    "another new role"
 ]
 
 [[command]]
 trigger = "!almostUnrestricted"
 response = "access granted"
 [command.permissions]
-hasNoneOf = ["452034011393425409"]
+hasNoneOf = ["new role"]
 
 [[command]]
 trigger = "!private"
@@ -80,7 +80,7 @@ response = "some long response that you don’t want in public channels"
 [command.permissions]
 onlyDM = true
 
-# redirect every message that starts with !redirect to channel 555097559023222825
+# redirect every message that starts with !redirect to a channel called “testchannel”
 [[command]]
 trigger = "!redirect"
 response = "redirected"
@@ -92,7 +92,7 @@ target = "testchannel"
 trigger = "!anonRedirect"
 response = "redirected"
 [command.action.redirect]
-target = "555097559023222825"
+target = "testchannel"
 anonymous = true
 
 [[command]]
