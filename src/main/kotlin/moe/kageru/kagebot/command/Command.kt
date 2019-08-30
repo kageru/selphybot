@@ -69,10 +69,10 @@ class Command(cmd: RawCommand) {
 
 enum class MatchType {
     PREFIX {
-        override fun matches(message: String, command: Command) = message.startsWith(command.trigger)
+        override fun matches(message: String, command: Command) = message.startsWith(command.trigger, ignoreCase = true)
     },
     CONTAINS {
-        override fun matches(message: String, command: Command) = message.contains(command.trigger)
+        override fun matches(message: String, command: Command) = message.contains(command.trigger, ignoreCase = true)
     },
     REGEX {
         override fun matches(message: String, command: Command) = command.regex!!.matches(message)
