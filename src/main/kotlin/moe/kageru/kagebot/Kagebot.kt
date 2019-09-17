@@ -18,19 +18,20 @@ fun main() {
 object Kagebot {
     fun MessageCreateEvent.process() {
         if (messageAuthor.isBotUser) {
-            if (messageAuthor.isYourself) {
-                val loggedMessage =
-                    if (readableMessageContent.isBlank()) "[embed]" else readableMessageContent
-                Log.info("<Self> $loggedMessage")
-            }
+            handleOwn()
             return
         }
         for (command in Config.commands) {
-            if (command.matches(readableMessageContent)) {
-                if (command.execute(this)) {
-                    break
-                }
-            }
+            // execute returns true if the command was actually executed (not denied due to permissions)
+            command.matches(readableMessageContent) && command.execute(this) && break
+        }
+    }
+
+    private fun MessageCreateEvent.handleOwn() {
+        if (messageAuthor.isYourself) {
+            val loggedMessage =
+                if (readableMessageContent.isBlank()) "[embed]" else readableMessageContent
+            Log.info("<Self> $loggedMessage")
         }
     }
 
