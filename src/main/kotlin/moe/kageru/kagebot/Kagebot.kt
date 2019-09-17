@@ -38,6 +38,7 @@ object Kagebot {
 
     fun init() {
         val api = DiscordApiBuilder().setToken(secret).login().join()
+        Globals.api = api
         try {
             ConfigParser.initialLoad(RawConfig.read())
         } catch (e: IllegalArgumentException) {
@@ -53,6 +54,5 @@ object Kagebot {
         api.addMessageCreateListener { checked { it.process() } }
         Config.features.eventFeatures().forEach { it.register(api) }
         CronD.startAll()
-        Globals.api = api
     }
 }
