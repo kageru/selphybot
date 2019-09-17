@@ -54,7 +54,7 @@ object Util {
     }
 
     private fun <T> Optional<T>.toNullable(): T? {
-        return ifNotEmpty { it }
+        return orElse(null)
     }
 
     fun findUser(idOrName: String): User? {
@@ -73,11 +73,13 @@ object Util {
         try {
             join()
         } catch (e: CompletionException) {
-            Log.warn("""Error during CompletableFuture:
+            Log.warn(
+                """Error during CompletableFuture:
                 |$e
                 |${e.localizedMessage}
                 |${e.stackTrace.joinToString("\n\t")}
-            """.trimMargin())
+            """.trimMargin()
+            )
             // we don’t care about this error, but I don’t want to spam stdout
         }
         return isCompletedExceptionally
