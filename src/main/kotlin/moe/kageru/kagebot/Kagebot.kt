@@ -29,8 +29,7 @@ object Kagebot {
 
     private fun MessageCreateEvent.handleOwn() {
         if (messageAuthor.isYourself) {
-            val loggedMessage =
-                if (readableMessageContent.isBlank()) "[embed]" else readableMessageContent
+            val loggedMessage = readableMessageContent.ifBlank { "[embed]" }
             Log.info("<Self> $loggedMessage")
         }
     }
