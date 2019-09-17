@@ -22,12 +22,8 @@ object Util {
      * Mimics the behavior of [Optional.ifPresent], but returns null if the optional is empty,
      * allowing easier fallback behavior via Kotlin’s ?: operator.
      */
-    internal inline fun <T, R> Optional<T>.ifNotEmpty(op: (T) -> R): R? {
-        if (this.isPresent) {
-            return op(this.get())
-        }
-        return null
-    }
+    internal inline fun <T, R> Optional<T>.ifNotEmpty(op: (T) -> R): R? =
+        if (this.isPresent) op(this.get()) else null
 
     fun hasOneOf(messageAuthor: MessageAuthor, roles: Set<Role>): Boolean {
         return messageAuthor.asUser().ifNotEmpty { user ->
@@ -43,13 +39,16 @@ object Util {
         return when {
             idOrName.isEntityId() -> server.getRoleById(idOrName).ifNotEmpty { it }
                 ?: throw IllegalArgumentException("Role $idOrName not found.")
-            else -> server.getRolesByNameIgnoreCase(idOrName).let {
-                when (it.size) {
-                    0 -> throw IllegalArgumentException("Role $idOrName not found.")
-                    1 -> it[0]
-                    else -> throw IllegalArgumentException("More than one role found with name $idOrName. Please specify the role ID instead")
-                }
-            }
+            else -> server.getRolesByNameIgnoreCase(idOrName).getOnlyElementOrError(idOrName)
+        }
+    }
+
+    private inline fun <reified T> List<T>.getOnlyElementOrError(identifier: String): T {
+        val className = T::class.simpleName!!
+        return when (size) {
+            0 -> throw IllegalArgumentException("$className $identifier not found.")
+            1 -> first()
+            else -> throw IllegalArgumentException("More than one ${className.toLowerCase()} found with name $identifier. Please specify the role ID instead")
         }
     }
 
@@ -73,14 +72,14 @@ object Util {
         try {
             join()
         } catch (e: CompletionException) {
-            Log.warn(
+            // we don’t care about this error, but I at least want to log it for debugging
+            Log.info(
                 """Error during CompletableFuture:
                 |$e
                 |${e.localizedMessage}
                 |${e.stackTrace.joinToString("\n\t")}
             """.trimMargin()
             )
-            // we don’t care about this error, but I don’t want to spam stdout
         }
         return isCompletedExceptionally
     }
@@ -92,22 +91,12 @@ object Util {
                 ?: throw IllegalArgumentException("Channel ID $idOrName not found.")
             else -> if (idOrName.startsWith('@')) {
                 Globals.api.getCachedUserByDiscriminatedName(idOrName.removePrefix("@")).ifNotEmpty { user ->
-                    val channelFuture = user.openPrivateChannel()
-                    val channel = channelFuture.join()
-                    if (channelFuture.isCompletedExceptionally) {
+                    user.openPrivateChannel().joinOr {
                         throw IllegalArgumentException("Could not open private channel with user $idOrName for redirection.")
                     }
-                    channel
-                }
-                    ?: throw IllegalArgumentException("Can’t find user $idOrName for redirection.")
+                } ?: throw IllegalArgumentException("Can’t find user $idOrName for redirection.")
             } else {
-                server.getTextChannelsByName(idOrName).let {
-                    when (it.size) {
-                        0 -> throw IllegalArgumentException("Channel $idOrName not found.")
-                        1 -> it[0]
-                        else -> throw IllegalArgumentException("More than one channel found with name $idOrName. Please specify the channel ID instead")
-                    }
-                }
+                server.getTextChannelsByName(idOrName).getOnlyElementOrError(idOrName)
             }
         }
     }
@@ -132,11 +121,7 @@ object Util {
         }
     }
 
-    fun userFromMessage(message: MessageCreateEvent): User? {
-        return message.messageAuthor.id.let { id ->
-            Config.server.getMemberById(id).orElse(null)
-        }
-    }
+    fun MessageCreateEvent.getUser(): User? = Config.server.getMemberById(messageAuthor.id).toNullable()
 
     /**
      * Convert a list of elements to pairs, retaining order.
@@ -147,5 +132,13 @@ object Util {
         (0 until size / 2).map {
             Pair(next(), next())
         }
+    }
+
+    private inline fun <T> CompletableFuture<T>.joinOr(op: () -> Nothing): T {
+        val value = join()
+        if (isCompletedExceptionally) {
+            op()
+        }
+        return value
     }
 }

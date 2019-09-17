@@ -34,10 +34,10 @@ object Kagebot {
         }
     }
 
-    private fun getSecret() = File("secret").readText().trim()
+    private val secret by lazy { File("secret").readText().trim() }
 
     fun init() {
-        Globals.api = DiscordApiBuilder().setToken(getSecret()).login().join()
+        val api = DiscordApiBuilder().setToken(secret).login().join()
         try {
             ConfigParser.initialLoad(RawConfig.read())
         } catch (e: IllegalArgumentException) {
@@ -47,11 +47,12 @@ object Kagebot {
         Runtime.getRuntime().addShutdownHook(Thread {
             Log.info("Bot has been interrupted. Shutting down.")
             Dao.close()
-            Globals.api.disconnect()
+            api.disconnect()
         })
         Log.info("kagebot Mk II running")
-        Globals.api.addMessageCreateListener { checked { it.process() } }
-        Config.features.eventFeatures().forEach { it.register(Globals.api) }
+        api.addMessageCreateListener { checked { it.process() } }
+        Config.features.eventFeatures().forEach { it.register(api) }
         CronD.startAll()
+        Globals.api = api
     }
 }

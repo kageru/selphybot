@@ -39,6 +39,7 @@ dependencies {
     implementation("org.javacord:javacord:3.0.4")
     implementation("org.mapdb:mapdb:3.0.7")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.1")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.50")
 
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.1")
     testImplementation("io.mockk:mockk:1.9.3")
