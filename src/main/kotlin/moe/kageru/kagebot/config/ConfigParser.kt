@@ -2,19 +2,20 @@ package moe.kageru.kagebot.config
 
 import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.command.Command
+import moe.kageru.kagebot.config.SystemSpec.serverId
 import moe.kageru.kagebot.features.Features
-import java.awt.Color
 import java.io.File
 
 object ConfigParser {
     val configFile: File = File(RawConfig.DEFAULT_CONFIG_PATH)
 
-    fun initialLoad(rawConfig: RawConfig) {
-        val systemConfig = rawConfig.system?.let(::SystemConfig)
-            ?: throw IllegalArgumentException("No [system] block in config.")
-        Config.server = Globals.api.getServerById(systemConfig.serverId)
+    fun initialLoad(file: String) {
+        val rawConfig = RawConfig.read(file)
+        val config = Config.specs.file(RawConfig.getFile(file))
+        Config.config = config
+
+        Config.server = Globals.api.getServerById(config[serverId])
             .orElseThrow { IllegalArgumentException("Invalid server configured.") }
-        Config.systemConfig = systemConfig
         reloadLocalization(rawConfig)
         reloadFeatures(rawConfig)
         reloadCommands(rawConfig)
@@ -34,13 +35,6 @@ object ConfigParser {
         Config.features = rawConfig.features?.let(::Features)
             ?: Features(RawFeatures(null, null))
     }
-}
-
-class SystemConfig(val serverId: String, val color: Color) {
-    constructor(rawSystemConfig: RawSystemConfig) : this(
-        rawSystemConfig.serverId ?: throw IllegalArgumentException("No [system.server] defined."),
-        Color.decode(rawSystemConfig.color ?: "#1793d0")
-    )
 }
 
 class Localization(

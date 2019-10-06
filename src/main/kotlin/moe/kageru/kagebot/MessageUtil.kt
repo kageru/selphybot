@@ -3,6 +3,7 @@ package moe.kageru.kagebot
 import moe.kageru.kagebot.Util.failed
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.Util.toPairs
+import moe.kageru.kagebot.config.SystemSpec
 import org.javacord.api.entity.message.Message
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.entity.message.Messageable
@@ -22,7 +23,7 @@ object MessageUtil {
     fun withEmbed(op: EmbedBuilder.() -> Unit): EmbedBuilder {
         val builder = EmbedBuilder()
         Config.server.icon.ifPresent { builder.setThumbnail(it) }
-        builder.setColor(Config.systemConfig.color)
+        builder.setColor(SystemSpec.color)
         builder.op()
         return builder
     }
@@ -33,9 +34,8 @@ object MessageUtil {
             op()
         }
         val sent = sendMessage(embed)
-        if (sent.failed()) {
-            // for logging
-        }
+        // for logging
+        sent.failed()
     }
 
     /**
@@ -51,9 +51,7 @@ object MessageUtil {
      * I tried LinkedHashMaps, but those don’t seem to work either.
      */
     fun listToEmbed(contents: List<String>): EmbedBuilder {
-        if (contents.size % 2 == 1) {
-            throw IllegalStateException("Embed must have even number of content strings (title/content pairs)")
-        }
+        check(contents.size % 2 != 1) { "Embed must have even number of content strings (title/content pairs)" }
         return withEmbed {
             contents.toPairs().forEach { (heading, content) ->
                 addField(heading, content)

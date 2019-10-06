@@ -103,7 +103,7 @@ object TestUtil {
             })
         }
         Globals.api = api
-        ConfigParser.initialLoad(RawConfig.read("testconfig.toml"))
+        ConfigParser.initialLoad("testconfig.toml")
     }
 
     fun testMessageSuccess(content: String, result: String) {

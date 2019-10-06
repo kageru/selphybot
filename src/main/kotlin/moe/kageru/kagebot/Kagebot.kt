@@ -44,7 +44,7 @@ object Kagebot {
         val api = DiscordApiBuilder().setToken(secret).login().join()
         Globals.api = api
         try {
-            ConfigParser.initialLoad(RawConfig.read())
+            ConfigParser.initialLoad(RawConfig.DEFAULT_CONFIG_PATH)
         } catch (e: IllegalArgumentException) {
             println("Config error:\n$e,\n${e.message},\n${e.stackTrace.joinToString("\n")}")
             exitProcess(1)

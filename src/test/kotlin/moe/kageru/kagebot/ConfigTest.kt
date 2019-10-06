@@ -6,13 +6,16 @@ import io.kotlintest.specs.ShouldSpec
 import io.mockk.every
 import io.mockk.mockk
 import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.config.SystemSpec
 import moe.kageru.kagebot.features.SetConfigFeature
+import java.awt.Color
 
 @ExperimentalStdlibApi
 class ConfigTest : ShouldSpec({
     TestUtil.prepareTestEnvironment()
     "should properly parse test config" {
-        Config.systemConfig shouldNotBe null
+        Config.config[SystemSpec.serverId] shouldNotBe null
+        SystemSpec.color shouldBe Color.decode("#1793d0")
         Config.localization shouldNotBe null
         Config.features shouldNotBe null
         Config.commands.size shouldBe 3

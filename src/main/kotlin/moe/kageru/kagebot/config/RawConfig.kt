@@ -2,10 +2,12 @@ package moe.kageru.kagebot.config
 
 import com.google.gson.annotations.SerializedName
 import com.moandjiezana.toml.Toml
+import com.uchuhimo.konf.ConfigSpec
+import moe.kageru.kagebot.config.Config.config
+import java.awt.Color
 import java.io.File
 
 class RawConfig(
-    val system: RawSystemConfig?,
     val localization: RawLocalization?,
     @SerializedName("command")
     val commands: List<RawCommand>?,
@@ -17,7 +19,7 @@ class RawConfig(
 
         fun readFromString(tomlContent: String): RawConfig = Toml().read(tomlContent).to(RawConfig::class.java)
 
-        private fun getFile(path: String): File {
+        fun getFile(path: String): File {
             val file = File(path)
             if (file.isFile) {
                 return file
@@ -33,7 +35,12 @@ class RawConfig(
     }
 }
 
-class RawSystemConfig(val serverId: String?, val color: String?)
+object SystemSpec : ConfigSpec() {
+    private val rawColor by optional("#1793d0", name = "color")
+    val serverId by required<String>()
+    val color by kotlin.lazy { Color.decode(config[rawColor])!! }
+}
+
 class RawLocalization(
     val permissionDenied: String?,
     val redirectedMessage: String?,
