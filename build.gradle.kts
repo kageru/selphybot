@@ -38,14 +38,14 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.javacord:javacord:3.0.4")
     implementation("org.mapdb:mapdb:3.0.7")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.50")
 
-    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.1")
+    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
     testImplementation("io.mockk:mockk:1.9.3")
     // these two are needed to access javacord internals (such as reading from sent embeds during tests)
     testImplementation("org.javacord:javacord-core:3.0.4")
-    testImplementation("com.fasterxml.jackson.core:jackson-databind:2.9.9.3")
+    testImplementation("com.fasterxml.jackson.core:jackson-databind:2.10.0.pr3")
 }
 
 tasks.withType<KotlinCompile> {
