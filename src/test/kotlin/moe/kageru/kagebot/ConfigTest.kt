@@ -17,7 +17,7 @@ class ConfigTest : ShouldSpec({
     "should properly parse test config" {
         Config.system[SystemSpec.serverId] shouldNotBe null
         SystemSpec.color shouldBe Color.decode("#1793d0")
-        Config.features shouldNotBe null
+        Config.features.welcome!!.embed shouldNotBe null
         Config.commands.size shouldBe 3
     }
 

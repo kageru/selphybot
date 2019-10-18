@@ -3,7 +3,6 @@ package moe.kageru.kagebot
 import moe.kageru.kagebot.Util.checked
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
-import moe.kageru.kagebot.config.RawConfig
 import moe.kageru.kagebot.cron.CronD
 import moe.kageru.kagebot.persistence.Dao
 import org.javacord.api.DiscordApiBuilder
@@ -44,7 +43,7 @@ object Kagebot {
         val api = DiscordApiBuilder().setToken(secret).login().join()
         Globals.api = api
         try {
-            ConfigParser.initialLoad(RawConfig.DEFAULT_CONFIG_PATH)
+            ConfigParser.initialLoad(ConfigParser.DEFAULT_CONFIG_PATH)
         } catch (e: IllegalArgumentException) {
             println("Config error:\n$e,\n${e.message},\n${e.stackTrace.joinToString("\n")}")
             exitProcess(1)

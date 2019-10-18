@@ -36,7 +36,6 @@ val test by tasks.getting(Test::class) {
 dependencies {
     implementation("com.uchuhimo:konf-core:0.20.0")
     implementation("com.uchuhimo:konf-toml:0.20.0")
-    implementation("com.moandjiezana.toml:toml4j:0.7.2")
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.javacord:javacord:3.0.4")
     implementation("org.mapdb:mapdb:3.0.7")

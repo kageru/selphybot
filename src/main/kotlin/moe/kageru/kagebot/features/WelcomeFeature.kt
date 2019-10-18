@@ -5,14 +5,19 @@ import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.Util.checked
 import moe.kageru.kagebot.Util.failed
-import moe.kageru.kagebot.config.RawWelcomeFeature
 import org.javacord.api.DiscordApi
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.event.message.MessageCreateEvent
 import org.javacord.api.event.server.member.ServerMemberJoinEvent
 
-class WelcomeFeature(rawWelcome: RawWelcomeFeature) : MessageFeature, EventFeature {
+class WelcomeFeature(
+    content: List<String>?,
+    fallbackChannel: String?,
+    private val fallbackMessage: String?
+) : MessageFeature, EventFeature {
+    val embed: EmbedBuilder? by lazy { content?.let(MessageUtil::listToEmbed) }
+
     override fun register(api: DiscordApi) {
         api.addServerMemberJoinListener { event ->
             checked { welcomeUser(event) }
@@ -40,14 +45,10 @@ class WelcomeFeature(rawWelcome: RawWelcomeFeature) : MessageFeature, EventFeatu
 
     private fun hasFallback(): Boolean = fallbackChannel != null && fallbackMessage != null
 
-    val embed: EmbedBuilder? by lazy {
-        rawWelcome.content?.let(MessageUtil::listToEmbed)
-    }
-    private val fallbackChannel: TextChannel? = rawWelcome.fallbackChannel?.let {
-        requireNotNull(rawWelcome.fallbackMessage) {
+    private val fallbackChannel: TextChannel? = fallbackChannel?.let {
+        requireNotNull(fallbackMessage) {
             "[feature.welcome.fallbackMessage] must not be null if fallbackChannel is defined"
         }
         Util.findChannel(it)
     }
-    private val fallbackMessage: String? = rawWelcome.fallbackMessage
 }

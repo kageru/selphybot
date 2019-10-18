@@ -1,23 +1,10 @@
 package moe.kageru.kagebot.features
 
-import moe.kageru.kagebot.config.RawFeatures
-
-class Features(
-    val welcome: WelcomeFeature?,
-    debug: DebugFeature,
-    help: HelpFeature,
-    getConfig: GetConfigFeature,
-    setConfig: SetConfigFeature,
-    val timeout: TimeoutFeature?
-) {
-    constructor(rawFeatures: RawFeatures) : this(
-        rawFeatures.welcome?.let(::WelcomeFeature),
-        DebugFeature(),
-        HelpFeature(),
-        GetConfigFeature(),
-        SetConfigFeature(),
-        rawFeatures.timeout?.let(::TimeoutFeature)
-    )
+class Features(val welcome: WelcomeFeature?, val timeout: TimeoutFeature?) {
+    private val debug = DebugFeature()
+    private val help = HelpFeature()
+    private val getConfig = GetConfigFeature()
+    private val setConfig = SetConfigFeature()
 
     private val all = listOf(welcome, debug, help, getConfig, setConfig, timeout)
     private val featureMap = mapOf(
@@ -31,4 +18,8 @@ class Features(
 
     fun findByString(feature: String) = featureMap[feature]
     fun eventFeatures() = all.filterIsInstance<EventFeature>()
+
+    companion object {
+        val DEFAULT = Features(null, null)
+    }
 }

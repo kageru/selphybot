@@ -1,5 +1,6 @@
 package moe.kageru.kagebot.features
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil.sendEmbed
 import moe.kageru.kagebot.Util.findRole
@@ -7,16 +8,14 @@ import moe.kageru.kagebot.Util.findUser
 import moe.kageru.kagebot.Util.ifNotEmpty
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.LocalizationSpec
-import moe.kageru.kagebot.config.RawTimeoutFeature
 import moe.kageru.kagebot.persistence.Dao
 import org.javacord.api.entity.permission.Role
 import org.javacord.api.event.message.MessageCreateEvent
 import java.time.Duration
 import java.time.Instant
 
-class TimeoutFeature(raw: RawTimeoutFeature) : MessageFeature {
-    private val timeoutRole: Role = raw.role?.let(::findRole)
-        ?: throw IllegalArgumentException("No timeout role defined")
+class TimeoutFeature(@JsonProperty("role") role: String) : MessageFeature {
+    private val timeoutRole: Role = findRole(role)
 
     override fun handle(message: MessageCreateEvent) {
         val timeout = message.readableMessageContent.split(' ', limit = 4).let { args ->
