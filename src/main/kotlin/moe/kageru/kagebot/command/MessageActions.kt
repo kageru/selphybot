@@ -3,6 +3,7 @@ package moe.kageru.kagebot.command
 import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil.sendEmbed
 import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.config.LocalizationSpec
 import moe.kageru.kagebot.config.RawMessageActions
 import org.javacord.api.event.message.MessageCreateEvent
 
@@ -24,7 +25,7 @@ class MessageActions(rawActions: RawMessageActions) {
             message.deleteMessage()
             message.messageAuthor.asUser().ifPresent { user ->
                 user.sendEmbed {
-                    addField("__Blacklisted__", Config.localization.messageDeleted)
+                    addField("__Blacklisted__", Config.localization[LocalizationSpec.messageDeleted])
                     addField("Original:", "“${message.readableMessageContent}”")
                 }
             }

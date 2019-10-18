@@ -11,19 +11,14 @@ object ConfigParser {
 
     fun initialLoad(file: String) {
         val rawConfig = RawConfig.read(file)
-        val config = Config.specs.file(RawConfig.getFile(file))
-        Config.config = config
-
+        val configFile = RawConfig.getFile(file)
+        val config = Config.systemSpec.file(configFile)
+        Config.system = config
         Config.server = Globals.api.getServerById(config[serverId])
             .orElseThrow { IllegalArgumentException("Invalid server configured.") }
-        reloadLocalization(rawConfig)
+        Config.localization = Config.localeSpec.file(configFile)
         reloadFeatures(rawConfig)
         reloadCommands(rawConfig)
-    }
-
-    fun reloadLocalization(rawConfig: RawConfig) {
-        Config.localization = rawConfig.localization?.let(::Localization)
-            ?: throw IllegalArgumentException("No [localization] block in config.")
     }
 
     fun reloadCommands(rawConfig: RawConfig) {
@@ -35,23 +30,4 @@ object ConfigParser {
         Config.features = rawConfig.features?.let(::Features)
             ?: Features(RawFeatures(null, null))
     }
-}
-
-class Localization(
-    val permissionDenied: String,
-    val redirectedMessage: String,
-    val messageDeleted: String,
-    val timeout: String
-) {
-
-    constructor(rawLocalization: RawLocalization) : this(
-        permissionDenied = rawLocalization.permissionDenied
-            ?: throw IllegalArgumentException("No [localization.permissionDenied] defined"),
-        redirectedMessage = rawLocalization.redirectedMessage
-            ?: throw IllegalArgumentException("No [localization.redirectMessage] defined"),
-        messageDeleted = rawLocalization.messageDeleted
-            ?: throw IllegalArgumentException("No [localization.messageDeleted] defined"),
-        timeout = rawLocalization.timeout
-            ?: throw IllegalArgumentException("No [localization.timeout] defined")
-    )
 }

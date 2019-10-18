@@ -116,7 +116,7 @@ object TestUtil {
         return (embed.delegate as EmbedBuilderDelegateImpl).toJsonNode().toString()
     }
 
-    fun <R> withCommands(config: String, test: (() -> R)) {
+    fun withCommands(config: String, test: (() -> Unit)) {
         val oldCmds = Config.commands
         val rawConfig = RawConfig.readFromString(config)
         ConfigParser.reloadCommands(rawConfig)
@@ -124,10 +124,9 @@ object TestUtil {
         Config.commands = oldCmds
     }
 
-    fun <R> withLocalization(config: String, test: (() -> R)) {
+    fun withLocalization(config: String, test: (() -> Unit)) {
         val oldLoc = Config.localization
-        val rawConfig = RawConfig.readFromString(config)
-        ConfigParser.reloadLocalization(rawConfig)
+        Config.localization = Config.localeSpec.string(config)
         test()
         Config.localization = oldLoc
     }

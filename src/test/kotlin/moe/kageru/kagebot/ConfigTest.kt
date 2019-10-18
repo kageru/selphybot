@@ -6,6 +6,7 @@ import io.kotlintest.specs.ShouldSpec
 import io.mockk.every
 import io.mockk.mockk
 import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.config.LocalizationSpec
 import moe.kageru.kagebot.config.SystemSpec
 import moe.kageru.kagebot.features.SetConfigFeature
 import java.awt.Color
@@ -14,9 +15,8 @@ import java.awt.Color
 class ConfigTest : ShouldSpec({
     TestUtil.prepareTestEnvironment()
     "should properly parse test config" {
-        Config.config[SystemSpec.serverId] shouldNotBe null
+        Config.system[SystemSpec.serverId] shouldNotBe null
         SystemSpec.color shouldBe Color.decode("#1793d0")
-        Config.localization shouldNotBe null
         Config.features shouldNotBe null
         Config.commands.size shouldBe 3
     }
@@ -38,6 +38,6 @@ class ConfigTest : ShouldSpec({
             every { url.openStream().readAllBytes() } returns testConfig.toByteArray()
         })
         SetConfigFeature().handle(message)
-        Config.localization.permissionDenied shouldBe denied
+        Config.localization[LocalizationSpec.permissionDenied] shouldBe denied
     }
 })

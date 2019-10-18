@@ -2,6 +2,7 @@ package moe.kageru.kagebot.features
 
 import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil.sendEmbed
+import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
 import moe.kageru.kagebot.config.RawConfig
 import org.javacord.api.entity.channel.TextChannel
@@ -22,7 +23,7 @@ class SetConfigFeature : MessageFeature {
             return
         }
         try {
-            ConfigParser.reloadLocalization(rawConfig)
+            Config.localization = Config.localeSpec.string(newConfig)
             ConfigParser.reloadFeatures(rawConfig)
             ConfigParser.reloadCommands(rawConfig)
             ConfigParser.configFile.writeText(newConfig)

@@ -3,12 +3,12 @@ package moe.kageru.kagebot.features
 import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
-import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.Kagebot.process
 import moe.kageru.kagebot.TestUtil
 import moe.kageru.kagebot.TestUtil.mockMessage
 import moe.kageru.kagebot.TestUtil.withCommands
 import moe.kageru.kagebot.TestUtil.withReplyContents
+import moe.kageru.kagebot.config.Config
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import java.util.*
 

@@ -6,6 +6,7 @@ import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.Util.applyIf
 import moe.kageru.kagebot.Util.failed
 import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.config.LocalizationSpec
 import moe.kageru.kagebot.config.RawRedirect
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.event.message.MessageCreateEvent
@@ -21,7 +22,7 @@ internal class MessageRedirect(rawRedirect: RawRedirect) {
                 .applyIf(command.matchType == MatchType.PREFIX) { content ->
                     content.removePrefix(command.trigger).trim()
                 }
-            addField(Config.localization.redirectedMessage, redirectedText)
+            addField(Config.localization[LocalizationSpec.redirectedMessage], redirectedText)
             Log.info("Redirected message: $redirectedText")
         }
         // No inlined if/else because the types are different.

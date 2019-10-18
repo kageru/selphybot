@@ -6,6 +6,7 @@ import moe.kageru.kagebot.Util.findRole
 import moe.kageru.kagebot.Util.findUser
 import moe.kageru.kagebot.Util.ifNotEmpty
 import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.config.LocalizationSpec
 import moe.kageru.kagebot.config.RawTimeoutFeature
 import moe.kageru.kagebot.persistence.Dao
 import org.javacord.api.entity.permission.Role
@@ -41,7 +42,10 @@ class TimeoutFeature(raw: RawTimeoutFeature) : MessageFeature {
             val releaseTime = Instant.now().plus(Duration.ofMinutes(timeout.duration)).epochSecond
             Dao.saveTimeout(releaseTime, listOf(user.id) + oldRoles)
             user.sendEmbed {
-                addField("Timeout", Config.localization.timeout.replace("@@", timeout.duration.toString()))
+                addField(
+                    "Timeout",
+                    Config.localization[LocalizationSpec.timeout].replace("@@", timeout.duration.toString())
+                )
                 timeout.reason?.let {
                     addField("Reason", it)
                 }

@@ -5,6 +5,7 @@ import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util.applyIf
 import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.config.LocalizationSpec
 import moe.kageru.kagebot.config.RawCommand
 import moe.kageru.kagebot.features.MessageFeature
 import org.javacord.api.entity.message.MessageAuthor
@@ -41,8 +42,8 @@ class Command(cmd: RawCommand) {
 
     fun execute(message: MessageCreateEvent): Boolean {
         if (permissions?.isAllowed(message) == false) {
-            if (Config.localization.permissionDenied.isNotBlank()) {
-                message.channel.sendMessage(Config.localization.permissionDenied)
+            if (Config.localization[LocalizationSpec.permissionDenied].isNotBlank()) {
+                message.channel.sendMessage(Config.localization[LocalizationSpec.permissionDenied])
             }
             Log.info("Denying command ${this.trigger} to user ${message.messageAuthor.discriminatedName} (ID: ${message.messageAuthor.id})")
             return false
@@ -62,9 +63,10 @@ class Command(cmd: RawCommand) {
 
     fun matches(msg: String) = this.matchType.matches(msg, this)
 
-    private fun respond(author: MessageAuthor, response: String) = response.applyIf(response.contains(AUTHOR_PLACEHOLDER)) {
-        it.replace(AUTHOR_PLACEHOLDER, MessageUtil.mention(author))
-    }
+    private fun respond(author: MessageAuthor, response: String) =
+        response.applyIf(response.contains(AUTHOR_PLACEHOLDER)) {
+            it.replace(AUTHOR_PLACEHOLDER, MessageUtil.mention(author))
+        }
 }
 
 enum class MatchType {

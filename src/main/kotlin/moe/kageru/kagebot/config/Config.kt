@@ -7,10 +7,11 @@ import moe.kageru.kagebot.features.Features
 import org.javacord.api.entity.server.Server
 
 object Config {
-    val specs = Config { addSpec(SystemSpec) }.from.toml
-    lateinit var config: Config
+    val systemSpec = Config { addSpec(SystemSpec) }.from.toml
+    val localeSpec = Config { addSpec(LocalizationSpec) }.from.toml
+    lateinit var system: Config
+    lateinit var localization: Config
     lateinit var server: Server
     lateinit var commands: List<Command>
     lateinit var features: Features
-    lateinit var localization: Localization
 }
