@@ -3,16 +3,12 @@ package moe.kageru.kagebot.config
 import com.google.gson.annotations.SerializedName
 import com.moandjiezana.toml.Toml
 import com.uchuhimo.konf.ConfigSpec
+import moe.kageru.kagebot.command.Command
 import moe.kageru.kagebot.config.Config.system
 import java.awt.Color
 import java.io.File
 
-class RawConfig(
-    @SerializedName("command")
-    val commands: List<RawCommand>?,
-    @SerializedName("feature")
-    val features: RawFeatures?
-) {
+class RawConfig(@SerializedName("feature") val features: RawFeatures?) {
     companion object {
         const val DEFAULT_CONFIG_PATH = "config.toml"
 
@@ -45,4 +41,8 @@ object LocalizationSpec : ConfigSpec() {
     val redirectedMessage by optional("says")
     val messageDeleted by optional("Your message was deleted.")
     val timeout by optional("You have been timed out for @@ minutes.")
+}
+
+object CommandSpec : ConfigSpec(prefix = "") {
+    val command by optional(emptyList<Command>())
 }

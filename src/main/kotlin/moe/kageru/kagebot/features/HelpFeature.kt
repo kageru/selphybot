@@ -15,5 +15,4 @@ class HelpFeature : MessageFeature {
 
 private fun listCommands(message: MessageCreateEvent) = Config.commands
     .filter { it.matchType == MatchType.PREFIX && it.isAllowed(message) }
-    .map { it.trigger }
-    .joinToString("\n")
+    .joinToString("\n") { it.trigger }

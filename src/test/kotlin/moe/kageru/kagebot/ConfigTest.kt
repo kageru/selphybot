@@ -29,9 +29,6 @@ class ConfigTest : ShouldSpec({
         redirectedMessage = "says"
         messageDeleted = "dongered"
         timeout = "timeout"
-        
-        [[command]]
-        response = "this command is broken"
         """.trimIndent()
         val message = TestUtil.mockMessage("anything")
         every { message.messageAttachments } returns listOf(mockk {

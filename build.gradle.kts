@@ -42,6 +42,7 @@ dependencies {
     implementation("org.mapdb:mapdb:3.0.7")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.50")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.10.0.pr3")
 
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
     testImplementation("io.mockk:mockk:1.9.3")

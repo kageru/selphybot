@@ -1,12 +1,12 @@
 package moe.kageru.kagebot.command
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util.applyIf
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.LocalizationSpec
-import moe.kageru.kagebot.config.RawCommand
 import moe.kageru.kagebot.features.MessageFeature
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.entity.message.embed.EmbedBuilder
@@ -14,29 +14,23 @@ import org.javacord.api.event.message.MessageCreateEvent
 
 private const val AUTHOR_PLACEHOLDER = "@@"
 
-class Command(cmd: RawCommand) {
-    val trigger: String
-    private val response: String?
-    val matchType: MatchType
-    private val permissions: Permissions?
-    private val actions: MessageActions?
-    val regex: Regex?
-    val embed: EmbedBuilder?
-    val feature: MessageFeature?
-
-    init {
-        trigger = cmd.trigger ?: throw IllegalArgumentException("Every command must have a trigger.")
-        response = cmd.response
-        matchType = cmd.matchType?.let { type ->
-            MatchType.values().find { it.name.equals(type, ignoreCase = true) }
-                ?: throw IllegalArgumentException("Invalid [command.matchType]: “${cmd.matchType}”")
-        } ?: MatchType.PREFIX
-        permissions = cmd.permissions?.let { Permissions(it) }
-        actions = cmd.actions?.let { MessageActions(it) }
-        regex = if (matchType == MatchType.REGEX) Regex(trigger) else null
-        embed = cmd.embed?.let(MessageUtil::listToEmbed)
-        feature = cmd.feature?.let { Config.features.findByString(it) }
-    }
+class Command(
+    val trigger: String,
+    private val response: String? = null,
+    private val permissions: Permissions?,
+    @JsonProperty("action")
+    private val actions: MessageActions?,
+    embed: List<String>?,
+    feature: String?,
+    matchType: String?
+) {
+    val matchType: MatchType = matchType?.let { type ->
+        MatchType.values().find { it.name.equals(type, ignoreCase = true) }
+            ?: throw IllegalArgumentException("Invalid [command.matchType]: “$matchType”")
+    } ?: MatchType.PREFIX
+    val regex: Regex? = if (this.matchType == MatchType.REGEX) Regex(trigger) else null
+    val embed: EmbedBuilder? = embed?.let(MessageUtil::listToEmbed)
+    private val feature: MessageFeature? = feature?.let { Config.features.findByString(it) }
 
     fun isAllowed(message: MessageCreateEvent) = permissions?.isAllowed(message) ?: true
 
@@ -69,6 +63,7 @@ class Command(cmd: RawCommand) {
         }
 }
 
+@Suppress("unused")
 enum class MatchType {
     PREFIX {
         override fun matches(message: String, command: Command) = message.startsWith(command.trigger, ignoreCase = true)

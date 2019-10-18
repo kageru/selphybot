@@ -1,16 +1,18 @@
 package moe.kageru.kagebot.command
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil.sendEmbed
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.LocalizationSpec
-import moe.kageru.kagebot.config.RawMessageActions
 import org.javacord.api.event.message.MessageCreateEvent
 
-class MessageActions(rawActions: RawMessageActions) {
-    private val delete: Boolean = rawActions.delete
-    private val redirect: MessageRedirect? = rawActions.redirect?.let(::MessageRedirect)
-    private val assignment: RoleAssignment? = rawActions.assign?.let(::RoleAssignment)
+class MessageActions(
+    private val delete: Boolean = false,
+    private val redirect: MessageRedirect?,
+    @JsonProperty("assign")
+    private val assignment: RoleAssignment?
+) {
 
     fun run(message: MessageCreateEvent, command: Command) {
         if (delete) {

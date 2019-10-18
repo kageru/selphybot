@@ -44,8 +44,8 @@ class WelcomeFeature(rawWelcome: RawWelcomeFeature) : MessageFeature, EventFeatu
         rawWelcome.content?.let(MessageUtil::listToEmbed)
     }
     private val fallbackChannel: TextChannel? = rawWelcome.fallbackChannel?.let {
-        if (rawWelcome.fallbackMessage == null) {
-            throw IllegalArgumentException("[feature.welcome.fallbackMessage] must not be null if fallbackChannel is defined")
+        requireNotNull(rawWelcome.fallbackMessage) {
+            "[feature.welcome.fallbackMessage] must not be null if fallbackChannel is defined"
         }
         Util.findChannel(it)
     }

@@ -1,7 +1,6 @@
 package moe.kageru.kagebot.config
 
 import moe.kageru.kagebot.Globals
-import moe.kageru.kagebot.command.Command
 import moe.kageru.kagebot.config.SystemSpec.serverId
 import moe.kageru.kagebot.features.Features
 import java.io.File
@@ -18,12 +17,7 @@ object ConfigParser {
             .orElseThrow { IllegalArgumentException("Invalid server configured.") }
         Config.localization = Config.localeSpec.file(configFile)
         reloadFeatures(rawConfig)
-        reloadCommands(rawConfig)
-    }
-
-    fun reloadCommands(rawConfig: RawConfig) {
-        Config.commands = rawConfig.commands?.map(::Command)?.toMutableList()
-            ?: throw IllegalArgumentException("No commands found in config.")
+        Config.commandConfig = Config.commandSpec.file(configFile)
     }
 
     fun reloadFeatures(rawConfig: RawConfig) {

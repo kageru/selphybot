@@ -7,14 +7,11 @@ import moe.kageru.kagebot.Util.applyIf
 import moe.kageru.kagebot.Util.failed
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.LocalizationSpec
-import moe.kageru.kagebot.config.RawRedirect
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.event.message.MessageCreateEvent
 
-internal class MessageRedirect(rawRedirect: RawRedirect) {
-    private val target: TextChannel = rawRedirect.target?.let(Util::findChannel)
-        ?: throw IllegalArgumentException("Every redirect needs to have a target.")
-    private val anonymous: Boolean = rawRedirect.anonymous
+class MessageRedirect(target: String, private val anonymous: Boolean = false) {
+    private val targetChannel: TextChannel = Util.findChannel(target)
 
     fun execute(message: MessageCreateEvent, command: Command) {
         val embed = MessageUtil.withEmbed {
@@ -35,9 +32,9 @@ internal class MessageRedirect(rawRedirect: RawRedirect) {
             }
         }
 
-        if (MessageUtil.sendEmbed(target, embed).failed()) {
-            target.sendMessage("Error: could not redirect message.")
-            Log.warn("Could not redirect message to channel $target")
+        if (MessageUtil.sendEmbed(targetChannel, embed).failed()) {
+            targetChannel.sendMessage("Error: could not redirect message.")
+            Log.warn("Could not redirect message to channel $targetChannel")
         }
     }
 }

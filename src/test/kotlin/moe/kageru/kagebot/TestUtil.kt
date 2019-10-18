@@ -10,7 +10,6 @@ import io.mockk.mockk
 import moe.kageru.kagebot.Kagebot.process
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
-import moe.kageru.kagebot.config.RawConfig
 import org.javacord.api.DiscordApi
 import org.javacord.api.entity.channel.ServerTextChannel
 import org.javacord.api.entity.message.embed.EmbedBuilder
@@ -22,7 +21,7 @@ import java.io.File
 import java.util.*
 
 object TestUtil {
-    val TIMEOUT_ROLE = mockk<Role> {
+    private val TIMEOUT_ROLE = mockk<Role> {
         every { id } returns 123
     }
     val TEST_ROLE = mockk<Role> {
@@ -117,11 +116,10 @@ object TestUtil {
     }
 
     fun withCommands(config: String, test: (() -> Unit)) {
-        val oldCmds = Config.commands
-        val rawConfig = RawConfig.readFromString(config)
-        ConfigParser.reloadCommands(rawConfig)
+        val oldCmds = Config.commandConfig
+        Config.commandConfig = Config.commandSpec.string(config)
         test()
-        Config.commands = oldCmds
+        Config.commandConfig = oldCmds
     }
 
     fun withLocalization(config: String, test: (() -> Unit)) {

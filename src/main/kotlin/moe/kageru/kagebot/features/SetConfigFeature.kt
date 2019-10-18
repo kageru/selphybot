@@ -25,7 +25,7 @@ class SetConfigFeature : MessageFeature {
         try {
             Config.localization = Config.localeSpec.string(newConfig)
             ConfigParser.reloadFeatures(rawConfig)
-            ConfigParser.reloadCommands(rawConfig)
+            Config.commandConfig = Config.commandSpec.string(newConfig)
             ConfigParser.configFile.writeText(newConfig)
             message.channel.sendMessage("Config reloaded.")
         } catch (e: IllegalArgumentException) {
