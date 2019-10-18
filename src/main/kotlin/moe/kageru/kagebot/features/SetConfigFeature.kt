@@ -4,7 +4,6 @@ import moe.kageru.kagebot.MessageUtil.sendEmbed
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
 import org.javacord.api.event.message.MessageCreateEvent
-import java.lang.reflect.InvocationTargetException
 
 class SetConfigFeature : MessageFeature {
     @ExperimentalStdlibApi

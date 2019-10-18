@@ -39,7 +39,7 @@ class CommandTest : StringSpec({
             Globals.commandCounter.get() shouldBe (before + 1)
         }
     }
-     "should match prefix command" {
+    "should match prefix command" {
         withCommands(
             """
             [[command]]
