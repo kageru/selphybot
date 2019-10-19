@@ -32,7 +32,6 @@ class TempVCFeature(@JsonProperty("category") category: String? = null) : EventF
 
     override fun register(api: DiscordApi) {
         api.addServerVoiceChannelMemberLeaveListener { event ->
-            println("asdsad")
             if (event.channel.connectedUsers.isEmpty() && Dao.isTemporaryVC(event.channel.idAsString)) {
                 deleteChannel(event.channel)
             }
