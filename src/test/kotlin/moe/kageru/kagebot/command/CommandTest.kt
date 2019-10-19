@@ -19,6 +19,7 @@ import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.Config.localization
 import moe.kageru.kagebot.config.LocalizationSpec
+import moe.kageru.kagebot.persistence.Dao
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.permission.Role
 import org.javacord.api.entity.user.User
@@ -290,6 +291,31 @@ class CommandTest : StringSpec({
             every { Config.server.getMemberById(1) } returns Optional.of(user)
             mockMessage("!assign").process()
             roles shouldBe mutableListOf(Util.findRole("testrole"))
+        }
+    }
+    "should create VC" {
+        withCommands(
+            """
+        [[command]]
+        trigger = "!vc"
+        feature = "vc"
+        """.trimIndent()
+        ) {
+            testMessageSuccess("!vc 2", "Done")
+            Dao.isTemporaryVC("12345") shouldBe true
+            Dao.removeTemporaryVC("12345")
+        }
+    }
+    "should reject invalid vc command" {
+        withCommands(
+            """
+        [[command]]
+        trigger = "!vc"
+        feature = "vc"
+        """.trimIndent()
+        ) {
+            testMessageSuccess("!vc asd", "Invalid syntax, expected a number, got asd")
+            Dao.isTemporaryVC("12345") shouldBe false
         }
     }
 })

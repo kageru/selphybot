@@ -19,6 +19,7 @@ import org.javacord.api.event.message.MessageCreateEvent
 import org.javacord.core.entity.message.embed.EmbedBuilderDelegateImpl
 import java.io.File
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 object TestUtil {
     private val TIMEOUT_ROLE = mockk<Role> {
@@ -58,6 +59,7 @@ object TestUtil {
             every { messageAuthor.isYourself } returns isBot
             every { messageAuthor.isBotOwner } returns false
             every { messageAuthor.asUser() } returns Optional.of(messageableAuthor(replyEmbeds))
+            every { messageAuthor.name } returns "kageru"
         }
     }
 
@@ -85,13 +87,18 @@ object TestUtil {
                 every { sendMessage(capture(sentMessages)) } returns mockk(relaxed = true)
             }
         }
-        val api = mockk<DiscordApi> {
-            every { getServerById(any<String>()) } returns Optional.of(mockk {
+        val api = mockk<DiscordApi>(relaxed = true) {
+            every { getServerById(any<String>()) } returns Optional.of(mockk(relaxed = true) {
                 every { icon.ifPresent(any()) } just Runs
                 every { getTextChannelById(any<String>()) } returns channel
                 every { getTextChannelsByName(any()) } returns listOf(channel.get())
                 every { getRolesByNameIgnoreCase("testrole") } returns listOf(TEST_ROLE)
                 every { getRolesByNameIgnoreCase("timeout") } returns listOf(TIMEOUT_ROLE)
+                every { getChannelCategoriesByNameIgnoreCase(any()) } returns listOf(mockk())
+                every { createVoiceChannelBuilder().create() } returns mockk {
+                    every { isCompletedExceptionally } returns false
+                    every { join().idAsString } returns "12345"
+                }
                 every { getMembersByName(any()) } returns listOf(mockk(relaxed = true) {
                     every { id } returns 123
                     every { getRoles(any()) } returns listOf(TEST_ROLE)
@@ -102,6 +109,8 @@ object TestUtil {
             })
         }
         Globals.api = api
+        // write our mocked server to the config
+        Config.server = api.getServerById("").get()
         ConfigParser.initialLoad("testconfig.toml")
     }
 

@@ -7,6 +7,7 @@ object Dao {
     private val db = DBMaker.fileDB("kagebot.db").fileMmapEnable().closeOnJvmShutdown().make()
     private val prisoners = db.hashMap("timeout", Serializer.LONG, Serializer.LONG_ARRAY).createOrOpen()
     private val commands = db.hashMap("commands", Serializer.STRING, Serializer.INTEGER).createOrOpen()
+    private val tempVcs = db.hashSet("vcs", Serializer.STRING).createOrOpen()
 
     fun saveTimeout(releaseTime: Long, roles: List<Long>) {
         prisoners[releaseTime] = roles.toLongArray()
@@ -26,5 +27,17 @@ object Dao {
         val timeout = prisoners[releaseTime]!!
         prisoners.remove(releaseTime)
         return timeout
+    }
+
+    fun isTemporaryVC(channel: String): Boolean {
+        return channel in tempVcs
+    }
+
+    fun addTemporaryVC(channel: String) {
+        tempVcs.add(channel)
+    }
+
+    fun removeTemporaryVC(channel: String) {
+        tempVcs.remove(channel)
     }
 }

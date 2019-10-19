@@ -123,3 +123,7 @@ feature = "setConfig"
 [[command]]
 trigger = "!prison"
 feature = "timeout"
+
+[[command]]
+trigger = "!vc"
+feature = "vc"

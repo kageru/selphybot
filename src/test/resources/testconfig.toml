@@ -21,6 +21,9 @@ content = [
 [feature.timeout]
 role = "timeout"
 
+[feature.vc]
+category = "testcategory"
+
 [[command]]
 trigger = "!debug"
 feature = "debug"
