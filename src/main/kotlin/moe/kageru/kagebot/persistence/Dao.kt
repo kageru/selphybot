@@ -4,7 +4,7 @@ import org.mapdb.DBMaker
 import org.mapdb.Serializer
 
 object Dao {
-    private val db = DBMaker.fileDB("kagebot.db").checksumHeaderBypass().fileMmapEnable().transactionEnable().closeOnJvmShutdown().make()
+    private val db = DBMaker.fileDB("kagebot.db").fileMmapEnable().transactionEnable().make()
     private val prisoners = db.hashMap("timeout", Serializer.LONG, Serializer.LONG_ARRAY).createOrOpen()
     private val commands = db.hashMap("commands", Serializer.STRING, Serializer.INTEGER).createOrOpen()
     private val tempVcs = db.hashSet("vcs", Serializer.STRING).createOrOpen()
