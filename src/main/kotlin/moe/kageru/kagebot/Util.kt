@@ -1,6 +1,9 @@
 package moe.kageru.kagebot
 
+import arrow.core.Option
+import arrow.core.extensions.list.foldable.find
 import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.extensions.*
 import moe.kageru.kagebot.config.Config.server
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.MessageAuthor
@@ -26,9 +29,9 @@ object Util {
         if (this.isPresent) op(this.get()) else null
 
     fun hasOneOf(messageAuthor: MessageAuthor, roles: Set<Role>): Boolean {
-        return messageAuthor.asUser().ifNotEmpty { user ->
-            user.getRoles(server).toSet().intersect(roles).isNotEmpty()
-        } ?: false
+        return messageAuthor.asUser().asOption().flatMap { user ->
+            user.roles().find { it in roles }
+        }.nonEmpty()
     }
 
     private val channelIdRegex = Regex("\\d{18}")
@@ -100,6 +103,8 @@ object Util {
             }
         }
     }
+
+    fun <T> Optional<T>.asOption(): Option<T> = if (this.isPresent) Option.just(this.get()) else Option.empty()
 
     inline fun checked(op: (() -> Unit)) {
         try {

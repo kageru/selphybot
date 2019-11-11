@@ -124,13 +124,6 @@ object TestUtil {
         Config.commandConfig = oldCmds
     }
 
-    fun withLocalization(config: String, test: (() -> Unit)) {
-        val oldLoc = Config.localization
-        Config.localization = Config.localeSpec.string(config)
-        test()
-        Config.localization = oldLoc
-    }
-
     fun withReplyContents(
         expected: List<String> = emptyList(),
         unexpected: List<String> = emptyList(),
