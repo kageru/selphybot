@@ -1,5 +1,7 @@
 package moe.kageru.kagebot
 
+import arrow.core.extensions.list.foldable.find
+import arrow.core.k
 import moe.kageru.kagebot.Util.checked
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
@@ -20,14 +22,9 @@ object Kagebot {
             handleOwn()
             return
         }
-        for (command in Config.commands) {
-            if (command.matches(readableMessageContent)) {
-                // only break if we have the permissions to execute this command, else keep searching
-                if (command.execute(this)) {
-                    break
-                }
-            }
-        }
+        Config.commands
+            .find { it.matches(readableMessageContent) && it.isAllowed(this) }
+            .map { it.execute(this) }
     }
 
     private fun MessageCreateEvent.handleOwn() {

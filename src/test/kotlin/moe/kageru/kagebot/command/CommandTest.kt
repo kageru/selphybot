@@ -17,8 +17,6 @@ import moe.kageru.kagebot.TestUtil.withCommands
 import moe.kageru.kagebot.TestUtil.withLocalization
 import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.config.Config
-import moe.kageru.kagebot.config.Config.localization
-import moe.kageru.kagebot.config.LocalizationSpec
 import moe.kageru.kagebot.persistence.Dao
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.permission.Role
@@ -149,20 +147,7 @@ class CommandTest : StringSpec({
             val replies = mutableListOf<String>()
             val mockMessage = mockMessage("!restricted", replies = replies)
             mockMessage.process()
-            replies shouldBe mutableListOf(localization[LocalizationSpec.permissionDenied])
-            withLocalization(
-                """
-            [localization]
-            permissionDenied = ""
-            messageDeleted = "whatever"
-            redirectedMessage = "asdja"
-            timeout = "asdasd"
-            """.trimIndent()
-            ) {
-                mockMessage.process()
-                // still one string in there from earlier, nothing new was added
-                replies.size shouldBe 1
-            }
+            replies shouldBe mutableListOf()
         }
     }
     "should accept restricted command for owner" {
@@ -234,7 +219,8 @@ class CommandTest : StringSpec({
                 every { get().getRoles(any()) } returns emptyList()
             }
             mockMessage.process()
-            calls shouldBe mutableListOf(localization[LocalizationSpec.permissionDenied], "access granted")
+            // first message didn’t answer anything
+            calls shouldBe mutableListOf("access granted")
         }
     }
     "should refuse DM only message in server channel" {
@@ -249,7 +235,7 @@ class CommandTest : StringSpec({
         ) {
             val calls = mutableListOf<String>()
             mockMessage("!dm", replies = calls).process()
-            calls shouldBe listOf(localization[LocalizationSpec.permissionDenied])
+            calls shouldBe mutableListOf()
         }
     }
     /*

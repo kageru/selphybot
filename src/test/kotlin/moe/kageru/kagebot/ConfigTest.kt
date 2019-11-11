@@ -22,11 +22,10 @@ class ConfigTest : ShouldSpec({
     }
 
     "should parse test config via command" {
-        val denied = "denied"
+        val redir = "says"
         val testConfig = """
         [localization]
-        permissionDenied = "$denied"
-        redirectedMessage = "says"
+        redirectedMessage = "$redir"
         messageDeleted = "dongered"
         timeout = "timeout"
         """.trimIndent()
@@ -35,6 +34,6 @@ class ConfigTest : ShouldSpec({
             every { url.openStream().readAllBytes() } returns testConfig.toByteArray()
         })
         SetConfigFeature().handle(message)
-        Config.localization[LocalizationSpec.permissionDenied] shouldBe denied
+        Config.localization[LocalizationSpec.redirectedMessage] shouldBe redir
     }
 })

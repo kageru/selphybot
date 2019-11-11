@@ -32,16 +32,11 @@ class Command(
     val embed: EmbedBuilder? = embed?.let(MessageUtil::listToEmbed)
     private val feature: MessageFeature? = feature?.let { Config.features.findByString(it) }
 
+    fun matches(msg: String) = this.matchType.matches(msg, this)
+
     fun isAllowed(message: MessageCreateEvent) = permissions?.isAllowed(message) ?: true
 
-    fun execute(message: MessageCreateEvent): Boolean {
-        if (permissions?.isAllowed(message) == false) {
-            if (Config.localization[LocalizationSpec.permissionDenied].isNotBlank()) {
-                message.channel.sendMessage(Config.localization[LocalizationSpec.permissionDenied])
-            }
-            Log.info("Denying command ${this.trigger} to user ${message.messageAuthor.discriminatedName} (ID: ${message.messageAuthor.id})")
-            return false
-        }
+    fun execute(message: MessageCreateEvent) {
         Log.info("Executing command ${this.trigger} triggered by user ${message.messageAuthor.discriminatedName} (ID: ${message.messageAuthor.id})")
         Globals.commandCounter.incrementAndGet()
         this.actions?.run(message, this)
@@ -52,10 +47,7 @@ class Command(
             MessageUtil.sendEmbed(message.channel, embed)
         }
         this.feature?.handle(message)
-        return true
     }
-
-    fun matches(msg: String) = this.matchType.matches(msg, this)
 
     private fun respond(author: MessageAuthor, response: String) =
         response.applyIf(response.contains(AUTHOR_PLACEHOLDER)) {

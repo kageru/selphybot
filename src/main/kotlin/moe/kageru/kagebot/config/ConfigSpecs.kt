@@ -13,7 +13,6 @@ object SystemSpec : ConfigSpec() {
 }
 
 object LocalizationSpec : ConfigSpec() {
-    val permissionDenied by optional("You do not have the permission to use this command.")
     val redirectedMessage by optional("says")
     val messageDeleted by optional("Your message was deleted.")
     val timeout by optional("You have been timed out for @@ minutes.")

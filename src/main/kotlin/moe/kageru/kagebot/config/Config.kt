@@ -1,5 +1,7 @@
 package moe.kageru.kagebot.config
 
+import arrow.core.ListK
+import arrow.core.k
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.source.toml
 import moe.kageru.kagebot.command.Command
@@ -20,5 +22,5 @@ object Config {
 
     // for easier access
     val features: Features get() = featureConfig[FeatureSpec.features]
-    val commands: List<Command> get() = commandConfig[CommandSpec.command]
+    val commands: ListK<Command> get() = commandConfig[CommandSpec.command].k()
 }
