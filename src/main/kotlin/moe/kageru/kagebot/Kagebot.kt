@@ -37,15 +37,12 @@ object Kagebot {
         }
     }
 
-    private val secret by lazy { File("secret").readText().trim() }
-
     fun init() {
+        val secret = File("secret").readText().trim()
         val api = DiscordApiBuilder().setToken(secret).login().join()
         Globals.api = api
-        try {
-            ConfigParser.initialLoad(ConfigParser.DEFAULT_CONFIG_PATH)
-        } catch (e: IllegalArgumentException) {
-            println("Config error:\n$e,\n${e.message},\n${e.stackTrace.joinToString("\n")}")
+        ConfigParser.initialLoad(ConfigParser.DEFAULT_CONFIG_PATH).mapLeft { e ->
+            println("Config parsing error:\n$e,\n${e.message},\n${e.stackTrace.joinToString("\n")}")
             exitProcess(1)
         }
         Runtime.getRuntime().addShutdownHook(Thread {

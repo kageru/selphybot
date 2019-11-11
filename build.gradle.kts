@@ -1,5 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val arrowVersion = "0.10.2"
+
+apply {
+    plugin("kotlin-kapt")
+}
 plugins {
     kotlin("jvm") version "1.3.50"
     id("com.github.johnrengelman.shadow") version "5.1.0" apply true
@@ -27,6 +32,9 @@ version = "0.1"
 repositories {
     mavenCentral()
     jcenter()
+    maven {
+        url = uri("https://dl.bintray.com/arrow-kt/arrow-kt/")
+    }
 }
 
 val test by tasks.getting(Test::class) {
@@ -42,6 +50,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.50")
     implementation("com.fasterxml.jackson.core:jackson-annotations:2.10.0.pr3")
+
+    implementation("io.arrow-kt:arrow-core:$arrowVersion")
+    implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
+    implementation("io.arrow-kt:arrow-optics:$arrowVersion")
+    implementation("io.arrow-kt:arrow-meta:$arrowVersion")
+    implementation("io.arrow-kt:arrow-fx:$arrowVersion")
 
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
     testImplementation("io.mockk:mockk:1.9.3")

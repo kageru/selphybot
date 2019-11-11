@@ -1,8 +1,8 @@
 package moe.kageru.kagebot
 
 import moe.kageru.kagebot.Util.failed
-import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.Util.toPairs
+import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.SystemSpec
 import org.javacord.api.entity.message.Message
 import org.javacord.api.entity.message.MessageAuthor

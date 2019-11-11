@@ -9,12 +9,13 @@ import java.util.logging.Logger
 
 object Log {
     private val log: Logger by lazy {
-        val log = Logger.getGlobal()
-        val fh = FileHandler("kagebot.log", true)
-        val formatter = LogFormatter()
-        fh.formatter = formatter
-        log.addHandler(fh)
-        return@lazy log
+        Logger.getGlobal().apply {
+            addHandler(
+                FileHandler("kagebot.log", true).apply {
+                    formatter = LogFormatter()
+                }
+            )
+        }
     }
 
     fun info(message: String) {
