@@ -1,5 +1,6 @@
 package moe.kageru.kagebot.command
 
+import arrow.core.Option
 import moe.kageru.kagebot.Util
 import org.javacord.api.entity.permission.Role
 import org.javacord.api.event.message.MessageCreateEvent
@@ -9,22 +10,14 @@ class Permissions(
     hasNoneOf: List<String>?,
     private val onlyDM: Boolean = false
 ) {
-    private val hasOneOf: Set<Role>? = hasOneOf?.mapTo(mutableSetOf(), Util::findRole)
-    private val hasNoneOf: Set<Role>? = hasNoneOf?.mapTo(mutableSetOf(), Util::findRole)
+    private val hasOneOf: Option<Set<Role>> = Option.fromNullable(hasOneOf?.mapTo(mutableSetOf(), Util::findRole))
+    private val hasNoneOf: Option<Set<Role>> = Option.fromNullable(hasNoneOf?.mapTo(mutableSetOf(), Util::findRole))
 
-    fun isAllowed(message: MessageCreateEvent): Boolean {
-        if (message.messageAuthor.isBotOwner) {
-            return true
-        }
-        if (onlyDM && !message.isPrivateMessage) {
-            return false
-        }
-        hasOneOf?.let { roles ->
-            if (!Util.hasOneOf(message.messageAuthor, roles)) return false
-        }
-        hasNoneOf?.let { roles ->
-            if (Util.hasOneOf(message.messageAuthor, roles)) return false
-        }
-        return true
+    fun isAllowed(message: MessageCreateEvent): Boolean = when {
+        message.messageAuthor.isBotOwner -> true
+        onlyDM && !message.isPrivateMessage -> false
+        // returns true if the Option is empty (case for no restrictions)
+        else -> hasOneOf.forall { Util.hasOneOf(message.messageAuthor, it) }
+            && hasNoneOf.forall { !Util.hasOneOf(message.messageAuthor, it) }
     }
 }

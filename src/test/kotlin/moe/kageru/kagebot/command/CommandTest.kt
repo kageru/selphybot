@@ -14,7 +14,6 @@ import moe.kageru.kagebot.TestUtil.mockMessage
 import moe.kageru.kagebot.TestUtil.prepareTestEnvironment
 import moe.kageru.kagebot.TestUtil.testMessageSuccess
 import moe.kageru.kagebot.TestUtil.withCommands
-import moe.kageru.kagebot.TestUtil.withLocalization
 import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.persistence.Dao

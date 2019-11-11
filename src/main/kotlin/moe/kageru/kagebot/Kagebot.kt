@@ -1,7 +1,6 @@
 package moe.kageru.kagebot
 
 import arrow.core.extensions.list.foldable.find
-import arrow.core.k
 import moe.kageru.kagebot.Util.checked
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser

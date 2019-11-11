@@ -6,7 +6,6 @@ import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util.applyIf
 import moe.kageru.kagebot.config.Config
-import moe.kageru.kagebot.config.LocalizationSpec
 import moe.kageru.kagebot.features.MessageFeature
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.entity.message.embed.EmbedBuilder
