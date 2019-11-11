@@ -10,7 +10,6 @@ import io.mockk.mockk
 import moe.kageru.kagebot.Kagebot.process
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
-import org.javacord.api.DiscordApi
 import org.javacord.api.entity.channel.ServerTextChannel
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.permission.Role
@@ -19,7 +18,6 @@ import org.javacord.api.event.message.MessageCreateEvent
 import org.javacord.core.entity.message.embed.EmbedBuilderDelegateImpl
 import java.io.File
 import java.util.*
-import java.util.concurrent.CompletableFuture
 
 object TestUtil {
     private val TIMEOUT_ROLE = mockk<Role> {
@@ -75,9 +73,7 @@ object TestUtil {
         sentMessages: MutableList<String> = mutableListOf(),
         dmEmbeds: MutableList<EmbedBuilder> = mutableListOf()
     ) {
-        val channel = mockk<Optional<ServerTextChannel>>(relaxed = true) {
-            every { isPresent } returns true
-            every { get() } returns mockk {
+        val channel = mockk<ServerTextChannel>(relaxed = true) {
                 every { sendMessage(capture(sentEmbeds)) } returns mockk(relaxed = true) {
                     every { join() } returns mockk {
                         every { isCompletedExceptionally } returns false
@@ -86,12 +82,11 @@ object TestUtil {
                 }
                 every { sendMessage(capture(sentMessages)) } returns mockk(relaxed = true)
             }
-        }
-        val api = mockk<DiscordApi>(relaxed = true) {
+        Globals.api = mockk(relaxed = true) {
             every { getServerById(any<String>()) } returns Optional.of(mockk(relaxed = true) {
                 every { icon.ifPresent(any()) } just Runs
-                every { getTextChannelById(any<String>()) } returns channel
-                every { getTextChannelsByName(any()) } returns listOf(channel.get())
+                every { getTextChannelById(any<String>()) } returns Optional.of(channel)
+                every { getTextChannelsByName(any()) } returns listOf(channel)
                 every { getRolesByNameIgnoreCase("testrole") } returns listOf(TEST_ROLE)
                 every { getRolesByNameIgnoreCase("timeout") } returns listOf(TIMEOUT_ROLE)
                 every { getChannelCategoriesByNameIgnoreCase(any()) } returns listOf(mockk())
@@ -108,9 +103,7 @@ object TestUtil {
                 })
             })
         }
-        Globals.api = api
-        // write our mocked server to the config
-        Config.server = api.getServerById("").get()
+        Config.server = Globals.api.getServerById("").get()
         ConfigParser.initialLoad("testconfig.toml")
     }
 
