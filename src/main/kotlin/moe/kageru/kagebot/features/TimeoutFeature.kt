@@ -35,7 +35,7 @@ class TimeoutFeature(@JsonProperty("role") role: String) : MessageFeature {
                 Tuple3(
                     findUser(it.a).orNull()
                         ?: return@flatMap "Error: User ${it.a} not found, consider using the user ID".left(),
-                    it.b.toLongOrNull() ?: return@flatMap "Error: malformed time".left(),
+                    it.b.toLongOrNull() ?: return@flatMap "Error: malformed time “${it.b}”".left(),
                     it.c
                 ).right()
             }.on { (user, time, _) ->

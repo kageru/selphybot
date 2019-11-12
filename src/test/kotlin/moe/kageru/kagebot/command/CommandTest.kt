@@ -1,5 +1,6 @@
 package moe.kageru.kagebot.command
 
+import arrow.core.ListK
 import io.kotlintest.matchers.string.shouldContain
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
@@ -17,6 +18,8 @@ import moe.kageru.kagebot.TestUtil.withCommands
 import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.Util.unwrap
 import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.extensions.roles
+import moe.kageru.kagebot.extensions.rolesByName
 import moe.kageru.kagebot.persistence.Dao
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.permission.Role
@@ -184,8 +187,8 @@ class CommandTest : StringSpec({
             val calls = mutableListOf<String>()
             val mockMessage = mockMessage("!restricted", replies = calls)
             every { mockMessage.messageAuthor.asUser() } returns Optional.of(mockk {
-                every { getRoles(any()) } returns listOf(
-                    Config.server.getRolesByNameIgnoreCase("testrole")[0]
+                every { roles() } returns ListK.just(
+                    Config.server.rolesByName("testrole").first()
                 )
             })
             mockMessage.process()
@@ -208,7 +211,7 @@ class CommandTest : StringSpec({
             every { mockMessage.messageAuthor.asUser() } returns mockk {
                 every { isPresent } returns true
                 every { get().getRoles(any()) } returns listOf(
-                    Config.server.getRolesByNameIgnoreCase("testrole")[0]
+                    Config.server.rolesByName("testrole").first()
                 )
             }
             mockMessage.process()

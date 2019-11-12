@@ -9,6 +9,7 @@ import moe.kageru.kagebot.TestUtil.mockMessage
 import moe.kageru.kagebot.TestUtil.withCommands
 import moe.kageru.kagebot.TestUtil.withReplyContents
 import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.extensions.rolesByName
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import java.util.*
 
@@ -48,7 +49,7 @@ class HelpFeatureTest : StringSpec({
                 val message = mockMessage("!help", replyEmbeds = replies)
                 every { message.messageAuthor.asUser() } returns Optional.of(mockk {
                     every { getRoles(any()) } returns listOf(
-                        Config.server.getRolesByNameIgnoreCase("testrole")[0]
+                        Config.server.rolesByName("testrole").first()
                     )
                 })
                 message.process()

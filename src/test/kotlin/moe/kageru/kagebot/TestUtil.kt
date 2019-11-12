@@ -1,5 +1,7 @@
 package moe.kageru.kagebot
 
+import arrow.core.ListK
+import arrow.core.Option
 import io.kotlintest.matchers.string.shouldContain
 import io.kotlintest.matchers.string.shouldNotContain
 import io.kotlintest.shouldBe
@@ -10,6 +12,7 @@ import io.mockk.mockk
 import moe.kageru.kagebot.Kagebot.process
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.ConfigParser
+import moe.kageru.kagebot.extensions.*
 import org.javacord.api.entity.channel.ServerTextChannel
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.permission.Role
@@ -63,7 +66,7 @@ object TestUtil {
 
     fun messageableAuthor(messages: MutableList<EmbedBuilder> = mutableListOf()): User {
         return mockk {
-            every { getRoles(any()) } returns emptyList()
+            every { roles() } returns ListK.empty()
             every { sendMessage(capture(messages)) } returns mockk(relaxed = true)
         }
     }
@@ -74,29 +77,29 @@ object TestUtil {
         dmEmbeds: MutableList<EmbedBuilder> = mutableListOf()
     ) {
         val channel = mockk<ServerTextChannel>(relaxed = true) {
-                every { sendMessage(capture(sentEmbeds)) } returns mockk(relaxed = true) {
-                    every { join() } returns mockk {
-                        every { isCompletedExceptionally } returns false
-                    }
+            every { sendMessage(capture(sentEmbeds)) } returns mockk(relaxed = true) {
+                every { join() } returns mockk {
                     every { isCompletedExceptionally } returns false
                 }
-                every { sendMessage(capture(sentMessages)) } returns mockk(relaxed = true)
+                every { isCompletedExceptionally } returns false
             }
+            every { sendMessage(capture(sentMessages)) } returns mockk(relaxed = true)
+        }
         Globals.api = mockk(relaxed = true) {
             every { getServerById(any<String>()) } returns Optional.of(mockk(relaxed = true) {
                 every { icon.ifPresent(any()) } just Runs
-                every { getTextChannelById(any<String>()) } returns Optional.of(channel)
-                every { getTextChannelsByName(any()) } returns listOf(channel)
-                every { getRolesByNameIgnoreCase("testrole") } returns listOf(TEST_ROLE)
-                every { getRolesByNameIgnoreCase("timeout") } returns listOf(TIMEOUT_ROLE)
-                every { getChannelCategoriesByNameIgnoreCase(any()) } returns listOf(mockk())
+                every { channelById(any()) } returns Option.just(channel)
+                every { channelsByName(any()) } returns ListK.just(channel)
+                every { rolesByName("testrole") } returns ListK.just(TEST_ROLE)
+                every { rolesByName("timeout") } returns ListK.just(TIMEOUT_ROLE)
+                every { categoriesByName(any()) } returns ListK.just(mockk())
                 every { createVoiceChannelBuilder().create() } returns mockk {
                     every { isCompletedExceptionally } returns false
                     every { join().idAsString } returns "12345"
                 }
-                every { getMembersByName(any()) } returns listOf(mockk(relaxed = true) {
+                every { membersByName(any()) } returns ListK.just(mockk(relaxed = true) {
                     every { id } returns 123
-                    every { getRoles(any()) } returns listOf(TEST_ROLE)
+                    every { roles() } returns ListK.just(TEST_ROLE)
                     every { sendMessage(capture(dmEmbeds)) } returns mockk(relaxed = true) {
                         every { isCompletedExceptionally } returns false
                     }

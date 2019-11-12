@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.Util.failed
 import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.extensions.categoriesByName
 import moe.kageru.kagebot.persistence.Dao
 import org.javacord.api.DiscordApi
 import org.javacord.api.entity.channel.ChannelCategory
@@ -12,8 +13,7 @@ import org.javacord.api.event.message.MessageCreateEvent
 import java.util.concurrent.CompletionException
 
 class TempVCFeature(@JsonProperty("category") category: String? = null) : EventFeature, MessageFeature {
-    private val category: ChannelCategory? =
-        category?.let { Config.server.getChannelCategoriesByNameIgnoreCase(it).first() }
+    private val category: ChannelCategory? = category?.let { Config.server.categoriesByName(it).first() }
 
     override fun handle(message: MessageCreateEvent) {
         if (" " !in message.readableMessageContent) {
