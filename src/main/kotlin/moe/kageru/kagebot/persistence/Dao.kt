@@ -10,8 +10,8 @@ object Dao {
     private val commands = db.hashMap("commands", Serializer.STRING, Serializer.INTEGER).createOrOpen()
     private val tempVcs = db.hashSet("vcs", Serializer.STRING).createOrOpen()
 
-    fun saveTimeout(releaseTime: Long, roles: List<Long>) {
-        prisoners[releaseTime] = roles.toLongArray()
+    fun saveTimeout(releaseTime: Long, user: Long, roles: List<Long>) {
+        prisoners[releaseTime] = (listOf(user) + roles).toLongArray()
     }
 
     fun setCommandCounter(count: Int) {
@@ -24,10 +24,10 @@ object Dao {
 
     fun getAllTimeouts() = prisoners.keys.k()
 
-    fun deleteTimeout(releaseTime: Long): LongArray {
+    fun deleteTimeout(releaseTime: Long): List<Long> {
         val timeout = prisoners[releaseTime]!!
         prisoners.remove(releaseTime)
-        return timeout
+        return timeout.toList()
     }
 
     fun isTemporaryVC(channel: String): Boolean {

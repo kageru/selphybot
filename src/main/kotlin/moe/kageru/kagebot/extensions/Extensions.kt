@@ -15,6 +15,7 @@ fun Server.channelById(id: String): Option<ServerTextChannel> = getTextChannelBy
 fun Server.channelByName(name: String): ListK<ServerTextChannel> = getTextChannelsByName(name).k()
 fun Server.rolesByName(name: String): ListK<Role> = getRolesByNameIgnoreCase(name).k()
 fun Server.membersByName(name: String): ListK<User> = getMembersByName(name).toList().k()
+fun Server.memberById(name: Long): Option<User> = getMemberById(name).asOption()
 fun Server.categoriesByName(name: String): ListK<ChannelCategory> = getChannelCategoriesByNameIgnoreCase(name).k()
 
 fun User.roles(): ListK<Role> = getRoles(Config.server).k()

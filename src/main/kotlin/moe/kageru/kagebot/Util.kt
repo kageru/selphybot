@@ -57,13 +57,13 @@ object Util {
         return orElse(null)
     }
 
-    fun findUser(idOrName: String): User? {
+    fun findUser(idOrName: String): Option<User> {
         return when {
-            idOrName.isEntityId() -> server.getMemberById(idOrName).toNullable()
+            idOrName.isEntityId() -> server.getMemberById(idOrName).asOption()
             else -> {
                 when {
-                    idOrName.contains('#') -> server.getMemberByDiscriminatedNameIgnoreCase(idOrName).toNullable()
-                    else -> server.getMembersByName(idOrName).firstOrNull()
+                    idOrName.contains('#') -> server.getMemberByDiscriminatedNameIgnoreCase(idOrName).asOption()
+                    else -> server.getMembersByName(idOrName).firstOrNull().toOption()
                 }
             }
         }

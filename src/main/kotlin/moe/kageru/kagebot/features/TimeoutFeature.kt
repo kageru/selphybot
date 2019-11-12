@@ -1,19 +1,23 @@
 package moe.kageru.kagebot.features
 
-import arrow.core.ListK
+import arrow.core.*
 import arrow.core.extensions.list.monad.map
-import arrow.core.k
+import arrow.core.extensions.listk.functorFilter.filter
+import arrow.syntax.collections.destructured
 import com.fasterxml.jackson.annotation.JsonProperty
 import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil.sendEmbed
-import moe.kageru.kagebot.Util.asOption
 import moe.kageru.kagebot.Util.findRole
 import moe.kageru.kagebot.Util.findUser
 import moe.kageru.kagebot.Util.unwrap
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.LocalizationSpec
+import moe.kageru.kagebot.extensions.memberById
+import moe.kageru.kagebot.extensions.on
+import moe.kageru.kagebot.extensions.roles
 import moe.kageru.kagebot.persistence.Dao
 import org.javacord.api.entity.permission.Role
+import org.javacord.api.entity.user.User
 import org.javacord.api.event.message.MessageCreateEvent
 import java.time.Duration
 import java.time.Instant
@@ -22,71 +26,55 @@ class TimeoutFeature(@JsonProperty("role") role: String) : MessageFeature {
     private val timeoutRole: Role = findRole(role).unwrap()
 
     override fun handle(message: MessageCreateEvent) {
-        val timeout = message.readableMessageContent.split(' ', limit = 4).let { args ->
-            if (args.size < 3) {
-                message.channel.sendMessage("Error: expected “<command> <user> <time> [<reason>]”. If the name contains spaces, please use the user ID instead.")
-                return
-            }
-            val time = args[2].toLongOrNull()
-            if (time == null) {
-                message.channel.sendMessage("Error: malformed time")
-                return
-            }
-            ParsedTimeout(args[1], time, args.getOrNull(3))
-        }
-        findUser(timeout.target)?.let { user ->
-            val oldRoles = user.getRoles(Config.server)
-                .filter { !it.isManaged }
-                .map { role ->
-                    user.removeRole(role)
-                    role.id
-                }
-            user.addRole(timeoutRole)
-            val releaseTime = Instant.now().plus(Duration.ofMinutes(timeout.duration)).epochSecond
-            Dao.saveTimeout(releaseTime, listOf(user.id) + oldRoles)
-            user.sendEmbed {
-                addField(
-                    "Timeout",
-                    Config.localization[LocalizationSpec.timeout].replace("@@", timeout.duration.toString())
-                )
-                timeout.reason?.let {
-                    addField("Reason", it)
-                }
-            }
-            Log.info("Removed roles ${oldRoles.joinToString()} from user ${user.discriminatedName}")
-        } ?: message.channel.sendMessage("Could not find user ${timeout.target}. Consider using the user ID.")
-    }
-
-    fun checkAndRelease() {
-        val now = Instant.now().epochSecond
-        Dao.getAllTimeouts()
-            .filter { releaseTime -> now > releaseTime }
-            .map { Dao.deleteTimeout(it) }
-            .map { UserInTimeout.ofLongs(it).toPair() }
-            .forEach { (userId, roleIds) ->
-                Config.server.getMemberById(userId).asOption().fold(
-                    { Log.warn("Tried to free user $userId, but couldn’t find them on the server anymore") }, { user ->
-                        roleIds.forEach { roleId ->
-                            findRole("$roleId").map(user::addRole)
-                        }
-                        user.removeRole(timeoutRole)
-                        Log.info("Lifted timeout from user ${user.discriminatedName}. Stored roles ${roleIds.joinToString()}")
+        message.readableMessageContent.split(' ', limit = 4).let { args ->
+            Either.cond(
+                args.size >= 3,
+                { Tuple3(args[1], args[2], args.getOrNull(3)) },
+                { "Error: expected “<command> <user> <time> [<reason>]”. If the name contains spaces, please use the user ID instead." }
+            ).flatMap {
+                Tuple3(
+                    findUser(it.a).orNull()
+                        ?: return@flatMap "Error: User ${it.a} not found, consider using the user ID".left(),
+                    it.b.toLongOrNull() ?: return@flatMap "Error: malformed time".left(),
+                    it.c
+                ).right()
+            }.on { (user, time, _) ->
+                applyTimeout(user, time)
+            }.fold(
+                { message.channel.sendMessage(it) },
+                { (user, time, reason) ->
+                    user.sendEmbed {
+                        addField("Timeout", Config.localization[LocalizationSpec.timeout].replace("@@", "$time"))
+                        reason?.let { addField("Reason", it) }
                     }
-                )
-            }
-    }
-}
-
-class UserInTimeout(private val id: Long, private val roles: ListK<Long>) {
-    fun toPair() = Pair(id, roles)
-
-    companion object {
-        fun ofLongs(longs: LongArray): UserInTimeout = longs.run {
-            val userId = first()
-            val roles = if (size > 1) slice(1 until size) else emptyList()
-            return UserInTimeout(userId, roles.k())
+                }
+            )
         }
     }
-}
 
-class ParsedTimeout(val target: String, val duration: Long, val reason: String?)
+    private fun applyTimeout(user: User, time: Long) {
+        val oldRoles = user.roles()
+            .filter { !it.isManaged }
+            .onEach { user.removeRole(it) }
+            .map { it.id }
+        user.addRole(timeoutRole)
+        val releaseTime = Instant.now().plus(Duration.ofMinutes(time)).epochSecond
+        Dao.saveTimeout(releaseTime, user.id, oldRoles)
+        Log.info("Removed roles ${oldRoles.joinToString()} from user ${user.discriminatedName}")
+    }
+
+    fun checkAndRelease(): Unit = Dao.getAllTimeouts()
+        .filter { releaseTime -> Instant.now().epochSecond > releaseTime }
+        .map { Dao.deleteTimeout(it) }
+        .map { it.destructured() }
+        .forEach { (userId, roleIds) ->
+            Config.server.memberById(userId).fold(
+                { Log.warn("Tried to free user $userId, but couldn’t find them on the server anymore") },
+                { user ->
+                    roleIds.forEach { findRole("$it").map(user::addRole) }
+                    user.removeRole(timeoutRole)
+                    Log.info("Lifted timeout from user ${user.discriminatedName}. Stored roles ${roleIds.joinToString()}")
+                }
+            )
+        }
+}
