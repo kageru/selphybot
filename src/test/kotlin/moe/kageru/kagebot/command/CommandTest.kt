@@ -15,6 +15,7 @@ import moe.kageru.kagebot.TestUtil.prepareTestEnvironment
 import moe.kageru.kagebot.TestUtil.testMessageSuccess
 import moe.kageru.kagebot.TestUtil.withCommands
 import moe.kageru.kagebot.Util
+import moe.kageru.kagebot.Util.unwrap
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.persistence.Dao
 import org.javacord.api.entity.message.embed.EmbedBuilder
@@ -275,7 +276,7 @@ class CommandTest : StringSpec({
             }
             every { Config.server.getMemberById(1) } returns Optional.of(user)
             mockMessage("!assign").process()
-            roles shouldBe mutableListOf(Util.findRole("testrole"))
+            roles shouldBe mutableListOf(Util.findRole("testrole").unwrap())
         }
     }
     "should create VC" {

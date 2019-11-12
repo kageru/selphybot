@@ -1,7 +1,9 @@
 package moe.kageru.kagebot
 
-import arrow.core.Option
+import arrow.core.*
+import arrow.core.extensions.either.monad.flatMap
 import arrow.core.extensions.list.foldable.find
+import arrow.typeclasses.Monad
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.extensions.*
 import moe.kageru.kagebot.config.Config.server
@@ -37,21 +39,17 @@ object Util {
     private val channelIdRegex = Regex("\\d{18}")
     private fun String.isEntityId() = channelIdRegex.matches(this)
 
-    @Throws(IllegalArgumentException::class)
-    fun findRole(idOrName: String): Role {
+    fun findRole(idOrName: String): Either<String, Role> {
         return when {
-            idOrName.isEntityId() -> server.getRoleById(idOrName).ifNotEmpty { it }
-                ?: throw IllegalArgumentException("Role $idOrName not found.")
-            else -> server.getRolesByNameIgnoreCase(idOrName).getOnlyElementOrError(idOrName)
-        }
+            idOrName.isEntityId() -> server.getRoleById(idOrName).asOption().toEither { 0 }
+            else -> server.rolesByName(idOrName).getOnly()
+        }.mapLeft { "Found $it results, expected 1" }
     }
 
-    private inline fun <reified T> List<T>.getOnlyElementOrError(identifier: String): T {
-        val className = T::class.simpleName!!
+    private fun <T> ListK<T>.getOnly(): Either<Int, T> {
         return when (size) {
-            0 -> throw IllegalArgumentException("$className $identifier not found.")
-            1 -> first()
-            else -> throw IllegalArgumentException("More than one ${className.toLowerCase()} found with name $identifier. Please specify the role ID instead")
+            1 -> Either.right(first())
+            else -> Either.left(size)
         }
     }
 
@@ -71,6 +69,16 @@ object Util {
         }
     }
 
+    fun <T> CompletableFuture<T>.asOption(): Option<T> {
+        return try {
+            Option.just(join())
+        } catch (e: CompletionException) {
+            Option.empty()
+        }
+    }
+
+    fun <T> Either<*, T>.unwrap(): T = this.getOrElse { error("Attempted to unwrap Either.left") }
+
     fun <T> CompletableFuture<T>.failed(): Boolean {
         try {
             join()
@@ -87,20 +95,15 @@ object Util {
         return isCompletedExceptionally
     }
 
-    @Throws(IllegalArgumentException::class)
-    fun findChannel(idOrName: String): TextChannel {
+    fun findChannel(idOrName: String): Either<String, TextChannel> {
         return when {
-            idOrName.isEntityId() -> server.getTextChannelById(idOrName).ifNotEmpty { it }
-                ?: throw IllegalArgumentException("Channel ID $idOrName not found.")
-            else -> if (idOrName.startsWith('@')) {
-                Globals.api.getCachedUserByDiscriminatedName(idOrName.removePrefix("@")).ifNotEmpty { user ->
-                    user.openPrivateChannel().joinOr {
-                        throw IllegalArgumentException("Could not open private channel with user $idOrName for redirection.")
-                    }
-                } ?: throw IllegalArgumentException("Can’t find user $idOrName for redirection.")
-            } else {
-                server.getTextChannelsByName(idOrName).getOnlyElementOrError(idOrName)
-            }
+            idOrName.isEntityId() -> server.getTextChannelById(idOrName).asOption().toEither { "Channel $idOrName not found" }
+            idOrName.startsWith('@') -> Globals.api.getCachedUserByDiscriminatedName(idOrName.removePrefix("@")).asOption()
+                .toEither { "User $idOrName not found" }
+                .flatMap { user ->
+                    user.openPrivateChannel().asOption().toEither { "Can’t DM user $idOrName" }
+                }
+            else -> server.channelByName(idOrName).getOnly().mapLeft { "Found $it channels for $idOrName, expected 1" }
         }
     }
 

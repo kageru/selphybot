@@ -5,6 +5,7 @@ import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.Util.checked
 import moe.kageru.kagebot.Util.failed
+import moe.kageru.kagebot.Util.unwrap
 import org.javacord.api.DiscordApi
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.embed.EmbedBuilder
@@ -45,10 +46,10 @@ class WelcomeFeature(
 
     private fun hasFallback(): Boolean = fallbackChannel != null && fallbackMessage != null
 
-    private val fallbackChannel: TextChannel? = fallbackChannel?.let {
+    private val fallbackChannel: TextChannel? = fallbackChannel?.let { channel ->
         requireNotNull(fallbackMessage) {
             "[feature.welcome.fallbackMessage] must not be null if fallbackChannel is defined"
         }
-        Util.findChannel(it)
+        Util.findChannel(channel).unwrap()
     }
 }

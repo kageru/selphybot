@@ -1,5 +1,6 @@
 package moe.kageru.kagebot.persistence
 
+import arrow.core.k
 import org.mapdb.DBMaker
 import org.mapdb.Serializer
 
@@ -21,7 +22,7 @@ object Dao {
 
     fun close() = db.close()
 
-    fun getAllTimeouts() = prisoners.keys
+    fun getAllTimeouts() = prisoners.keys.k()
 
     fun deleteTimeout(releaseTime: Long): LongArray {
         val timeout = prisoners[releaseTime]!!

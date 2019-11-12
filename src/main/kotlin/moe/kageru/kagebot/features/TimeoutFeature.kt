@@ -1,11 +1,15 @@
 package moe.kageru.kagebot.features
 
+import arrow.core.ListK
+import arrow.core.extensions.list.monad.map
+import arrow.core.k
 import com.fasterxml.jackson.annotation.JsonProperty
 import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil.sendEmbed
+import moe.kageru.kagebot.Util.asOption
 import moe.kageru.kagebot.Util.findRole
 import moe.kageru.kagebot.Util.findUser
-import moe.kageru.kagebot.Util.ifNotEmpty
+import moe.kageru.kagebot.Util.unwrap
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.LocalizationSpec
 import moe.kageru.kagebot.persistence.Dao
@@ -15,7 +19,7 @@ import java.time.Duration
 import java.time.Instant
 
 class TimeoutFeature(@JsonProperty("role") role: String) : MessageFeature {
-    private val timeoutRole: Role = findRole(role)
+    private val timeoutRole: Role = findRole(role).unwrap()
 
     override fun handle(message: MessageCreateEvent) {
         val timeout = message.readableMessageContent.split(' ', limit = 4).let { args ->
@@ -57,30 +61,30 @@ class TimeoutFeature(@JsonProperty("role") role: String) : MessageFeature {
         val now = Instant.now().epochSecond
         Dao.getAllTimeouts()
             .filter { releaseTime -> now > releaseTime }
-            .map {
-                Dao.deleteTimeout(it).let { rawIds ->
-                    UserInTimeout.ofLongs(rawIds).toPair()
-                }
-            }.forEach { (userId, roleIds) ->
-                Config.server.getMemberById(userId).ifNotEmpty { user ->
-                    roleIds.forEach { roleId ->
-                        user.addRole(findRole("$roleId"))
+            .map { Dao.deleteTimeout(it) }
+            .map { UserInTimeout.ofLongs(it).toPair() }
+            .forEach { (userId, roleIds) ->
+                Config.server.getMemberById(userId).asOption().fold(
+                    { Log.warn("Tried to free user $userId, but couldn’t find them on the server anymore") }, { user ->
+                        roleIds.forEach { roleId ->
+                            findRole("$roleId").map(user::addRole)
+                        }
+                        user.removeRole(timeoutRole)
+                        Log.info("Lifted timeout from user ${user.discriminatedName}. Stored roles ${roleIds.joinToString()}")
                     }
-                    user.removeRole(timeoutRole)
-                    Log.info("Lifted timeout from user ${user.discriminatedName}. Stored roles ${roleIds.joinToString()}")
-                } ?: Log.warn("Tried to free user $userId, but couldn’t find them on the server anymore")
+                )
             }
     }
 }
 
-class UserInTimeout(private val id: Long, private val roles: List<Long>) {
+class UserInTimeout(private val id: Long, private val roles: ListK<Long>) {
     fun toPair() = Pair(id, roles)
 
     companion object {
         fun ofLongs(longs: LongArray): UserInTimeout = longs.run {
             val userId = first()
             val roles = if (size > 1) slice(1 until size) else emptyList()
-            return UserInTimeout(userId, roles)
+            return UserInTimeout(userId, roles.k())
         }
     }
 }
