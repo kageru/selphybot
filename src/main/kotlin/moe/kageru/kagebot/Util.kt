@@ -59,21 +59,7 @@ object Util {
         }
     }
 
-    fun <T> CompletableFuture<T>.failed(): Boolean {
-        try {
-            join()
-        } catch (e: CompletionException) {
-            // we don’t care about this error, but I at least want to log it for debugging
-            Log.info(
-                """Error during CompletableFuture:
-                |$e
-                |${e.localizedMessage}
-                |${e.stackTrace.joinToString("\n\t")}
-            """.trimMargin()
-            )
-        }
-        return isCompletedExceptionally
-    }
+    fun <T> Optional<T>.asOption(): Option<T> = if (this.isPresent) Option.just(this.get()) else Option.empty()
 
     fun findChannel(idOrName: String): Either<String, TextChannel> {
         return when {
@@ -86,8 +72,6 @@ object Util {
             else -> server.channelsByName(idOrName).getOnly().mapLeft { "Found $it channels for $idOrName, expected 1" }
         }
     }
-
-    fun <T> Optional<T>.asOption(): Option<T> = if (this.isPresent) Option.just(this.get()) else Option.empty()
 
     inline fun checked(op: (() -> Unit)) {
         try {
@@ -102,21 +86,10 @@ object Util {
                     .addField("Error", "kagebot has encountered an error")
                     .addField(
                         "$e", """```
-                       ${e.stackTrace.joinToString("\n")}
+                       ${e.stackTrace.joinToString("\n\t")}
                     ```""".trimIndent().run { applyIf(length > 1800) { substring(1..1800) } }
                     )
             )
-        }
-    }
-
-    /**
-     * Convert a list of elements to pairs, retaining order.
-     * The last element is dropped if the input size is odd.
-     * [1, 2, 3, 4, 5] -> [[1, 2], [3, 4]]
-     */
-    fun <T> Collection<T>.toPairs(): List<Pair<T, T>> = this.iterator().run {
-        (0 until size / 2).map {
-            Pair(next(), next())
         }
     }
 }

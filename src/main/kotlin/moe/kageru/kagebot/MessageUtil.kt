@@ -1,7 +1,5 @@
 package moe.kageru.kagebot
 
-import moe.kageru.kagebot.Util.failed
-import moe.kageru.kagebot.Util.toPairs
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.SystemSpec
 import org.javacord.api.entity.message.Message
@@ -33,9 +31,7 @@ object MessageUtil {
             setTimestampToNow()
             op()
         }
-        val sent = sendMessage(embed)
-        // for logging
-        sent.failed()
+        sendMessage(embed)
     }
 
     /**
@@ -56,6 +52,17 @@ object MessageUtil {
             contents.toPairs().forEach { (heading, content) ->
                 addField(heading, content)
             }
+        }
+    }
+
+    /**
+     * Convert a list of elements to pairs, retaining order.
+     * The last element is dropped if the input size is odd.
+     * [1, 2, 3, 4, 5] -> [[1, 2], [3, 4]]
+     */
+    private fun <T> Collection<T>.toPairs(): List<Pair<T, T>> = this.iterator().run {
+        (0 until size / 2).map {
+            Pair(next(), next())
         }
     }
 }

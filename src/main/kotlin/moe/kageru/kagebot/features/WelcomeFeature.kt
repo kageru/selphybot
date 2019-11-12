@@ -4,7 +4,7 @@ import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.Util.checked
-import moe.kageru.kagebot.Util.failed
+import moe.kageru.kagebot.Util.asOption
 import moe.kageru.kagebot.extensions.unwrap
 import org.javacord.api.DiscordApi
 import org.javacord.api.entity.channel.TextChannel
@@ -29,7 +29,7 @@ class WelcomeFeature(
         Log.info("User ${event.user.discriminatedName} joined")
         val message = event.user.sendMessage(embed)
         // If the user disabled direct messages, try the fallback (if defined)
-        if (message.failed() && hasFallback()) {
+        if (message.asOption().isEmpty() && hasFallback()) {
             fallbackChannel!!.sendMessage(
                 fallbackMessage!!.replace("@@", MessageUtil.mention(event.user))
             )
@@ -38,9 +38,7 @@ class WelcomeFeature(
 
     override fun handle(message: MessageCreateEvent) {
         embed?.let {
-            val sent = MessageUtil.sendEmbed(message.channel, it)
-            // invoke this for logging
-            sent.failed()
+            MessageUtil.sendEmbed(message.channel, it)
         } ?: Log.info("Welcome command was triggered, but no welcome embed defined.")
     }
 

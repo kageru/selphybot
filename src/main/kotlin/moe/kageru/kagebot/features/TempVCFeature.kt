@@ -2,7 +2,7 @@ package moe.kageru.kagebot.features
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import moe.kageru.kagebot.Log
-import moe.kageru.kagebot.Util.failed
+import moe.kageru.kagebot.Util.asOption
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.extensions.categoriesByName
 import moe.kageru.kagebot.persistence.Dao
@@ -38,14 +38,11 @@ class TempVCFeature(@JsonProperty("category") category: String? = null) : EventF
         }
     }
 
-    private fun deleteChannel(channel: ServerVoiceChannel) {
-        val deletion = channel.delete("Empty temporary channel")
-        if (deletion.failed()) {
-            Log.warn("Attempted to delete temporary VC without the necessary permissions")
-        } else {
-            Dao.removeTemporaryVC(channel.idAsString)
-        }
-    }
+    private fun deleteChannel(channel: ServerVoiceChannel) =
+        channel.delete("Empty temporary channel").asOption().fold(
+            { Log.warn("Attempted to delete temporary VC without the necessary permissions") },
+            { Dao.removeTemporaryVC(channel.idAsString) }
+        )
 
     private fun createChannel(message: MessageCreateEvent, limit: Long) {
         val creation = Config.server.createVoiceChannelBuilder().apply {

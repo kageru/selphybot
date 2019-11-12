@@ -4,7 +4,7 @@ import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.Util.applyIf
-import moe.kageru.kagebot.Util.failed
+import moe.kageru.kagebot.Util.asOption
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.LocalizationSpec
 import moe.kageru.kagebot.extensions.unwrap
@@ -33,8 +33,7 @@ class MessageRedirect(target: String, private val anonymous: Boolean = false) {
             }
         }
 
-        if (MessageUtil.sendEmbed(targetChannel, embed).failed()) {
-            targetChannel.sendMessage("Error: could not redirect message.")
+        if (MessageUtil.sendEmbed(targetChannel, embed).asOption().isEmpty()) {
             Log.warn("Could not redirect message to channel $targetChannel")
         }
     }
