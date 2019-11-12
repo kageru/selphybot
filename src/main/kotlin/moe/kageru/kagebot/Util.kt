@@ -46,12 +46,8 @@ object Util {
     fun findUser(idOrName: String): Option<User> {
         return when {
             idOrName.isEntityId() -> server.getMemberById(idOrName).asOption()
-            else -> {
-                when {
-                    idOrName.contains('#') -> server.getMemberByDiscriminatedNameIgnoreCase(idOrName).asOption()
-                    else -> server.membersByName(idOrName).firstOrNone()
-                }
-            }
+            idOrName.contains('#') -> server.getMemberByDiscriminatedNameIgnoreCase(idOrName).asOption()
+            else -> server.membersByName(idOrName).firstOrNone()
         }
     }
 
@@ -62,8 +58,6 @@ object Util {
             Option.empty()
         }
     }
-
-    fun <T> Either<*, T>.unwrap(): T = this.getOrElse { error("Attempted to unwrap Either.left") }
 
     fun <T> CompletableFuture<T>.failed(): Boolean {
         try {

@@ -5,7 +5,7 @@ import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.Util.checked
 import moe.kageru.kagebot.Util.failed
-import moe.kageru.kagebot.Util.unwrap
+import moe.kageru.kagebot.extensions.unwrap
 import org.javacord.api.DiscordApi
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.embed.EmbedBuilder

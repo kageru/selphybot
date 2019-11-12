@@ -5,9 +5,9 @@ import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.Util.applyIf
 import moe.kageru.kagebot.Util.failed
-import moe.kageru.kagebot.Util.unwrap
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.LocalizationSpec
+import moe.kageru.kagebot.extensions.unwrap
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.event.message.MessageCreateEvent
 

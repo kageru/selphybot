@@ -2,7 +2,7 @@ package moe.kageru.kagebot.command
 
 import arrow.core.Option
 import moe.kageru.kagebot.Util
-import moe.kageru.kagebot.Util.unwrap
+import moe.kageru.kagebot.extensions.unwrap
 import org.javacord.api.entity.permission.Role
 import org.javacord.api.event.message.MessageCreateEvent
 

@@ -9,12 +9,12 @@ import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil.sendEmbed
 import moe.kageru.kagebot.Util.findRole
 import moe.kageru.kagebot.Util.findUser
-import moe.kageru.kagebot.Util.unwrap
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.LocalizationSpec
 import moe.kageru.kagebot.extensions.memberById
 import moe.kageru.kagebot.extensions.on
 import moe.kageru.kagebot.extensions.roles
+import moe.kageru.kagebot.extensions.unwrap
 import moe.kageru.kagebot.persistence.Dao
 import org.javacord.api.entity.permission.Role
 import org.javacord.api.entity.user.User

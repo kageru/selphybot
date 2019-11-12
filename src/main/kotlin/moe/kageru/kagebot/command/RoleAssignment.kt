@@ -3,8 +3,8 @@ package moe.kageru.kagebot.command
 import com.fasterxml.jackson.annotation.JsonProperty
 import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.Util
-import moe.kageru.kagebot.Util.unwrap
 import moe.kageru.kagebot.extensions.getUser
+import moe.kageru.kagebot.extensions.unwrap
 import org.javacord.api.event.message.MessageCreateEvent
 
 class RoleAssignment(@JsonProperty("role") role: String) {

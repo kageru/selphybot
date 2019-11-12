@@ -16,10 +16,10 @@ import moe.kageru.kagebot.TestUtil.prepareTestEnvironment
 import moe.kageru.kagebot.TestUtil.testMessageSuccess
 import moe.kageru.kagebot.TestUtil.withCommands
 import moe.kageru.kagebot.Util
-import moe.kageru.kagebot.Util.unwrap
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.extensions.roles
 import moe.kageru.kagebot.extensions.rolesByName
+import moe.kageru.kagebot.extensions.unwrap
 import moe.kageru.kagebot.persistence.Dao
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.permission.Role
