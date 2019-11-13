@@ -1,11 +1,12 @@
 package moe.kageru.kagebot.features
 
-import arrow.core.Either
-import arrow.core.Tuple3
+import arrow.Kind
+import arrow.core.*
+import arrow.core.extensions.either.applicative.applicative
 import arrow.core.extensions.either.monad.flatMap
 import arrow.core.extensions.list.monad.map
 import arrow.core.extensions.listk.functorFilter.filter
-import arrow.core.toOption
+import arrow.core.extensions.option.applicative.applicative
 import arrow.syntax.collections.destructured
 import com.fasterxml.jackson.annotation.JsonProperty
 import moe.kageru.kagebot.Log
@@ -32,13 +33,16 @@ class TimeoutFeature(@JsonProperty("role") role: String) : MessageFeature {
                 { Tuple3(args[1], args[2], args.getOrNull(3)) },
                 { "Error: expected “<command> <user> <time> [<reason>]”. If the name contains spaces, please use the user ID instead." }
             ).flatMap {
-                it.mapFirst(::findUser).toEither { "Error: User ${it.a} not found, consider using the user ID" }
+                it.mapFirst(Option.applicative(), ::findUser).fix()
+                    .toEither { "Error: User ${it.a} not found, consider using the user ID" }
             }.flatMap {
-                it.mapSecond { time -> time.toLongOrNull().toOption() }.toEither { "Error: malformed time “${it.b}”" }
+                it.mapSecond(Either.applicative()) { time ->
+                    time.toLongOrNull().rightIfNotNull { "Error: malformed time “${it.b}”" }
+                }.fix()
             }.on { (user, time, _) ->
                 applyTimeout(user, time)
             }.fold(
-                { message.channel.sendMessage(it) },
+                { error -> message.channel.sendMessage(error) },
                 { (user, time, reason) ->
                     user.sendEmbed {
                         addField("Timeout", Config.localization[LocalizationSpec.timeout].replace("@@", "$time"))
