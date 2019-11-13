@@ -23,5 +23,5 @@ object CommandSpec : ConfigSpec(prefix = "") {
 }
 
 object FeatureSpec : ConfigSpec(prefix = "") {
-    val features by optional(Features.DEFAULT, name = "feature")
+    val features by optional(Features(), name = "feature")
 }

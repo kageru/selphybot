@@ -1,6 +1,10 @@
 package moe.kageru.kagebot.features
 
-class Features(val welcome: WelcomeFeature?, val timeout: TimeoutFeature?, vc: TempVCFeature = TempVCFeature(null)) {
+class Features(
+    val welcome: WelcomeFeature? = null,
+    val timeout: TimeoutFeature? = null,
+    vc: TempVCFeature = TempVCFeature(null)
+) {
     private val debug = DebugFeature()
     private val help = HelpFeature()
     private val getConfig = GetConfigFeature()
@@ -19,8 +23,4 @@ class Features(val welcome: WelcomeFeature?, val timeout: TimeoutFeature?, vc: T
 
     fun findByString(feature: String) = featureMap[feature]
     fun eventFeatures() = all.filterIsInstance<EventFeature>()
-
-    companion object {
-        val DEFAULT = Features(null, null)
-    }
 }

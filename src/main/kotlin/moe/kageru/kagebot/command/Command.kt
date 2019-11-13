@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import moe.kageru.kagebot.Globals
 import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil
-import moe.kageru.kagebot.Util.applyIf
+import moe.kageru.kagebot.MessageUtil.mention
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.features.MessageFeature
 import org.javacord.api.entity.message.MessageAuthor
@@ -49,22 +49,12 @@ class Command(
     }
 
     private fun respond(author: MessageAuthor, response: String) =
-        response.applyIf(response.contains(AUTHOR_PLACEHOLDER)) {
-            it.replace(AUTHOR_PLACEHOLDER, MessageUtil.mention(author))
-        }
+        response.replace(AUTHOR_PLACEHOLDER, author.mention())
 }
 
 @Suppress("unused")
-enum class MatchType {
-    PREFIX {
-        override fun matches(message: String, command: Command) = message.startsWith(command.trigger, ignoreCase = true)
-    },
-    CONTAINS {
-        override fun matches(message: String, command: Command) = message.contains(command.trigger, ignoreCase = true)
-    },
-    REGEX {
-        override fun matches(message: String, command: Command) = command.regex!!.matches(message)
-    };
-
-    abstract fun matches(message: String, command: Command): Boolean
+enum class MatchType(val matches: (String, Command) -> Boolean) {
+    PREFIX({ message, command -> message.startsWith(command.trigger, ignoreCase = true) }),
+    CONTAINS({ message, command -> message.contains(command.trigger, ignoreCase = true) }),
+    REGEX({ message, command -> command.regex!!.matches(message) });
 }

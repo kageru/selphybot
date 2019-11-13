@@ -3,8 +3,8 @@ package moe.kageru.kagebot.features
 import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.MessageUtil
 import moe.kageru.kagebot.Util
-import moe.kageru.kagebot.Util.checked
 import moe.kageru.kagebot.Util.asOption
+import moe.kageru.kagebot.Util.checked
 import moe.kageru.kagebot.extensions.unwrap
 import org.javacord.api.DiscordApi
 import org.javacord.api.entity.channel.TextChannel
@@ -31,7 +31,7 @@ class WelcomeFeature(
         // If the user disabled direct messages, try the fallback (if defined)
         if (message.asOption().isEmpty() && hasFallback()) {
             fallbackChannel!!.sendMessage(
-                fallbackMessage!!.replace("@@", MessageUtil.mention(event.user))
+                fallbackMessage!!.replace("@@", event.user.mentionTag)
             )
         }
     }

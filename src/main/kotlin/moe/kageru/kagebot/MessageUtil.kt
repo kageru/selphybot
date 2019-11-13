@@ -6,24 +6,17 @@ import org.javacord.api.entity.message.Message
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.entity.message.Messageable
 import org.javacord.api.entity.message.embed.EmbedBuilder
-import org.javacord.api.entity.user.User
 import java.util.concurrent.CompletableFuture
 
 object MessageUtil {
-    fun mention(user: MessageAuthor): String {
-        return "<@${user.id}>"
-    }
-
-    fun mention(user: User): String {
-        return "<@${user.id}>"
-    }
+    fun MessageAuthor.mention() = "<@$id>"
 
     fun withEmbed(op: EmbedBuilder.() -> Unit): EmbedBuilder {
-        val builder = EmbedBuilder()
-        Config.server.icon.ifPresent { builder.setThumbnail(it) }
-        builder.setColor(SystemSpec.color)
-        builder.op()
-        return builder
+        return EmbedBuilder().apply {
+            Config.server.icon.ifPresent { setThumbnail(it) }
+            setColor(SystemSpec.color)
+            op()
+        }
     }
 
     fun Messageable.sendEmbed(op: EmbedBuilder.() -> Unit) {
