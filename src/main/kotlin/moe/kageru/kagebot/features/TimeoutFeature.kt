@@ -1,8 +1,11 @@
 package moe.kageru.kagebot.features
 
-import arrow.core.*
+import arrow.core.Either
+import arrow.core.Tuple3
+import arrow.core.extensions.either.monad.flatMap
 import arrow.core.extensions.list.monad.map
 import arrow.core.extensions.listk.functorFilter.filter
+import arrow.core.toOption
 import arrow.syntax.collections.destructured
 import com.fasterxml.jackson.annotation.JsonProperty
 import moe.kageru.kagebot.Log
@@ -11,10 +14,7 @@ import moe.kageru.kagebot.Util.findRole
 import moe.kageru.kagebot.Util.findUser
 import moe.kageru.kagebot.config.Config
 import moe.kageru.kagebot.config.LocalizationSpec
-import moe.kageru.kagebot.extensions.memberById
-import moe.kageru.kagebot.extensions.on
-import moe.kageru.kagebot.extensions.roles
-import moe.kageru.kagebot.extensions.unwrap
+import moe.kageru.kagebot.extensions.*
 import moe.kageru.kagebot.persistence.Dao
 import org.javacord.api.entity.permission.Role
 import org.javacord.api.entity.user.User
@@ -32,12 +32,9 @@ class TimeoutFeature(@JsonProperty("role") role: String) : MessageFeature {
                 { Tuple3(args[1], args[2], args.getOrNull(3)) },
                 { "Error: expected “<command> <user> <time> [<reason>]”. If the name contains spaces, please use the user ID instead." }
             ).flatMap {
-                Tuple3(
-                    findUser(it.a).orNull()
-                        ?: return@flatMap "Error: User ${it.a} not found, consider using the user ID".left(),
-                    it.b.toLongOrNull() ?: return@flatMap "Error: malformed time “${it.b}”".left(),
-                    it.c
-                ).right()
+                it.mapFirst(::findUser).toEither { "Error: User ${it.a} not found, consider using the user ID" }
+            }.flatMap {
+                it.mapSecond { time -> time.toLongOrNull().toOption() }.toEither { "Error: malformed time “${it.b}”" }
             }.on { (user, time, _) ->
                 applyTimeout(user, time)
             }.fold(
