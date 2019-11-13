@@ -1,6 +1,5 @@
 package moe.kageru.kagebot.features
 
-import arrow.Kind
 import arrow.core.*
 import arrow.core.extensions.either.applicative.applicative
 import arrow.core.extensions.either.monad.flatMap

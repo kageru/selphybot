@@ -1,5 +1,9 @@
 package moe.kageru.kagebot.features
 
+import arrow.core.Either
+import arrow.core.filterOrElse
+import arrow.core.flatMap
+import arrow.core.rightIfNotNull
 import com.fasterxml.jackson.annotation.JsonProperty
 import moe.kageru.kagebot.Log
 import moe.kageru.kagebot.Util.asOption
@@ -10,24 +14,22 @@ import org.javacord.api.DiscordApi
 import org.javacord.api.entity.channel.ChannelCategory
 import org.javacord.api.entity.channel.ServerVoiceChannel
 import org.javacord.api.event.message.MessageCreateEvent
-import java.util.concurrent.CompletionException
 
 class TempVCFeature(@JsonProperty("category") category: String? = null) : EventFeature, MessageFeature {
     private val category: ChannelCategory? = category?.let { Config.server.categoriesByName(it).first() }
 
-    override fun handle(message: MessageCreateEvent) {
-        if (" " !in message.readableMessageContent) {
-            message.channel.sendMessage("Invalid syntax, expected 2 arguments")
-            return
-        }
-        val (_, limit) = message.readableMessageContent.split(" ", limit = 2)
-        limit.toLongOrNull()?.let { parsedLimit ->
-            if (parsedLimit > 99) {
-                message.channel.sendMessage("You can’t create a channel with that many users.")
-            }
-            createChannel(message, parsedLimit)
-            message.channel.sendMessage("Done")
-        } ?: message.channel.sendMessage("Invalid syntax, expected a number, got $limit")
+    override fun handle(message: MessageCreateEvent): Unit = with(message) {
+        Either.cond(' ' in readableMessageContent,
+            { readableMessageContent.split(' ', limit = 2).last() },
+            { "Invalid syntax, expected `<command> <userlimit>`" })
+            .flatMap { limit ->
+                limit.toIntOrNull().rightIfNotNull { "Invalid syntax, expected a number as limit, got $limit" }
+            }.filterOrElse({ it < 99 }, { "Error: can’t create a channel with that many users." })
+            .fold({ err -> channel.sendMessage(err) },
+                { limit ->
+                    createChannel(message, limit)
+                    channel.sendMessage("Done")
+                })
     }
 
     override fun register(api: DiscordApi) {
@@ -44,22 +46,16 @@ class TempVCFeature(@JsonProperty("category") category: String? = null) : EventF
             { Dao.removeTemporaryVC(channel.idAsString) }
         )
 
-    private fun createChannel(message: MessageCreateEvent, limit: Long) {
-        val creation = Config.server.createVoiceChannelBuilder().apply {
-            setUserlimit(limit.toInt())
+    private fun createChannel(message: MessageCreateEvent, limit: Int): Unit =
+        Config.server.createVoiceChannelBuilder().apply {
+            setUserlimit(limit)
             setName(generateChannelName(message))
             setAuditLogReason("Created temporary VC for user ${message.messageAuthor.discriminatedName}")
-            category?.let { setCategory(it) }
-        }.create()
-        try {
-            val channel = creation.join()
-            Dao.addTemporaryVC(channel.idAsString)
-        } catch (e: CompletionException) {
-            Log.warn("Attempted to create temporary VC without the necessary permissions")
-        }
-    }
+            setCategory(category)
+        }.create().asOption().fold(
+            { Log.warn("Attempted to create temporary VC without the necessary permissions") },
+            { channel -> Dao.addTemporaryVC(channel.idAsString) })
 
-    private fun generateChannelName(message: MessageCreateEvent): String {
-        return "${message.messageAuthor.name}’s volatile corner"
-    }
+    private fun generateChannelName(message: MessageCreateEvent): String =
+        "${message.messageAuthor.name}’s volatile corner"
 }
