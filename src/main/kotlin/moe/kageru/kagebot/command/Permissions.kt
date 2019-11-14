@@ -22,7 +22,7 @@ class Permissions(
         message.messageAuthor.isBotOwner -> true
         onlyDM && !message.isPrivateMessage -> false
         // returns true if the Option is empty (case for no restrictions)
-        else -> hasOneOf.forall { Util.hasOneOf(message.messageAuthor, it) }
-                && hasNoneOf.forall { !Util.hasOneOf(message.messageAuthor, it) }
+        else -> hasOneOf.forall { Util.hasOneOf(message.messageAuthor, it) } &&
+                hasNoneOf.forall { !Util.hasOneOf(message.messageAuthor, it) }
     }
 }
