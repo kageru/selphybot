@@ -6,16 +6,16 @@ import kotlinx.coroutines.launch
 import moe.kageru.kagebot.config.Config
 
 object CronD {
-    fun startAll() {
-        GlobalScope.launch {
-            minutely()
-        }
+  fun startAll() {
+    GlobalScope.launch {
+      minutely()
     }
+  }
 
-    private suspend fun minutely() {
-        while (true) {
-            Config.features.timeout?.checkAndRelease()
-            delay(60_000)
-        }
+  private suspend fun minutely() {
+    while (true) {
+      Config.features.timeout?.checkAndRelease()
+      delay(60_000)
     }
+  }
 }

@@ -14,46 +14,46 @@ import org.javacord.api.entity.message.embed.EmbedBuilder
 import java.util.*
 
 class HelpFeatureTest : StringSpec({
-    val sentEmbeds = mutableListOf<EmbedBuilder>()
-    TestUtil.prepareTestEnvironment(sentEmbeds = sentEmbeds)
-    val commandConfig = """
-        [[command]]
-        trigger = "!help"
-        feature = "help"
-        [[command]]
-        trigger = "!ping"
-        [[command]]
-        trigger = "!something"
-        [[command]]
-        trigger = "not a prefix"
-        matchType = "CONTAINS"
-        [[command]]
-        trigger = "!prison"
-        [command.permissions]
-        hasOneOf = ["testrole"]
-        """.trimIndent()
-    "should show prefix command" {
-        withCommands(commandConfig) {
-            val expected = listOf("!ping", "!something")
-            val unexpected = listOf("not a prefix", "!prison")
-            withReplyContents(expected = expected, unexpected = unexpected) { replies ->
-                mockMessage("!help", replyEmbeds = replies).process()
-            }
-        }
+  val sentEmbeds = mutableListOf<EmbedBuilder>()
+  TestUtil.prepareTestEnvironment(sentEmbeds = sentEmbeds)
+  val commandConfig = """
+    [[command]]
+    trigger = "!help"
+    feature = "help"
+    [[command]]
+    trigger = "!ping"
+    [[command]]
+    trigger = "!something"
+    [[command]]
+    trigger = "not a prefix"
+    matchType = "CONTAINS"
+    [[command]]
+    trigger = "!prison"
+    [command.permissions]
+    hasOneOf = ["testrole"]
+    """.trimIndent()
+  "should show prefix command" {
+    withCommands(commandConfig) {
+      val expected = listOf("!ping", "!something")
+      val unexpected = listOf("not a prefix", "!prison")
+      withReplyContents(expected = expected, unexpected = unexpected) { replies ->
+        mockMessage("!help", replyEmbeds = replies).process()
+      }
     }
-    "should show moderation commands for mod" {
-        withCommands(commandConfig) {
-            val expected = listOf("!ping", "!something", "!prison")
-            val unexpected = listOf("not a prefix")
-            withReplyContents(expected = expected, unexpected = unexpected) { replies ->
-                val message = mockMessage("!help", replyEmbeds = replies)
-                every { message.messageAuthor.asUser() } returns Optional.of(mockk {
-                    every { getRoles(any()) } returns listOf(
-                        Config.server.rolesByName("testrole").first()
-                    )
-                })
-                message.process()
-            }
-        }
+  }
+  "should show moderation commands for mod" {
+    withCommands(commandConfig) {
+      val expected = listOf("!ping", "!something", "!prison")
+      val unexpected = listOf("not a prefix")
+      withReplyContents(expected = expected, unexpected = unexpected) { replies ->
+        val message = mockMessage("!help", replyEmbeds = replies)
+        every { message.messageAuthor.asUser() } returns Optional.of(mockk {
+          every { getRoles(any()) } returns listOf(
+            Config.server.rolesByName("testrole").first()
+          )
+        })
+        message.process()
+      }
     }
+  }
 })

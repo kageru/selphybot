@@ -13,27 +13,27 @@ import java.awt.Color
 
 @ExperimentalStdlibApi
 class ConfigTest : ShouldSpec({
-    TestUtil.prepareTestEnvironment()
-    "should properly parse test config" {
-        Config.system[SystemSpec.serverId] shouldNotBe null
-        SystemSpec.color shouldBe Color.decode("#1793d0")
-        Config.features.welcome!!.embed shouldNotBe null
-        Config.commands.size shouldBe 3
-    }
+  TestUtil.prepareTestEnvironment()
+  "should properly parse test config" {
+    Config.system[SystemSpec.serverId] shouldNotBe null
+    SystemSpec.color shouldBe Color.decode("#1793d0")
+    Config.features.welcome!!.embed shouldNotBe null
+    Config.commands.size shouldBe 3
+  }
 
-    "should parse test config via command" {
-        val redir = "says"
-        val testConfig = """
-        [localization]
-        redirectedMessage = "$redir"
-        messageDeleted = "dongered"
-        timeout = "timeout"
-        """.trimIndent()
-        val message = TestUtil.mockMessage("anything")
-        every { message.messageAttachments } returns listOf(mockk {
-            every { url.openStream().readAllBytes() } returns testConfig.toByteArray()
-        })
-        SetConfigFeature().handle(message)
-        Config.localization[LocalizationSpec.redirectedMessage] shouldBe redir
-    }
+  "should parse test config via command" {
+    val redir = "says"
+    val testConfig = """
+      [localization]
+      redirectedMessage = "$redir"
+      messageDeleted = "dongered"
+      timeout = "timeout"
+      """.trimIndent()
+    val message = TestUtil.mockMessage("anything")
+    every { message.messageAttachments } returns listOf(mockk {
+      every { url.openStream().readAllBytes() } returns testConfig.toByteArray()
+    })
+    SetConfigFeature().handle(message)
+    Config.localization[LocalizationSpec.redirectedMessage] shouldBe redir
+  }
 })

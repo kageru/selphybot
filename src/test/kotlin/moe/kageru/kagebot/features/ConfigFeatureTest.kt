@@ -9,16 +9,17 @@ import moe.kageru.kagebot.TestUtil.withCommands
 import java.io.File
 
 class ConfigFeatureTest : ShouldSpec({
-    TestUtil.prepareTestEnvironment()
-    "getConfig should sent message with attachment" {
-        withCommands("""
-        [[command]]
-        trigger = "!getConfig"
-        feature = "getConfig"
-        """.trimIndent()) {
-            val calls = mutableListOf<File>()
-            mockMessage("!getConfig", files = calls).process()
-            calls.size shouldBe 1
-        }
+  TestUtil.prepareTestEnvironment()
+  "getConfig should sent message with attachment" {
+    withCommands(
+      """
+      [[command]]
+      trigger = "!getConfig"
+      feature = "getConfig"
+      """.trimIndent()) {
+      val calls = mutableListOf<File>()
+      mockMessage("!getConfig", files = calls).process()
+      calls.size shouldBe 1
     }
+  }
 })

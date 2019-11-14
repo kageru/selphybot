@@ -12,44 +12,44 @@ import java.io.File
 import kotlin.system.exitProcess
 
 fun main() {
-    Kagebot.init()
+  Kagebot.init()
 }
 
 object Kagebot {
-    fun MessageCreateEvent.process() {
-        if (messageAuthor.isBotUser) {
-            handleOwn()
-            return
-        }
-        Config.commands
-            .find { it.matches(readableMessageContent) && it.isAllowed(this) }
-            .map { it.execute(this) }
+  fun MessageCreateEvent.process() {
+    if (messageAuthor.isBotUser) {
+      handleOwn()
+      return
     }
+    Config.commands
+      .find { it.matches(readableMessageContent) && it.isAllowed(this) }
+      .map { it.execute(this) }
+  }
 
-    private fun MessageCreateEvent.handleOwn() {
-        if (messageAuthor.isYourself) {
-            val loggedMessage = readableMessageContent.ifBlank { "[embed]" }
-            Log.info("<Self> $loggedMessage")
-        }
+  private fun MessageCreateEvent.handleOwn() {
+    if (messageAuthor.isYourself) {
+      val loggedMessage = readableMessageContent.ifBlank { "[embed]" }
+      Log.info("<Self> $loggedMessage")
     }
+  }
 
-    fun init() {
-        val secret = File("secret").readText().trim()
-        val api = DiscordApiBuilder().setToken(secret).login().join()
-        Globals.api = api
-        ConfigParser.initialLoad(ConfigParser.DEFAULT_CONFIG_PATH).mapLeft { e ->
-            println("Config parsing error:\n$e,\n${e.message},\n${e.stackTrace.joinToString("\n")}")
-            exitProcess(1)
-        }
-        Runtime.getRuntime().addShutdownHook(Thread {
-            Log.info("Bot has been interrupted. Shutting down.")
-            Dao.setCommandCounter(Globals.commandCounter.get())
-            Dao.close()
-            api.disconnect()
-        })
-        Log.info("kagebot Mk II running")
-        api.addMessageCreateListener { checked { it.process() } }
-        Config.features.eventFeatures().forEach { it.register(api) }
-        CronD.startAll()
+  fun init() {
+    val secret = File("secret").readText().trim()
+    val api = DiscordApiBuilder().setToken(secret).login().join()
+    Globals.api = api
+    ConfigParser.initialLoad(ConfigParser.DEFAULT_CONFIG_PATH).mapLeft { e ->
+      println("Config parsing error:\n$e,\n${e.message},\n${e.stackTrace.joinToString("\n")}")
+      exitProcess(1)
     }
+    Runtime.getRuntime().addShutdownHook(Thread {
+      Log.info("Bot has been interrupted. Shutting down.")
+      Dao.setCommandCounter(Globals.commandCounter.get())
+      Dao.close()
+      api.disconnect()
+    })
+    Log.info("kagebot Mk II running")
+    api.addMessageCreateListener { checked { it.process() } }
+    Config.features.eventFeatures().forEach { it.register(api) }
+    CronD.startAll()
+  }
 }
