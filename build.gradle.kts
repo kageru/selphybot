@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val arrowVersion = "0.10.2"
 
 apply {
     plugin("kotlin-kapt")
@@ -41,6 +40,7 @@ val test by tasks.getting(Test::class) {
     useJUnitPlatform { }
 }
 
+val arrowVersion = "0.10.2"
 dependencies {
     implementation("com.uchuhimo:konf-core:0.20.0")
     implementation("com.uchuhimo:konf-toml:0.20.0")
@@ -53,9 +53,6 @@ dependencies {
 
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
     implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
-    implementation("io.arrow-kt:arrow-optics:$arrowVersion")
-    implementation("io.arrow-kt:arrow-meta:$arrowVersion")
-    implementation("io.arrow-kt:arrow-fx:$arrowVersion")
 
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
     testImplementation("io.mockk:mockk:1.9.3")
