@@ -4,8 +4,10 @@ import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import moe.kageru.kagebot.TestUtil
 import moe.kageru.kagebot.config.Config
+import moe.kageru.kagebot.extensions.channelsByName
 import org.javacord.api.entity.message.embed.EmbedBuilder
 
 @ExperimentalStdlibApi
@@ -27,8 +29,6 @@ class WelcomeFeatureTest : StringSpec({
     sentMessages shouldBe mutableListOf(Config.features.welcome!!.embed)
   }
   "should send welcome fallback if DMs are disabled" {
-    val message = mutableListOf<String>()
-    TestUtil.prepareTestEnvironment(sentMessages = message)
     Config.features.welcome!!.welcomeUser(
       mockk {
         every { user } returns mockk {
@@ -38,9 +38,11 @@ class WelcomeFeatureTest : StringSpec({
             every { join() } returns mockk()
             every { isCompletedExceptionally } returns true
           }
+          every { mentionTag } returns "<@123>"
         }
       }
     )
-    message shouldBe mutableListOf("<@123> welcome")
+    val channel = Config.server.channelsByName("").first()
+    verify(exactly = 1) { channel.sendMessage("<@123> welcome") }
   }
 })

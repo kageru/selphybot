@@ -85,28 +85,31 @@ object TestUtil {
       }
       every { sendMessage(capture(sentMessages)) } returns mockk(relaxed = true)
     }
-    Globals.api = mockk(relaxed = true) {
-      every { getServerById(any<String>()) } returns Optional.of(mockk(relaxed = true) {
-        every { icon.ifPresent(any()) } just Runs
-        every { channelById(any()) } returns Option.just(channel)
-        every { channelsByName(any()) } returns ListK.just(channel)
-        every { rolesByName("testrole") } returns ListK.just(TEST_ROLE)
-        every { rolesByName("timeout") } returns ListK.just(TIMEOUT_ROLE)
-        every { categoriesByName(any()) } returns ListK.just(mockk())
-        every { createVoiceChannelBuilder().create() } returns mockk {
+    // mockk tries to access Config.server in the mocking block below, so we need to provide some kind of value
+    Config.server = mockk()
+    Config.server = mockk(relaxed = true) {
+      every { icon.ifPresent(any()) } just Runs
+      every { channelById(any()) } returns Option.just(channel)
+      every { channelsByName(any()) } returns ListK.just(channel)
+      every { rolesByName("testrole") } returns ListK.just(TEST_ROLE)
+      every { rolesByName("timeout") } returns ListK.just(TIMEOUT_ROLE)
+      every { categoriesByName(any()) } returns ListK.just(mockk())
+      every { createVoiceChannelBuilder().create() } returns mockk {
+        every { isCompletedExceptionally } returns false
+        every { join().idAsString } returns "12345"
+      }
+      every { getMembersByName(any()) } returns ListK.just(mockk(relaxed = true) {
+        every { id } returns 123
+        every { roles() } returns ListK.just(TEST_ROLE)
+        every { getRoles(any()) } returns ListK.just(TEST_ROLE)
+        every { sendMessage(capture(dmEmbeds)) } returns mockk(relaxed = true) {
           every { isCompletedExceptionally } returns false
-          every { join().idAsString } returns "12345"
         }
-        every { membersByName(any()) } returns ListK.just(mockk(relaxed = true) {
-          every { id } returns 123
-          every { roles() } returns ListK.just(TEST_ROLE)
-          every { sendMessage(capture(dmEmbeds)) } returns mockk(relaxed = true) {
-            every { isCompletedExceptionally } returns false
-          }
-        })
       })
     }
-    Config.server = Globals.api.getServerById("").get()
+    Globals.api = mockk(relaxed = true) {
+      every { getServerById(any<String>()) } returns Optional.of(Config.server)
+    }
     ConfigParser.initialLoad("testconfig.toml")
   }
 

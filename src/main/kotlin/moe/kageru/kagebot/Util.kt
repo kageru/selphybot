@@ -1,11 +1,8 @@
 package moe.kageru.kagebot
 
-import arrow.core.Either
-import arrow.core.ListK
-import arrow.core.Option
+import arrow.core.*
 import arrow.core.extensions.either.monad.flatMap
 import arrow.core.extensions.list.foldable.find
-import arrow.core.firstOrNone
 import moe.kageru.kagebot.config.Config.server
 import moe.kageru.kagebot.extensions.*
 import org.javacord.api.entity.channel.TextChannel
@@ -56,7 +53,8 @@ object Util {
 
   fun <T> CompletableFuture<T>.asOption(): Option<T> {
     return try {
-      Option.just(join())
+      val future = join()
+      if (isCompletedExceptionally) None else Option.just(future)
     } catch (e: CompletionException) {
       Option.empty()
     }

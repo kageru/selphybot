@@ -303,7 +303,7 @@ class CommandTest : StringSpec({
       feature = "vc"
       """.trimIndent()
     ) {
-      testMessageSuccess("!vc asd", "Invalid syntax, expected a number, got asd")
+      testMessageSuccess("!vc asd", "Invalid syntax, expected a number as limit, got asd")
       Dao.isTemporaryVC("12345") shouldBe false
     }
   }
