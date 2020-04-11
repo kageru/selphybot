@@ -20,9 +20,9 @@ object Util {
     return if (condition) op(this) else this
   }
 
-  fun hasOneOf(messageAuthor: MessageAuthor, roles: Set<Role>): Boolean {
+  fun hasOneOf(messageAuthor: MessageAuthor, roles: Set<String>): Boolean {
     return messageAuthor.asUser().asOption().flatMap { user ->
-      user.roles().find { it in roles }
+      user.roles().find { it.name in roles }
     }.nonEmpty()
   }
 

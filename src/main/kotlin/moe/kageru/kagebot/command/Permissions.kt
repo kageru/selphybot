@@ -1,6 +1,7 @@
 package moe.kageru.kagebot.command
 
 import arrow.core.Option
+import arrow.core.toOption
 import moe.kageru.kagebot.Util
 import moe.kageru.kagebot.extensions.unwrap
 import org.javacord.api.entity.permission.Role
@@ -11,12 +12,8 @@ class Permissions(
   hasNoneOf: List<String>?,
   private val onlyDM: Boolean = false
 ) {
-  private val hasOneOf: Option<Set<Role>> = resolveRoles(hasOneOf)
-  private val hasNoneOf: Option<Set<Role>> = resolveRoles(hasNoneOf)
-
-  private fun resolveRoles(hasOneOf: List<String>?): Option<Set<Role>> {
-    return Option.fromNullable(hasOneOf?.mapTo(mutableSetOf(), { Util.findRole(it).unwrap() }))
-  }
+  private val hasOneOf: Option<Set<String>> = hasOneOf?.toSet().toOption()
+  private val hasNoneOf: Option<Set<String>> = hasNoneOf?.toSet().toOption()
 
   fun isAllowed(message: MessageCreateEvent): Boolean = when {
     message.messageAuthor.isBotOwner -> true
