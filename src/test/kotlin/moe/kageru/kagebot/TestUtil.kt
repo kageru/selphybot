@@ -26,9 +26,10 @@ object TestUtil {
   private val TIMEOUT_ROLE = mockk<Role> {
     every { id } returns 123
   }
-  val TEST_ROLE = mockk<Role> {
+  val TEST_ROLE: Role = mockk {
     every { id } returns 1
     every { isManaged } returns false
+    every { name } returns "testrole"
   }
 
   fun mockMessage(
