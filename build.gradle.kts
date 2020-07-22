@@ -46,9 +46,9 @@ dependencies {
   implementation(kotlin("stdlib-jdk8"))
   implementation("org.javacord:javacord:3.0.6")
   implementation("org.mapdb:mapdb:3.0.8")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
   implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.72")
-  implementation("com.fasterxml.jackson.core:jackson-annotations:2.11.0")
+  implementation("com.fasterxml.jackson.core:jackson-annotations:2.11.1")
 
   implementation("io.arrow-kt:arrow-core:$arrowVersion")
   implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
@@ -57,7 +57,7 @@ dependencies {
   testImplementation("io.mockk:mockk:1.10.0")
   // these two are needed to access javacord internals (such as reading from sent embeds during tests)
   testImplementation("org.javacord:javacord-core:3.0.6")
-  testImplementation("com.fasterxml.jackson.core:jackson-databind:2.11.0")
+  testImplementation("com.fasterxml.jackson.core:jackson-databind:2.11.1")
 }
 
 tasks.withType<KotlinCompile> {
