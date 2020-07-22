@@ -38,11 +38,8 @@ object Kagebot {
     val api = DiscordApiBuilder().setToken(secret).login().join()
     Globals.api = api
     ConfigParser.initialLoad(ConfigParser.DEFAULT_CONFIG_PATH).mapLeft { e ->
-      println("Config parsing error:")
-      generateSequence(e) { e.cause }
-        .map { err ->
-          err.stackTrace.joinToString("\n", prefix = "$err: ${err.message}", postfix = "\n")
-        }.forEach(::println)
+      println("Config parsing error:\n$e,\n${e.message},\n${e.stackTrace.joinToString("\n")}")
+      println("Caused by: ${e.cause}\n${e.cause?.stackTrace?.joinToString("\n")}")
       exitProcess(1)
     }
     Runtime.getRuntime().addShutdownHook(Thread {
