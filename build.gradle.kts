@@ -4,8 +4,8 @@ apply {
   plugin("kotlin-kapt")
 }
 plugins {
-  kotlin("jvm") version "1.3.72"
-  id("com.github.johnrengelman.shadow") version "5.1.0" apply true
+  kotlin("jvm") version "1.4.10"
+  id("com.github.johnrengelman.shadow") version "5.2.0" apply true
   application
 }
 
@@ -39,16 +39,15 @@ val test by tasks.getting(Test::class) {
   useJUnitPlatform { }
 }
 
-val arrowVersion = "0.10.3"
+val arrowVersion = "0.11.0"
 dependencies {
   implementation("com.uchuhimo:konf-core:0.22.1")
   implementation("com.uchuhimo:konf-toml:0.22.1")
-  implementation(kotlin("stdlib-jdk8"))
-  implementation("org.javacord:javacord:3.0.6")
+  implementation("org.javacord:javacord:3.0.7")
   implementation("org.mapdb:mapdb:3.0.8")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
-  implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.72")
-  implementation("com.fasterxml.jackson.core:jackson-annotations:2.11.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+  implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.10")
+  implementation("com.fasterxml.jackson.core:jackson-annotations:2.11.2")
 
   implementation("io.arrow-kt:arrow-core:$arrowVersion")
   implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
@@ -56,10 +55,10 @@ dependencies {
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
   testImplementation("io.mockk:mockk:1.10.0")
   // these two are needed to access javacord internals (such as reading from sent embeds during tests)
-  testImplementation("org.javacord:javacord-core:3.0.6")
-  testImplementation("com.fasterxml.jackson.core:jackson-databind:2.11.1")
+  testImplementation("org.javacord:javacord-core:3.0.7")
+  testImplementation("com.fasterxml.jackson.core:jackson-databind:2.11.2")
 }
 
 tasks.withType<KotlinCompile> {
-  kotlinOptions.jvmTarget = "11"
+  kotlinOptions.jvmTarget = "14"
 }
