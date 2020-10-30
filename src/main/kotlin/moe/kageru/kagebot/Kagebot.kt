@@ -35,7 +35,7 @@ object Kagebot {
 
   fun init() {
     val secret = File("secret").readText().trim()
-    val api = DiscordApiBuilder().setToken(secret).login().join()
+    val api = DiscordApiBuilder().setToken(secret).setAllIntents().login().join()
     Globals.api = api
     ConfigParser.initialLoad(ConfigParser.DEFAULT_CONFIG_PATH).mapLeft { e ->
       println("Config parsing error:\n$e,\n${e.message},\n${e.stackTrace.joinToString("\n")}")
