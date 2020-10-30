@@ -41,13 +41,13 @@ val test by tasks.getting(Test::class) {
 
 val arrowVersion = "0.11.0"
 dependencies {
-  implementation("com.uchuhimo:konf-core:0.22.1")
-  implementation("com.uchuhimo:konf-toml:0.22.1")
-  implementation("org.javacord:javacord:3.0.7")
+  implementation("com.uchuhimo:konf-core:0.23.0")
+  implementation("com.uchuhimo:konf-toml:0.23.0")
+  implementation("org.javacord:javacord:3.1.1")
   implementation("org.mapdb:mapdb:3.0.8")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
   implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.10")
-  implementation("com.fasterxml.jackson.core:jackson-annotations:2.11.2")
+  implementation("com.fasterxml.jackson.core:jackson-annotations:2.11.3")
 
   implementation("io.arrow-kt:arrow-core:$arrowVersion")
   implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
@@ -55,8 +55,8 @@ dependencies {
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
   testImplementation("io.mockk:mockk:1.10.0")
   // these two are needed to access javacord internals (such as reading from sent embeds during tests)
-  testImplementation("org.javacord:javacord-core:3.0.7")
-  testImplementation("com.fasterxml.jackson.core:jackson-databind:2.11.2")
+  testImplementation("org.javacord:javacord-core:3.1.1")
+  testImplementation("com.fasterxml.jackson.core:jackson-databind:2.11.3")
 }
 
 tasks.withType<KotlinCompile> {
