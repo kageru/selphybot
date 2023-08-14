@@ -65,7 +65,7 @@ object Util {
   fun findChannel(idOrName: String): Either<String, TextChannel> {
     return when {
       idOrName.isEntityId() -> server.channelById(idOrName).toEither { "Channel $idOrName not found" }
-      idOrName.startsWith('@') -> Globals.api.getCachedUserByDiscriminatedName(idOrName.removePrefix("@")).asOption()
+      idOrName.startsWith('@') -> Globals.api.getUserById(idOrName.removePrefix("@")).asOption()
         .toEither { "User $idOrName not found" }
         .flatMap { user ->
           user.openPrivateChannel().asOption().toEither { "Can’t DM user $idOrName" }
