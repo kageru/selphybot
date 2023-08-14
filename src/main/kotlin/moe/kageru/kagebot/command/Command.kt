@@ -21,7 +21,7 @@ class Command(
   private val actions: MessageActions?,
   embed: List<String>?,
   feature: String?,
-  matchType: String?
+  matchType: String?,
 ) {
   val matchType: MatchType = matchType?.let { type ->
     MatchType.values().find { it.name.equals(type, ignoreCase = true) }
@@ -56,5 +56,5 @@ class Command(
 enum class MatchType(val matches: (String, Command) -> Boolean) {
   PREFIX({ message, command -> message.startsWith(command.trigger, ignoreCase = true) }),
   CONTAINS({ message, command -> message.contains(command.trigger, ignoreCase = true) }),
-  REGEX({ message, command -> command.regex!!.matches(message) });
+  REGEX({ message, command -> command.regex!!.matches(message) }),
 }

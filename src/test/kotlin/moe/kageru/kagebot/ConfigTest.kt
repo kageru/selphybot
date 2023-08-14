@@ -31,9 +31,11 @@ class ConfigTest : StringSpec() {
       timeout = "timeout"
       """.trimIndent()
       val message = TestUtil.mockMessage("anything")
-      every { message.messageAttachments } returns listOf(mockk {
-        every { url.openStream().readAllBytes() } returns testConfig.toByteArray()
-      })
+      every { message.messageAttachments } returns listOf(
+        mockk {
+          every { url.openStream().readAllBytes() } returns testConfig.toByteArray()
+        },
+      )
       SetConfigFeature().handle(message)
       Config.localization[LocalizationSpec.redirectedMessage] shouldBe redir
     }

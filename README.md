@@ -1,4 +1,6 @@
-# kagebot – where the code is better than the name
+# kagebot
+Kinda dead.
+
 This bot is a replacement for [my old one](https://git.kageru.moe/kageru/discord-selphybot) with a very simple premise:
 As much as possible should be configurable in a human-readable way.
 This will allow anyone to modify the config to host their own instance tailored to their own needs,
@@ -14,4 +16,6 @@ The implementation has kind of deteriorated into a playground for me
   but it’s been running and moderating a 1000+ user server for over a year
   with relatively little maintenance.
 
-[1]: While arrow is great, adding it to a project after the fact leads to a very weird combination of FP and non-FP constructs. Would not recommend in production.
+[1]: While arrow is great, adding it to a project after the fact leads to a very weird combination of FP and non-FP constructs.
+Would not recommend in production. This was also built in an early version of arrow that still had `Kind` and other concepts that were scrapped later,
+but I don’t plan to update that ever. The bot can keep running as-is until it breaks.

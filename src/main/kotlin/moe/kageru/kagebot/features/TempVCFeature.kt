@@ -19,17 +19,21 @@ class TempVCFeature(@JsonProperty("category") category: String? = null) : EventF
   private val category: ChannelCategory? = category?.let { Config.server.categoriesByName(it).first() }
 
   override fun handle(message: MessageCreateEvent): Unit = with(message) {
-    Either.cond(' ' in readableMessageContent,
+    Either.cond(
+      ' ' in readableMessageContent,
       { readableMessageContent.split(' ', limit = 2).last() },
-      { "Invalid syntax, expected `<command> <userlimit>`" })
+      { "Invalid syntax, expected `<command> <userlimit>`" },
+    )
       .flatMap { limit ->
         limit.toIntOrNull().rightIfNotNull { "Invalid syntax, expected a number as limit, got $limit" }
       }.filterOrElse({ it < 99 }, { "Error: can’t create a channel with that many users." })
-      .fold({ err -> channel.sendMessage(err) },
+      .fold(
+        { err -> channel.sendMessage(err) },
         { limit ->
           createChannel(message, limit)
           channel.sendMessage("Done")
-        })
+        },
+      )
   }
 
   override fun register(api: DiscordApi) {
@@ -43,7 +47,7 @@ class TempVCFeature(@JsonProperty("category") category: String? = null) : EventF
   private fun deleteChannel(channel: ServerVoiceChannel) =
     channel.delete("Empty temporary channel").asOption().fold(
       { Log.warn("Attempted to delete temporary VC without the necessary permissions") },
-      { Dao.removeTemporaryVC(channel.idAsString) }
+      { Dao.removeTemporaryVC(channel.idAsString) },
     )
 
   private fun createChannel(message: MessageCreateEvent, limit: Int): Unit =
@@ -54,7 +58,8 @@ class TempVCFeature(@JsonProperty("category") category: String? = null) : EventF
       setCategory(category)
     }.create().asOption().fold(
       { Log.warn("Attempted to create temporary VC without the necessary permissions") },
-      { channel -> Dao.addTemporaryVC(channel.idAsString) })
+      { channel -> Dao.addTemporaryVC(channel.idAsString) },
+    )
 
   private fun generateChannelName(message: MessageCreateEvent): String =
     "${message.messageAuthor.name}’s volatile corner"

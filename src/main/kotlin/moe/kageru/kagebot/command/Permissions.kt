@@ -3,14 +3,12 @@ package moe.kageru.kagebot.command
 import arrow.core.Option
 import arrow.core.toOption
 import moe.kageru.kagebot.Util
-import moe.kageru.kagebot.extensions.unwrap
-import org.javacord.api.entity.permission.Role
 import org.javacord.api.event.message.MessageCreateEvent
 
 class Permissions(
   hasOneOf: List<String>?,
   hasNoneOf: List<String>?,
-  private val onlyDM: Boolean = false
+  private val onlyDM: Boolean = false,
 ) {
   private val hasOneOf: Option<Set<String>> = hasOneOf?.toSet().toOption()
   private val hasNoneOf: Option<Set<String>> = hasNoneOf?.toSet().toOption()

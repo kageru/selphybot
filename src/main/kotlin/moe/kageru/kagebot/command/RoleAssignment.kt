@@ -12,6 +12,6 @@ class RoleAssignment(@JsonProperty("role") role: String) {
 
   fun assign(message: MessageCreateEvent) = message.getUser().fold(
     { Log.warn("Could not find user ${message.messageAuthor.name} for role assign") },
-    { it.addRole(role, "Requested via command.") }
+    { it.addRole(role, "Requested via command.") },
   )
 }

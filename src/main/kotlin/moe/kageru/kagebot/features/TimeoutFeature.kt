@@ -30,7 +30,7 @@ class TimeoutFeature(@JsonProperty("role") role: String) : MessageFeature {
       Either.cond(
         args.size >= 3,
         { Tuple3(args[1], args[2], args.getOrNull(3)) },
-        { "Error: expected “<command> <user> <time> [<reason>]”. If the name contains spaces, please use the user ID instead." }
+        { "Error: expected “<command> <user> <time> [<reason>]”. If the name contains spaces, please use the user ID instead." },
       ).flatMap {
         it.mapFirst(Option.applicative(), ::findUser).fix()
           .toEither { "Error: User ${it.a} not found, consider using the user ID" }
@@ -47,7 +47,7 @@ class TimeoutFeature(@JsonProperty("role") role: String) : MessageFeature {
             addField("Timeout", Config.localization[LocalizationSpec.timeout].replace("@@", "$time"))
             reason?.let { addField("Reason", it) }
           }
-        }
+        },
       )
     }
   }
@@ -74,7 +74,7 @@ class TimeoutFeature(@JsonProperty("role") role: String) : MessageFeature {
           roleIds.forEach { findRole("$it").map(user::addRole) }
           user.removeRole(timeoutRole)
           Log.info("Lifted timeout from user ${user.discriminatedName}. Stored roles ${roleIds.joinToString()}")
-        }
+        },
       )
     }
 }

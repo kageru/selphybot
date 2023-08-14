@@ -22,11 +22,15 @@ class DebugFeature : MessageFeature {
     val runtime = Runtime.getRuntime()
     return MessageUtil.listToEmbed(
       listOf(
-        "Bot:", getBotStats(),
-        "Memory:", getMemoryInfo(runtime, osBean),
-        "CPU:", getCpuInfo(osBean),
-        "System:", getOsInfo()
-      )
+        "Bot:",
+        getBotStats(),
+        "Memory:",
+        getMemoryInfo(runtime, osBean),
+        "CPU:",
+        getCpuInfo(osBean),
+        "System:",
+        getOsInfo(),
+      ),
     )
   }
 
@@ -40,7 +44,7 @@ class DebugFeature : MessageFeature {
       uptime.toDaysPart(),
       uptime.toHoursPart(),
       uptime.toMinutesPart(),
-      uptime.toSecondsPart()
+      uptime.toSecondsPart(),
     )
   }
 

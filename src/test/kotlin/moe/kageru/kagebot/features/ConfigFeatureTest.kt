@@ -16,7 +16,8 @@ class ConfigFeatureTest : ShouldSpec({
       [[command]]
       trigger = "!getConfig"
       feature = "getConfig"
-      """.trimIndent()) {
+      """.trimIndent(),
+    ) {
       val calls = mutableListOf<File>()
       mockMessage("!getConfig", files = calls).process()
       calls.size shouldBe 1

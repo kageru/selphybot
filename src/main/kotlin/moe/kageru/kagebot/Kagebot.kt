@@ -42,12 +42,14 @@ object Kagebot {
       println("Caused by: ${e.cause}\n${e.cause?.stackTrace?.joinToString("\n")}")
       exitProcess(1)
     }
-    Runtime.getRuntime().addShutdownHook(Thread {
-      Log.info("Bot has been interrupted. Shutting down.")
-      Dao.setCommandCounter(Globals.commandCounter.get())
-      Dao.close()
-      api.disconnect()
-    })
+    Runtime.getRuntime().addShutdownHook(
+      Thread {
+        Log.info("Bot has been interrupted. Shutting down.")
+        Dao.setCommandCounter(Globals.commandCounter.get())
+        Dao.close()
+        api.disconnect()
+      },
+    )
     Log.info("kagebot Mk II running")
     api.addMessageCreateListener { checked { it.process() } }
     Config.features.eventFeatures().forEach { it.register(api) }

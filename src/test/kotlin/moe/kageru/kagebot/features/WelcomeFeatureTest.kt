@@ -24,7 +24,7 @@ class WelcomeFeatureTest : StringSpec({
             every { isCompletedExceptionally } returns false
           }
         }
-      }
+      },
     )
     sentMessages shouldBe mutableListOf(Config.features.welcome!!.embed)
   }
@@ -40,7 +40,7 @@ class WelcomeFeatureTest : StringSpec({
           }
           every { mentionTag } returns "<@123>"
         }
-      }
+      },
     )
     val channel = Config.server.channelsByName("").first()
     verify(exactly = 1) { channel.sendMessage("<@123> welcome") }

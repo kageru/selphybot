@@ -11,7 +11,7 @@ class MessageActions(
   private val delete: Boolean = false,
   private val redirect: MessageRedirect?,
   @JsonProperty("assign")
-  private val assignment: RoleAssignment?
+  private val assignment: RoleAssignment?,
 ) {
 
   fun run(message: MessageCreateEvent, command: Command) {

@@ -31,7 +31,7 @@ class HelpFeatureTest : StringSpec({
     trigger = "!prison"
     [command.permissions]
     hasOneOf = ["testrole"]
-    """.trimIndent()
+  """.trimIndent()
   "should show prefix command" {
     withCommands(commandConfig) {
       val expected = listOf("!ping", "!something")
@@ -47,11 +47,13 @@ class HelpFeatureTest : StringSpec({
       val unexpected = listOf("not a prefix")
       withReplyContents(expected = expected, unexpected = unexpected) { replies ->
         val message = mockMessage("!help", replyEmbeds = replies)
-        every { message.messageAuthor.asUser() } returns Optional.of(mockk {
-          every { getRoles(any()) } returns listOf(
-            Config.server.rolesByName("testrole").first()
-          )
-        })
+        every { message.messageAuthor.asUser() } returns Optional.of(
+          mockk {
+            every { getRoles(any()) } returns listOf(
+              Config.server.rolesByName("testrole").first(),
+            )
+          },
+        )
         message.process()
       }
     }

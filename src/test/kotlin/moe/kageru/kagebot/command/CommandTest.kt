@@ -34,7 +34,7 @@ class CommandTest : StringSpec({
       [[command]]
       trigger = "!ping"
       response = "pong"
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       val before = Globals.commandCounter.get()
       testMessageSuccess("!ping", "pong")
@@ -47,7 +47,7 @@ class CommandTest : StringSpec({
       [[command]]
       trigger = "!ping"
       response = "pong"
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       testMessageSuccess("!ping", "pong")
     }
@@ -62,7 +62,7 @@ class CommandTest : StringSpec({
       [[command]]
       trigger = "!embed"
       embed = [ "$heading", "$content" ]
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       TestUtil.withReplyContents(expected = listOf(heading, content)) {
         mockMessage("!embed", replyEmbeds = it).process()
@@ -76,7 +76,7 @@ class CommandTest : StringSpec({
       trigger = "somewhere"
       response = "found it"
       matchType = "CONTAINS"
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       testMessageSuccess("the trigger is somewhere in this message", "found it")
     }
@@ -88,7 +88,7 @@ class CommandTest : StringSpec({
       trigger = "A.+B"
       response = "regex matched"
       matchType = "REGEX"
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       testMessageSuccess("AcsdB", "regex matched")
     }
@@ -99,7 +99,7 @@ class CommandTest : StringSpec({
       [[command]]
       trigger = "answer me"
       response = "@@ there you go"
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       testMessageSuccess("answer me", "<@1> there you go")
     }
@@ -110,7 +110,7 @@ class CommandTest : StringSpec({
       [[command]]
       trigger = "!ping"
       response = "pong"
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       val calls = mutableListOf<String>()
       mockMessage("!ping", replies = calls, isBot = true).process()
@@ -124,7 +124,7 @@ class CommandTest : StringSpec({
       trigger = "delet this"
       [command.action]
       delete = true
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       val messageContent = "delet this"
       TestUtil.withReplyContents(expected = listOf(messageContent)) {
@@ -145,7 +145,7 @@ class CommandTest : StringSpec({
       hasOneOf = [
           "testrole",
       ]
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       val replies = mutableListOf<String>()
       val mockMessage = mockMessage("!restricted", replies = replies)
@@ -163,7 +163,7 @@ class CommandTest : StringSpec({
       hasOneOf = [
           "testrole"
       ]
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       val calls = mutableListOf<String>()
       val mockMessage = mockMessage("!restricted", replies = calls)
@@ -182,15 +182,17 @@ class CommandTest : StringSpec({
       hasOneOf = [
           "testrole"
       ]
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       val calls = mutableListOf<String>()
       val mockMessage = mockMessage("!restricted", replies = calls)
-      every { mockMessage.messageAuthor.asUser() } returns Optional.of(mockk {
-        every { roles() } returns ListK.just(
-          Config.server.rolesByName("testrole").first()
-        )
-      })
+      every { mockMessage.messageAuthor.asUser() } returns Optional.of(
+        mockk {
+          every { roles() } returns ListK.just(
+            Config.server.rolesByName("testrole").first(),
+          )
+        },
+      )
       mockMessage.process()
       calls shouldBe mutableListOf("access granted")
     }
@@ -203,7 +205,7 @@ class CommandTest : StringSpec({
       response = "access granted"
       [command.permissions]
       hasNoneOf = ["testrole"]
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       val calls = mutableListOf<String>()
       val mockMessage = mockMessage("!almostUnrestricted", replies = calls)
@@ -211,7 +213,7 @@ class CommandTest : StringSpec({
       every { mockMessage.messageAuthor.asUser() } returns mockk {
         every { isPresent } returns true
         every { get().getRoles(any()) } returns listOf(
-          Config.server.rolesByName("testrole").first()
+          Config.server.rolesByName("testrole").first(),
         )
       }
       mockMessage.process()
@@ -234,7 +236,7 @@ class CommandTest : StringSpec({
       response = "access granted"
       [command.permissions]
       onlyDM = true
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       val calls = mutableListOf<String>()
       mockMessage("!dm", replies = calls).process()
@@ -256,7 +258,7 @@ class CommandTest : StringSpec({
       [command.action.redirect]
       target = "testchannel"
       anonymous = true
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       val message = "this is a message"
       mockMessage("!redirect $message").process()
@@ -271,7 +273,7 @@ class CommandTest : StringSpec({
       trigger = "!assign"
       [command.action.assign]
       role = "testrole"
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       val roles = mutableListOf<Role>()
       val user = mockk<User> {
@@ -288,7 +290,7 @@ class CommandTest : StringSpec({
       [[command]]
       trigger = "!vc"
       feature = "vc"
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       testMessageSuccess("!vc 2", "Done")
       Dao.isTemporaryVC("12345") shouldBe true
@@ -301,7 +303,7 @@ class CommandTest : StringSpec({
       [[command]]
       trigger = "!vc"
       feature = "vc"
-      """.trimIndent()
+      """.trimIndent(),
     ) {
       testMessageSuccess("!vc asd", "Invalid syntax, expected a number as limit, got asd")
       Dao.isTemporaryVC("12345") shouldBe false

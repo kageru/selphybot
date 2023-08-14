@@ -3,7 +3,7 @@ package moe.kageru.kagebot.features
 class Features(
   val welcome: WelcomeFeature? = null,
   val timeout: TimeoutFeature? = null,
-  vc: TempVCFeature = TempVCFeature(null)
+  vc: TempVCFeature = TempVCFeature(null),
 ) {
   private val debug = DebugFeature()
   private val help = HelpFeature()
@@ -18,7 +18,7 @@ class Features(
     "getConfig" to getConfig,
     "setConfig" to setConfig,
     "timeout" to timeout,
-    "vc" to vc
+    "vc" to vc,
   )
 
   fun findByString(feature: String) = featureMap[feature]

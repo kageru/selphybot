@@ -15,7 +15,7 @@ import org.javacord.api.event.server.member.ServerMemberJoinEvent
 class WelcomeFeature(
   content: List<String>?,
   fallbackChannel: String?,
-  private val fallbackMessage: String?
+  private val fallbackMessage: String?,
 ) : MessageFeature, EventFeature {
   val embed: EmbedBuilder? by lazy { content?.let(MessageUtil::listToEmbed) }
 
@@ -31,7 +31,7 @@ class WelcomeFeature(
     // If the user disabled direct messages, try the fallback (if defined)
     if (message.asOption().isEmpty() && hasFallback()) {
       fallbackChannel!!.sendMessage(
-        fallbackMessage!!.replace("@@", event.user.mentionTag)
+        fallbackMessage!!.replace("@@", event.user.mentionTag),
       )
     }
   }

@@ -37,7 +37,7 @@ object TestUtil {
     replies: MutableList<String> = mutableListOf(),
     replyEmbeds: MutableList<EmbedBuilder> = mutableListOf(),
     files: MutableList<File> = mutableListOf(),
-    isBot: Boolean = false
+    isBot: Boolean = false,
   ): MessageCreateEvent {
     return mockk {
       every { messageContent } returns content
@@ -75,7 +75,7 @@ object TestUtil {
   fun prepareTestEnvironment(
     sentEmbeds: MutableList<EmbedBuilder> = mutableListOf(),
     sentMessages: MutableList<String> = mutableListOf(),
-    dmEmbeds: MutableList<EmbedBuilder> = mutableListOf()
+    dmEmbeds: MutableList<EmbedBuilder> = mutableListOf(),
   ) {
     val channel = mockk<ServerTextChannel>(relaxed = true) {
       every { sendMessage(capture(sentEmbeds)) } returns mockk(relaxed = true) {
@@ -99,14 +99,16 @@ object TestUtil {
         every { isCompletedExceptionally } returns false
         every { join().idAsString } returns "12345"
       }
-      every { getMembersByName(any()) } returns ListK.just(mockk(relaxed = true) {
-        every { id } returns 123
-        every { roles() } returns ListK.just(TEST_ROLE)
-        every { getRoles(any()) } returns ListK.just(TEST_ROLE)
-        every { sendMessage(capture(dmEmbeds)) } returns mockk(relaxed = true) {
-          every { isCompletedExceptionally } returns false
-        }
-      })
+      every { getMembersByName(any()) } returns setOf(
+        mockk(relaxed = true) {
+          every { id } returns 123
+          every { roles() } returns ListK.just(TEST_ROLE)
+          every { getRoles(any()) } returns ListK.just(TEST_ROLE)
+          every { sendMessage(capture(dmEmbeds)) } returns mockk(relaxed = true) {
+            every { isCompletedExceptionally } returns false
+          }
+        },
+      )
     }
     Globals.api = mockk(relaxed = true) {
       every { getServerById(any<String>()) } returns Optional.of(Config.server)
@@ -134,7 +136,7 @@ object TestUtil {
   fun withReplyContents(
     expected: List<String> = emptyList(),
     unexpected: List<String> = emptyList(),
-    op: (MutableList<EmbedBuilder>) -> Unit
+    op: (MutableList<EmbedBuilder>) -> Unit,
   ) {
     val replies = mutableListOf<EmbedBuilder>()
     op(replies)

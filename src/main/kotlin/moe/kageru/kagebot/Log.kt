@@ -13,7 +13,7 @@ object Log {
       addHandler(
         FileHandler("kagebot.log", true).apply {
           formatter = LogFormatter()
-        }
+        },
       )
     }
   }

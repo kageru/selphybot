@@ -80,17 +80,6 @@ object Util {
     } catch (e: Exception) {
       Log.warn("An uncaught exception occurred.\n$e")
       Log.warn(e.stackTrace.joinToString("\n"))
-      MessageUtil.sendEmbed(
-        Globals.api.owner.get(),
-        EmbedBuilder()
-          .setColor(Color.RED)
-          .addField("Error", "kagebot has encountered an error")
-          .addField(
-            "$e", """```
-                       ${e.stackTrace.joinToString("\n\t")}
-                    ```""".trimIndent().run { applyIf(length > 1800) { substring(1..1800) } }
-          )
-      )
     }
   }
 }
